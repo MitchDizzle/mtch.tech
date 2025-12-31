@@ -5,7 +5,7 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
           <div class="flex">
-            <router-link to="/" class="flex items-center px-3 text-xl font-bold bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent hover:from-primary-300 hover:to-primary-500 transition">
+            <router-link to="/" class="flex items-center px-3 text-xl font-bold text-primary-500 hover:text-primary-400 transition">
               mtch.tech
             </router-link>
           </div>
