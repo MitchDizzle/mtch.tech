@@ -1,43 +1,49 @@
 <template>
   <DefaultLayout>
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div v-if="loading" class="text-center py-12">
-        <p class="text-gray-600">Loading...</p>
-      </div>
-
-      <div v-else-if="!content" class="text-center py-12">
-        <p class="text-gray-600">Project not found</p>
-        <router-link to="/portfolio" class="text-blue-600 hover:text-blue-800 mt-4 inline-block">
-          &larr; Back to Portfolio
-        </router-link>
-      </div>
-
-      <article v-else>
-        <router-link to="/portfolio" class="text-blue-600 hover:text-blue-800 mb-4 inline-block">
-          &larr; Back to Portfolio
-        </router-link>
-
-        <h1 class="text-4xl font-bold text-gray-900 mt-4 mb-4">{{ content.title }}</h1>
-
-        <div class="flex items-center gap-4 mb-6 text-sm text-gray-600">
-          <span v-if="content.date">{{ formatDate(content.date) }}</span>
-          <span v-if="content.updated && content.updated !== content.date">
-            Updated: {{ formatDate(content.updated) }}
-          </span>
+    <div class="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-12">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div v-if="loading" class="text-center py-20">
+          <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary-500 border-t-transparent"></div>
         </div>
 
-        <div class="flex gap-2 mb-8">
-          <span
-            v-for="tag in content.tags"
-            :key="tag"
-            class="px-3 py-1 bg-blue-100 text-blue-800 rounded text-sm"
-          >
-            {{ tag }}
-          </span>
+        <div v-else-if="!content" class="text-center py-20">
+          <p class="text-gray-400 text-lg">Project not found</p>
+          <router-link to="/portfolio" class="text-primary-400 hover:text-primary-300 mt-4 inline-block">
+            ← Back to Portfolio
+          </router-link>
         </div>
 
-        <div class="prose prose-lg max-w-none" v-html="content.html"></div>
-      </article>
+        <article v-else>
+          <router-link to="/portfolio" class="inline-flex items-center text-primary-400 hover:text-primary-300 mb-6 transition">
+            ← Back to Portfolio
+          </router-link>
+
+          <h1 class="text-5xl font-bold mt-4 mb-6">
+            <span class="bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent">
+              {{ content.title }}
+            </span>
+          </h1>
+
+          <div class="flex items-center gap-4 mb-6 text-sm text-gray-500">
+            <span v-if="content.date">{{ formatDate(content.date) }}</span>
+            <span v-if="content.updated && content.updated !== content.date">
+              Updated: {{ formatDate(content.updated) }}
+            </span>
+          </div>
+
+          <div class="flex gap-2 mb-8">
+            <span
+              v-for="tag in content.tags"
+              :key="tag"
+              class="px-4 py-2 bg-primary-500/20 text-primary-300 rounded-lg text-sm border border-primary-500/30"
+            >
+              {{ tag }}
+            </span>
+          </div>
+
+          <div class="prose prose-lg prose-invert max-w-none prose-headings:text-gray-100 prose-p:text-gray-300 prose-a:text-primary-400 prose-strong:text-gray-200 prose-code:text-primary-300 prose-pre:bg-gray-800 prose-pre:border prose-pre:border-gray-700" v-html="content.html"></div>
+        </article>
+      </div>
     </div>
   </DefaultLayout>
 </template>
