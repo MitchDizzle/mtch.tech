@@ -1,30 +1,28 @@
 <template>
   <DefaultLayout>
-    <div class="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-12">
+    <div class="min-h-screen bg-gradient-to-b from-dark-900 to-dark-800 py-12">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 class="text-5xl font-bold mb-8">
-          <span class="bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent">
-            Recipes
-          </span>
+        <h1 class="text-6xl font-bold mb-8 text-primary-500">
+          Recipes
         </h1>
 
         <div class="mb-8">
-          <div class="flex gap-4 border-b border-gray-700">
+          <div class="flex gap-4 border-b-2 border-primary-500/20">
             <button
               @click="activeCategory = 'all'"
-              :class="['px-6 py-3 font-medium transition-all duration-200', activeCategory === 'all' ? 'border-b-2 border-primary-500 text-primary-400' : 'text-gray-400 hover:text-gray-200']"
+              :class="['px-6 py-3 font-medium transition-all duration-200', activeCategory === 'all' ? 'border-b-2 border-primary-500 text-primary-400' : 'text-dark-300 hover:text-primary-400']"
             >
               All
             </button>
             <button
               @click="activeCategory = 'baking'"
-              :class="['px-6 py-3 font-medium transition-all duration-200', activeCategory === 'baking' ? 'border-b-2 border-primary-500 text-primary-400' : 'text-gray-400 hover:text-gray-200']"
+              :class="['px-6 py-3 font-medium transition-all duration-200', activeCategory === 'baking' ? 'border-b-2 border-primary-500 text-primary-400' : 'text-dark-300 hover:text-primary-400']"
             >
               🍰 Baking
             </button>
             <button
               @click="activeCategory = 'cooking'"
-              :class="['px-6 py-3 font-medium transition-all duration-200', activeCategory === 'cooking' ? 'border-b-2 border-primary-500 text-primary-400' : 'text-gray-400 hover:text-gray-200']"
+              :class="['px-6 py-3 font-medium transition-all duration-200', activeCategory === 'cooking' ? 'border-b-2 border-primary-500 text-primary-400' : 'text-dark-300 hover:text-primary-400']"
             >
               🍳 Cooking
             </button>
@@ -33,35 +31,35 @@
 
         <div v-if="loading" class="text-center py-20">
           <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-primary-500 border-t-transparent"></div>
-          <p class="text-gray-400 mt-4">Loading recipes...</p>
+          <p class="text-dark-300 mt-4">Loading recipes...</p>
         </div>
 
         <div v-else-if="filteredRecipes.length === 0" class="text-center py-20">
           <div class="text-6xl mb-4">🍴</div>
-          <p class="text-gray-400 text-lg">No recipes yet. Add some markdown files to /src/content/recipes/!</p>
+          <p class="text-dark-200 text-lg">No recipes yet. Add some markdown files to /src/content/recipes/!</p>
         </div>
 
         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div
             v-for="recipe in filteredRecipes"
             :key="recipe.slug"
-            class="group bg-gray-800/50 backdrop-blur border border-gray-700 rounded-xl overflow-hidden hover:border-primary-500/50 hover:shadow-xl hover:shadow-primary-500/10 transition-all duration-300 cursor-pointer transform hover:scale-105"
+            class="group bg-dark-800/80 backdrop-blur border-2 border-primary-500/30 rounded-xl overflow-hidden hover:border-primary-500 hover:shadow-xl hover:shadow-primary-500/20 transition-all duration-300 cursor-pointer transform hover:scale-105"
             @click="$router.push(`/recipes/${recipe.category}/${recipe.slug}`)"
           >
-            <div v-if="recipe.image" class="h-48 bg-gray-700">
+            <div v-if="recipe.image" class="h-48 bg-dark-700">
               <img :src="recipe.image" :alt="recipe.title" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
             </div>
             <div class="p-6">
               <div class="flex items-center justify-between mb-3">
-                <span class="px-3 py-1 bg-primary-500/20 text-primary-300 rounded-full text-xs font-medium border border-primary-500/30">
+                <span class="px-3 py-2 bg-primary-500/20 text-primary-300 rounded-full text-xs font-semibold border border-primary-500/40">
                   {{ recipe.category }}
                 </span>
-                <span v-if="recipe.date" class="text-xs text-gray-500">
+                <span v-if="recipe.date" class="text-xs text-dark-300">
                   {{ formatDate(recipe.date) }}
                 </span>
               </div>
-              <h3 class="text-xl font-semibold text-gray-100 mb-2 group-hover:text-primary-400 transition">{{ recipe.title }}</h3>
-              <p class="text-gray-400 text-sm">{{ recipe.description }}</p>
+              <h3 class="text-xl font-semibold text-dark-100 mb-2 group-hover:text-primary-400 transition">{{ recipe.title }}</h3>
+              <p class="text-dark-200 text-sm">{{ recipe.description }}</p>
             </div>
           </div>
         </div>
