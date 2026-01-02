@@ -15,7 +15,7 @@
           <div class="mb-8">
             <div class="inline-block relative">
               <div class="absolute inset-0 blur-3xl bg-primary-500/50 rounded-full"></div>
-              <h1 class="relative text-6xl md:text-8xl font-black mb-4">
+              <h1 class="relative text-3xl md:text-5xl font-black mb-4">
                 <span class="text-primary-500 drop-shadow-[0_0_30px_rgba(249,115,22,0.5)]">
                   Welcome to mtch.tech
                 </span>
@@ -45,7 +45,7 @@
             </router-link>
           </div>
 
-          <!-- Feature cards with orange borders -->
+          <!-- Feature cards with orange borders 
           <div class="mt-24 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <div class="p-8 bg-dark-800/80 backdrop-blur rounded-2xl border-2 border-primary-500/30 hover:border-primary-500 transition-all duration-200 shadow-xl">
               <div class="text-5xl mb-4">🚀</div>
@@ -62,7 +62,7 @@
               <h3 class="text-2xl font-bold text-primary-400 mb-3">Auto-Deploy</h3>
               <p class="text-dark-200 text-lg">Push to GitHub and it deploys automatically</p>
             </div>
-          </div>
+          </div>-->
         </div>
       </div>
     </div>
