@@ -1,65 +1,66 @@
 <template>
   <DefaultLayout>
     <div class="relative overflow-hidden">
-      <!-- Background gradient -->
-      <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-        <div class="absolute inset-0 bg-gradient-to-tr from-primary-900/20 via-transparent to-primary-800/20"></div>
+      <!-- Background gradient with orange glow -->
+      <div class="absolute inset-0 bg-gradient-to-br from-dark-900 via-dark-800 to-dark-950">
+        <div class="absolute inset-0 bg-gradient-to-tr from-primary-900/30 via-transparent to-primary-800/30"></div>
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary-600/10 rounded-full blur-3xl"></div>
       </div>
 
       <!-- Content -->
       <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32">
         <div class="text-center">
-          <!-- Glowing effect -->
+          <!-- Main heading with massive orange glow -->
           <div class="mb-8">
             <div class="inline-block relative">
-              <div class="absolute inset-0 blur-3xl bg-primary-500/30 rounded-full"></div>
-              <h1 class="relative text-6xl md:text-7xl font-bold mb-4">
-                <span class="bg-gradient-to-r from-primary-400 via-primary-500 to-primary-600 bg-clip-text text-transparent">
+              <div class="absolute inset-0 blur-3xl bg-primary-500/50 rounded-full"></div>
+              <h1 class="relative text-6xl md:text-8xl font-black mb-4">
+                <span class="text-primary-500 drop-shadow-[0_0_30px_rgba(249,115,22,0.5)]">
                   Welcome to mtch.tech
                 </span>
               </h1>
             </div>
           </div>
 
-          <p class="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-            A modular space for my <span class="text-primary-400 font-semibold">projects</span>,
-            <span class="text-primary-400 font-semibold">recipes</span>, and
-            <span class="text-primary-400 font-semibold">thoughts</span>.
+          <p class="text-2xl md:text-3xl text-dark-100 mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
+            A modular space for my <span class="text-primary-400 font-bold">projects</span>,
+            <span class="text-primary-400 font-bold">recipes</span>, and
+            <span class="text-primary-400 font-bold">thoughts</span>.
           </p>
 
-          <!-- CTA Buttons -->
+          <!-- CTA Buttons with more orange -->
           <div class="flex flex-col sm:flex-row justify-center gap-4">
             <router-link
               to="/portfolio"
-              class="group relative px-8 py-4 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl font-semibold text-lg shadow-lg shadow-primary-500/50 hover:shadow-primary-500/70 hover:scale-105 transition-all duration-200"
+              class="group relative px-10 py-5 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-xl font-bold text-xl shadow-2xl shadow-primary-500/60 hover:shadow-primary-500/80 hover:scale-105 transition-all duration-200 border-2 border-primary-400"
             >
-              <span class="relative z-10">View Portfolio</span>
-              <div class="absolute inset-0 bg-gradient-to-r from-primary-600 to-primary-700 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <span class="relative z-10">View Portfolio →</span>
             </router-link>
             <router-link
               to="/recipes"
-              class="px-8 py-4 bg-gray-800 text-gray-100 rounded-xl font-semibold text-lg border-2 border-gray-700 hover:border-primary-500 hover:bg-gray-700 transition-all duration-200 hover:scale-105"
+              class="px-10 py-5 bg-dark-800 text-dark-100 rounded-xl font-bold text-xl border-2 border-primary-500 hover:border-primary-400 hover:bg-primary-500/10 transition-all duration-200 hover:scale-105"
             >
-              Browse Recipes
+              Browse Recipes →
             </router-link>
           </div>
 
-          <!-- Decorative elements -->
-          <div class="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            <div class="p-6 bg-gray-800/50 backdrop-blur rounded-xl border border-gray-700 hover:border-primary-500/50 transition-all duration-200">
-              <div class="text-3xl mb-3">🚀</div>
-              <h3 class="text-lg font-semibold text-primary-400 mb-2">Auto-Discovery</h3>
-              <p class="text-gray-400 text-sm">Drop markdown files and they automatically appear</p>
+          <!-- Feature cards with orange borders -->
+          <div class="mt-24 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <div class="p-8 bg-dark-800/80 backdrop-blur rounded-2xl border-2 border-primary-500/30 hover:border-primary-500 transition-all duration-200 shadow-xl">
+              <div class="text-5xl mb-4">🚀</div>
+              <h3 class="text-2xl font-bold text-primary-400 mb-3">Auto-Discovery</h3>
+              <p class="text-dark-200 text-lg">Drop markdown files and they automatically appear</p>
             </div>
-            <div class="p-6 bg-gray-800/50 backdrop-blur rounded-xl border border-gray-700 hover:border-primary-500/50 transition-all duration-200">
-              <div class="text-3xl mb-3">⚡</div>
-              <h3 class="text-lg font-semibold text-primary-400 mb-2">Fast & Modern</h3>
-              <p class="text-gray-400 text-sm">Built with Vue 3, Vite, and TailwindCSS</p>
+            <div class="p-8 bg-dark-800/80 backdrop-blur rounded-2xl border-2 border-primary-500/30 hover:border-primary-500 transition-all duration-200 shadow-xl">
+              <div class="text-5xl mb-4">⚡</div>
+              <h3 class="text-2xl font-bold text-primary-400 mb-3">Fast & Modern</h3>
+              <p class="text-dark-200 text-lg">Built with Vue 3, Vite, and TailwindCSS</p>
             </div>
-            <div class="p-6 bg-gray-800/50 backdrop-blur rounded-xl border border-gray-700 hover:border-primary-500/50 transition-all duration-200">
-              <div class="text-3xl mb-3">🔄</div>
-              <h3 class="text-lg font-semibold text-primary-400 mb-2">Auto-Deploy</h3>
-              <p class="text-gray-400 text-sm">Push to GitHub and it deploys automatically</p>
+            <div class="p-8 bg-dark-800/80 backdrop-blur rounded-2xl border-2 border-primary-500/30 hover:border-primary-500 transition-all duration-200 shadow-xl">
+              <div class="text-5xl mb-4">🔄</div>
+              <h3 class="text-2xl font-bold text-primary-400 mb-3">Auto-Deploy</h3>
+              <p class="text-dark-200 text-lg">Push to GitHub and it deploys automatically</p>
             </div>
           </div>
         </div>
