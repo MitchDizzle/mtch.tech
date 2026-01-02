@@ -11,7 +11,6 @@ const md = new MarkdownIt({
 const contentModules = import.meta.glob('@/content/**/*.md', {
   eager: true,
   query: '?raw',
-  import: 'default',
 })
 
 export function useContent() {
