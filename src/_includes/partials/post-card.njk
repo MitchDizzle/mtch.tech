@@ -1,0 +1,20 @@
+<article class="card" data-tags="{{ item.data.tags | join(' ') }}">
+  {% if item.data.image %}
+  <img class="card-img" src="{{ item.data.image }}" alt="{{ item.data.title }}">
+  {% endif %}
+  <div class="card-body">
+    <h3 class="card-title"><a href="{{ item.url }}">{{ item.data.title }}</a></h3>
+    <p class="card-date"><time datetime="{{ item.date | htmlDateString }}">{{ item.date | readableDate }}</time></p>
+    {% if item.data.description %}
+    <p class="card-desc">{{ item.data.description }}</p>
+    {% endif %}
+    {% if item.data.tags %}
+    <ul class="tag-list">
+      {% for tag in item.data.tags %}
+      <li class="tag">{{ tag }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    <a class="btn btn-sm" href="{{ item.url }}">Read Post</a>
+  </div>
+</article>

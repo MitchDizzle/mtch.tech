@@ -1,0 +1,26 @@
+---
+layout: layouts/base.njk
+title: Blog
+---
+<main class="content">
+  <h1>Blog</h1>
+  <p>Writing on DevOps, infrastructure, tooling, and whatever else I find interesting.</p>
+
+  {% if collections.posts | length %}
+  <div class="filter-bar">
+    <button class="filter-btn active" data-tag="all">All</button>
+    {% for tag in collections.posts | allTags %}
+    <button class="filter-btn" data-tag="{{ tag }}">{{ tag }}</button>
+    {% endfor %}
+  </div>
+
+  <div class="card-grid" id="card-grid">
+    {% for item in collections.posts %}
+      {% include "partials/post-card.njk" %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <p>No posts yet. Check back soon.</p>
+  {% endif %}
+</main>
+<script src="/assets/js/filter.js"></script>

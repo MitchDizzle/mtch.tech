@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% if title %}{{ title }} — {{ site.shortName }}{% else %}{{ site.name }} — {{ site.tagline }}{% endif %}</title>
+    <meta name="description" content="{{ description or site.description }}">
+    <link rel="stylesheet" href="/assets/css/styles.css">
+  </head>
+  <body>
+    <div class="wrapper">
+      {% include "partials/header.njk" %}
+      {% include "partials/nav.njk" %}
+      {{ content | safe }}
+    </div>
+    {% include "partials/footer.njk" %}
+  </body>
+</html>

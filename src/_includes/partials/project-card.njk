@@ -1,0 +1,24 @@
+<article class="card" data-tags="{{ item.data.tags | join(' ') }}">
+  {% if item.data.image %}
+  <img class="card-img" src="{{ item.data.image }}" alt="{{ item.data.title }}">
+  {% endif %}
+  <div class="card-body">
+    <h3 class="card-title"><a href="{{ item.url }}">{{ item.data.title }}</a></h3>
+    {% if item.data.description %}
+    <p class="card-desc">{{ item.data.description }}</p>
+    {% endif %}
+    {% if item.data.tags %}
+    <ul class="tag-list">
+      {% for tag in item.data.tags %}
+      <li class="tag">{{ tag }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    <div class="card-actions">
+      <a class="btn btn-sm" href="{{ item.url }}">View Project</a>
+      {% if item.data.github_url %}
+      <a class="btn btn-outline btn-sm" href="{{ item.data.github_url }}" target="_blank" rel="noopener">GitHub</a>
+      {% endif %}
+    </div>
+  </div>
+</article>

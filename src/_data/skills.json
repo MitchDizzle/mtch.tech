@@ -1,0 +1,16 @@
+{
+  "categories": [
+    {
+      "name": "DevOps & Infrastructure",
+      "items": ["Docker", "Kubernetes", "Terraform", "Ansible", "CI/CD", "Linux"]
+    },
+    {
+      "name": "Cloud Platforms",
+      "items": ["AWS", "OCI", "Azure"]
+    },
+    {
+      "name": "Languages",
+      "items": ["Java", "C#", "Ruby", "Python", "Shell", "JavaScript", "TypeScript", "SQL", "SourcePawn"]
+    }
+  ]
+}

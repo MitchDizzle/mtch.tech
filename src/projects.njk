@@ -1,0 +1,26 @@
+---
+layout: layouts/base.njk
+title: Projects
+---
+<main class="content">
+  <h1>Projects</h1>
+  <p>A collection of personal and professional projects spanning DevOps, infrastructure, and software development.</p>
+
+  {% if collections.projects | length %}
+  <div class="filter-bar">
+    <button class="filter-btn active" data-tag="all">All</button>
+    {% for tag in collections.projects | allTags %}
+    <button class="filter-btn" data-tag="{{ tag }}">{{ tag }}</button>
+    {% endfor %}
+  </div>
+
+  <div class="card-grid" id="card-grid">
+    {% for item in collections.projects %}
+      {% include "partials/project-card.njk" %}
+    {% endfor %}
+  </div>
+  {% else %}
+  <p>No projects yet. Check back soon.</p>
+  {% endif %}
+</main>
+<script src="/assets/js/filter.js"></script>
