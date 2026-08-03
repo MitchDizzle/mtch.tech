@@ -27,11 +27,56 @@ Settled: two-mode fork, side-scrolling street hub with beat-em-up locomotion,
 diegetic detail falloff, hats as minigame rewards, fantasy-panel UI throughout
 the static site, Mitchtopia on the landing and Mitch Gardner inside.
 
-Next up: build the panel component and the three screens. The game route is a
-placeholder — the whole landing and options flow ships before any game work.
+### Built and working
 
-Open and blocking art work: palette, logical resolution, character height,
-time of day. See Phase 0 in the asset list.
+- `layouts/shell.njk` — head script (adds `.js` before first paint, phase-locks
+  the background drift to wall clock), fonts, background layer, toast region
+- `components/panel.njk` — the panel macro. Variants: `prompt`, `dialog`,
+  `page`, `dialogue`, `toast`. Options include `overlay`, `hidden`, `autoOpen`
+- `assets/css/panel.css`, `assets/js/panel.js` — LitRPG open/close, in-flow
+  swaps, modal overlays with focus containment and Escape, toasts
+- `assets/css/landing.css` — animated background, title card, buttons, forms
+- `assets/js/fps.js` — dev FPS meter, `?fps` or Ctrl+Shift+F
+- Routes: `/` landing with in-place options popup, `/play/` game placeholder,
+  `/site/` static hub placeholder
+
+Verified on desktop and mobile.
+
+### Next session — static site
+
+`/site/` is a placeholder. Needed: the section list, the `domain` field on the
+content model, converting `/blog/`, `/projects/`, and `/contact/` off the old
+`base.njk` layout onto the panel, and picking which Kenney borders to extract.
+See [08-static-site.md](08-static-site.md).
+
+Old templates (`base.njk`, `styles.css`, header/nav/footer partials) are still
+live for those three routes and untouched. The previous home page is preserved
+at `src/_archive/old-home.njk` with `permalink: false`.
+
+### Hard-won implementation notes
+
+Worth not rediscovering:
+
+- Panel animations use `fill-mode: both`, never `forwards`. With `forwards`,
+  nothing applies the 0% keyframe during `animation-delay`, so a delayed panel
+  renders open and then snaps shut.
+- `open()`/`close()` resolve on `animationend`, not a duration timer — a
+  duration-only timer fires while a delayed animation is still queued.
+- Never remove and restore an `animation` to hide something. Re-applying an
+  animation restarts it from zero. Fade a parent instead; parent opacity
+  multiplies down the subtree.
+- Backdrop fades declare their `transition` on the active-state rule only, so
+  the fade is one-way: animated out, instant back in.
+- No `filter: blur()` on the background blobs. A radial gradient is already
+  soft, and blurring something that also animates forces a re-raster per frame.
+- `backdrop-filter` is off by default (`.panel--frosted` opts in). It re-blurs
+  every frame the backdrop changes, which is always, on both the landing and
+  the game canvas.
+
+### Open and blocking art work
+
+Palette, logical resolution, character height, time of day. See Phase 0 in the
+[asset list](assets/asset-list.md).
 
 Deferred by decision: the isekai fall and fantasy world, the top-down roguelite
 (likely returns as an arcade cabinet), combat, the race minigame.
