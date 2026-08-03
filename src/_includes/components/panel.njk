@@ -1,0 +1,73 @@
+{# =========================================================================
+   Panel macro
+
+   Usage — wrap content with {% call %} so the body is arbitrary markup:
+
+     {% from "components/panel.njk" import panel %}
+
+     {% call panel({ variant: "prompt", title: "Mitchtopia" }) %}
+       <p>Software engineer. Motorcycles, baking, and games in between.</p>
+       <div class="panel__actions">
+         <a class="btn" href="/site/" data-panel-exit>Static site</a>
+         <a class="btn" href="/play/" data-panel-exit>Play game</a>
+       </div>
+     {% endcall %}
+
+   Options:
+     variant   prompt | dialog | page | dialogue | toast   (default: prompt)
+     title     optional heading rendered inside the panel
+     id        element id, needed if you drive it from JS
+     tabs      array of { label, href } or { label, pane } — omit for none
+     autoOpen  false to leave it closed until JS opens it (default: true)
+     class     extra classes
+     labelledBy / label  accessible name when there is no visible title
+   ========================================================================= #}
+
+{% macro panel(opts = {}) %}
+{% set variant = opts.variant | default("prompt") %}
+<div
+  class="panel panel--{{ variant }}{% if opts.class %} {{ opts.class }}{% endif %}"
+  {% if opts.id %}id="{{ opts.id }}"{% endif %}
+  data-panel
+  {% if opts.autoOpen === false %}data-panel-no-autoopen{% endif %}
+  {% if variant == "dialog" %}role="dialog" aria-modal="true"{% endif %}
+  {% if variant == "toast" %}role="status" aria-live="polite"{% endif %}
+  {% if opts.labelledBy %}aria-labelledby="{{ opts.labelledBy }}"
+  {% elif opts.label %}aria-label="{{ opts.label }}"{% endif %}
+>
+  <span class="panel__edge" aria-hidden="true"></span>
+
+  {% if opts.tabs %}
+  <div class="panel__tabs" role="tablist">
+    {% for tab in opts.tabs %}
+      {% if tab.href %}
+    <a class="panel__tab" href="{{ tab.href }}"
+       {% if tab.current %}aria-current="page"{% endif %}>{{ tab.label }}</a>
+      {% else %}
+    <button class="panel__tab" type="button" role="tab"
+            id="tab-{{ tab.pane }}"
+            aria-controls="{{ tab.pane }}"
+            aria-selected="{{ 'true' if loop.first else 'false' }}"
+            tabindex="{{ '0' if loop.first else '-1' }}">{{ tab.label }}</button>
+      {% endif %}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="panel__body">
+    {% if opts.title %}
+    <h2 class="panel__title"{% if opts.labelledBy %} id="{{ opts.labelledBy }}"{% endif %}>{{ opts.title }}</h2>
+    {% endif %}
+    {{ caller() }}
+  </div>
+</div>
+{% endmacro %}
+
+
+{# =========================================================================
+   Toast container. Include once per page that fires notifications.
+   ========================================================================= #}
+
+{% macro toastRegion() %}
+<div class="panel-toasts" id="panel-toasts" aria-live="polite" aria-atomic="false"></div>
+{% endmacro %}

@@ -1,0 +1,277 @@
+/* ==========================================================================
+   LitRPG panel — shared component
+
+   The site's signature element. Used for:
+     - the landing prompt
+     - the game options screen
+     - static page frames
+     - in-game menus, dialogue, and system notifications (DOM overlaid on
+       the canvas, so this is literally the same component, not a lookalike)
+
+   Opening: a horizontal line expands from centre, then extends vertically.
+   Closing: the reverse.
+
+   The panel is a CLIPPING MASK, not a scaling box. Content sits at final
+   size and the clip opens over it, so text is never stretched or squashed
+   and is already in place as the panel reveals it.
+   ========================================================================== */
+
+:root {
+  /* --- Border ----------------------------------------------------------
+     Swap these when the Kenney fantasy border comes in. Keeping the width
+     in a variable means adding the ornate border causes no layout reflow.
+     Do not hardcode the width anywhere. */
+  --panel-border-width: 2px;
+  --panel-border-color: rgb(180 190 210 / 0.55);
+  --panel-radius: 4px;
+
+  /* --- Surface ---------------------------------------------------------
+     Panels are slightly transparent, like a game overlay. Alpha stays high
+     enough that body text keeps its contrast ratio against the darkest
+     backdrop the panel can sit on. Do not push below ~0.85 without
+     re-checking contrast. */
+  --panel-bg: rgb(16 18 26 / 0.88);
+  --panel-bg-solid: rgb(16 18 26);
+  --panel-fg: rgb(228 232 240);
+  --panel-fg-muted: rgb(158 166 184);
+  --panel-rule-color: rgb(180 190 210 / 0.22);
+  --panel-accent: rgb(126 178 235);
+
+  /* Optional frosting. Costly on low-end mobile — see the guard below. */
+  --panel-blur: 6px;
+
+  --panel-padding: 1.25rem;
+
+  /* --- Timing ---------------------------------------------------------- */
+  --panel-open-duration: 550ms;
+  --panel-close-duration: 450ms;
+  --panel-open-ease: cubic-bezier(0.2, 0.8, 0.3, 1);
+  --panel-close-ease: cubic-bezier(0.6, 0, 0.7, 0.2);
+}
+
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+
+.panel {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--panel-max-width, 48rem);
+  margin-inline: auto;
+
+  border: var(--panel-border-width) solid var(--panel-border-color);
+  border-radius: var(--panel-radius);
+  background: var(--panel-bg);
+  color: var(--panel-fg);
+
+  /* Default state is OPEN and fully visible. Everything must be readable
+     with no JS, no CSS animation support, or a failed bundle. The animation
+     is progressive enhancement layered on top — never the other way round. */
+  clip-path: inset(0 0 0 0);
+}
+
+/* --- Frosting: OFF by default ------------------------------------------
+   backdrop-filter must re-sample and re-blur everything behind it on every
+   frame in which that backdrop changes. The landing background is animated
+   and the game canvas repaints constantly, so on those surfaces it is a
+   guaranteed frame-rate problem, not a maybe.
+
+   Opt in per-surface with .panel--frosted, and only where the backdrop is
+   static. Measure before shipping it anywhere. */
+@supports (backdrop-filter: blur(1px)) {
+  @media (min-width: 48rem) and (prefers-reduced-motion: no-preference) {
+    .panel--frosted {
+      backdrop-filter: blur(var(--panel-blur));
+    }
+  }
+}
+
+/* Panel grows to content height; the PAGE scrolls. Never give the panel its
+   own internal scroll container — nested scrolling on mobile is hostile and
+   the frame would clip long content. */
+.panel__body {
+  padding: var(--panel-padding);
+}
+
+.panel__title {
+  margin: 0 0 0.5rem;
+  font-size: 1.15rem;
+  font-weight: 500;
+}
+
+.panel__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.panel__actions > * {
+  flex: 1;
+}
+
+/* --- Tabs ---------------------------------------------------------------
+   Static hub and interior pages only. The landing panel has no tabs. */
+
+.panel__tabs {
+  display: flex;
+  border-bottom: 1px solid var(--panel-rule-color);
+}
+
+.panel__tab {
+  flex: 1;
+  padding: 0.6rem 0.5rem;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--panel-fg-muted);
+  font: inherit;
+  cursor: pointer;
+}
+
+.panel__tab[aria-selected="true"] {
+  color: var(--panel-accent);
+  border-bottom-color: var(--panel-accent);
+}
+
+/* --- Leading edge -------------------------------------------------------
+   The expanding line during phase one. Decorative; aria-hidden in markup. */
+
+.panel__edge {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100%;
+  height: var(--panel-border-width);
+  translate: -50% -50%;
+  background: var(--panel-accent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Variants
+   -------------------------------------------------------------------------- */
+
+/* Landing screen and short confirmations. Narrow, centred, no tabs. */
+.panel--prompt {
+  --panel-max-width: 30rem;
+}
+
+/* Game options, pause menu, anything with form controls. */
+.panel--dialog {
+  --panel-max-width: 34rem;
+}
+
+/* Static page frame. Wide, grows to content, page scrolls. */
+.panel--page {
+  --panel-max-width: 52rem;
+  --panel-padding: 1.75rem;
+}
+
+/* In-game dialogue box. Anchored low, wide, short. */
+.panel--dialogue {
+  --panel-max-width: 44rem;
+  --panel-padding: 1rem 1.25rem;
+}
+
+/* Transient LitRPG system notification — "Hat acquired". Small, corner-
+   anchored, auto-dismissing. Managed by panel.js. */
+.panel--toast {
+  --panel-max-width: 22rem;
+  --panel-padding: 0.75rem 1rem;
+  margin-inline: 0;
+}
+
+.panel-toasts {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none;
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* --------------------------------------------------------------------------
+   Animation — progressive enhancement only
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes panel-open {
+    0%   { clip-path: inset(50% 50% 50% 50%); }
+    45%  { clip-path: inset(50% 0 50% 0); }
+    100% { clip-path: inset(0 0 0 0); }
+  }
+
+  @keyframes panel-close {
+    0%   { clip-path: inset(0 0 0 0); }
+    55%  { clip-path: inset(50% 0 50% 0); }
+    100% { clip-path: inset(50% 50% 50% 50%); }
+  }
+
+  @keyframes panel-edge {
+    0%   { scale: 0 1; opacity: 1; }
+    45%  { scale: 1 1; opacity: 1; }
+    60%  { opacity: 0; }
+    100% { scale: 1 1; opacity: 0; }
+  }
+
+  .panel.is-opening {
+    animation: panel-open var(--panel-open-duration) var(--panel-open-ease) forwards;
+  }
+
+  .panel.is-closing {
+    animation: panel-close var(--panel-close-duration) var(--panel-close-ease) forwards;
+  }
+
+  .panel.is-opening .panel__edge {
+    animation: panel-edge var(--panel-open-duration) var(--panel-open-ease) forwards;
+  }
+
+  /* Toasts are quicker — they fire often and must not feel ceremonial. */
+  .panel--toast {
+    --panel-open-duration: 320ms;
+    --panel-close-duration: 260ms;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel.is-opening,
+  .panel.is-closing {
+    animation: none;
+    clip-path: inset(0 0 0 0);
+  }
+
+  .panel__edge {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Fantasy border — swap-in point
+   Uncomment once the Kenney symbols are extracted. Corners stay fixed and
+   edges repeat; do NOT scale the whole border SVG uniformly or the corner
+   ornaments squash.
+   -------------------------------------------------------------------------- */
+
+/*
+:root {
+  --panel-border-width: 24px;
+}
+
+.panel {
+  border-style: solid;
+  border-image-source: url("/assets/ui/border-panel.svg");
+  border-image-slice: 24 fill;
+  border-image-repeat: round;
+  border-image-width: 1;
+}
+
+@media (max-width: 30rem) {
+  :root { --panel-border-width: 12px; }
+}
+*/

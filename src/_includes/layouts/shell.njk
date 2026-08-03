@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>{% if title %}{{ title }} — {{ site.shortName }}{% else %}{{ site.name }} — {{ site.tagline }}{% endif %}</title>
+    <meta name="description" content="{{ description or site.description }}">
+    <meta name="color-scheme" content="dark">
+    <link rel="stylesheet" href="/assets/css/landing.css">
+    <link rel="stylesheet" href="/assets/css/panel.css">
+  </head>
+  <body>
+    {# Animated background. Placeholder for background art — swapping this
+       block should not require touching anything else. #}
+    <div class="bg" aria-hidden="true">
+      <span class="bg__blob bg__blob--1"></span>
+      <span class="bg__blob bg__blob--2"></span>
+      <span class="bg__blob bg__blob--3"></span>
+    </div>
+
+    {{ content | safe }}
+
+    <div class="panel-toasts" id="panel-toasts" aria-live="polite" aria-atomic="false"></div>
+
+    <script src="/assets/js/panel.js" defer></script>
+    {# Dev only. Inert unless ?fps is in the URL or Ctrl+Shift+F is pressed. #}
+    <script src="/assets/js/fps.js" defer></script>
+  </body>
+</html>

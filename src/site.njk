@@ -1,0 +1,35 @@
+---
+layout: layouts/shell.njk
+permalink: /site/
+title: Mitch Gardner
+description: Projects, writing, and the things I spend time on.
+---
+{% from "components/panel.njk" import panel %}
+
+{# Placeholder hub. Section list is not final — see docs/08-static-site.md. #}
+
+<main class="landing">
+  {% call panel({
+    variant: "page",
+    title: "Mitch Gardner",
+    labelledBy: "hub-title",
+    tabs: [
+      { label: "About",   href: "/site/",      current: true },
+      { label: "Projects",href: "/projects/" },
+      { label: "Writing", href: "/blog/" },
+      { label: "Contact", href: "/contact/" }
+    ]
+  }) %}
+    <p class="muted">
+      Software engineer of ten years — Java, JavaScript, SourcePawn, and
+      whatever the problem needs. Away from the keyboard: motorcycles, baking,
+      and games.
+    </p>
+    <p class="muted small">
+      Placeholder content. Sections are not final.
+    </p>
+    <div class="panel__actions">
+      <a class="btn" href="/" data-panel-exit>Back to Mitchtopia</a>
+    </div>
+  {% endcall %}
+</main>

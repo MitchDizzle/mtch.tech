@@ -1,0 +1,65 @@
+---
+permalink: false
+eleventyExcludeFromCollections: true
+---
+{#
+  Preserved content of the previous src/index.njk, kept for reference while the
+  rebuild is in progress. Not built (permalink: false). Delete when the new
+  static pages have absorbed anything worth keeping — the skills grid in
+  particular is still undecided.
+#}
+<main class="content">
+  <section class="hero">
+    <h1>{{ site.name }}</h1>
+    <p class="hero-tagline">{{ site.tagline }}</p>
+    <p class="hero-bio">DevOps and software engineer focused on building reliable infrastructure and clean tooling. I work across cloud platforms, automation, and full-stack development.</p>
+    <div class="hero-actions">
+      <a class="btn" href="/projects/">View Projects</a>
+      <a class="btn btn-outline" href="/contact/">Get in Touch</a>
+    </div>
+  </section>
+
+  <section class="skills-section">
+    <h2>Skills Snapshot</h2>
+    <div class="skills-grid">
+      {% for category in skills.categories %}
+      <div class="skills-category">
+        <h3>{{ category.name }}</h3>
+        <ul class="skills-list">
+          {% for item in category.items %}
+          <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  {% if collections.featuredProjects | length %}
+  <section class="featured-section">
+    <div class="section-header">
+      <h2>Featured Projects</h2>
+      <a href="/projects/">View All &rarr;</a>
+    </div>
+    <div class="card-grid">
+      {% for item in collections.featuredProjects %}
+        {% include "partials/project-card.njk" %}
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  {% if collections.recentPosts | length %}
+  <section class="recent-section">
+    <div class="section-header">
+      <h2>Recent Posts</h2>
+      <a href="/blog/">View All &rarr;</a>
+    </div>
+    <div class="card-grid">
+      {% for item in collections.recentPosts %}
+        {% include "partials/post-card.njk" %}
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+</main>

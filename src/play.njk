@@ -1,0 +1,84 @@
+---
+layout: layouts/shell.njk
+permalink: /play/
+title: Options
+description: Set audio and storage preferences before playing.
+---
+{% from "components/panel.njk" import panel %}
+
+<main class="landing">
+  {% call panel({ variant: "dialog", title: "Options", labelledBy: "opts-title" }) %}
+    <p class="muted small">
+      Shown the first time you play. You can change these later from the pause
+      menu.
+    </p>
+
+    <form id="options-form" method="get" action="/play/start/">
+      <div class="field">
+        <label class="field__label" for="vol-music">
+          <span>Music</span>
+          <span class="field__value" id="vol-music-out">20%</span>
+        </label>
+        <input type="range" id="vol-music" name="music"
+               min="0" max="100" step="1" value="20">
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="vol-sfx">
+          <span>Sound effects</span>
+          <span class="field__value" id="vol-sfx-out">40%</span>
+        </label>
+        <input type="range" id="vol-sfx" name="sfx"
+               min="0" max="100" step="1" value="40">
+      </div>
+
+      <label class="field field--check">
+        <input type="checkbox" id="opt-storage" name="storage" checked>
+        <span>
+          Save my settings, hats, and best scores in this browser.
+          <span class="muted small">No account, nothing leaves your device.</span>
+        </span>
+      </label>
+
+      <div class="panel__actions">
+        <a class="btn" href="/" data-panel-exit>Cancel</a>
+        <button class="btn" type="submit">Accept and continue</button>
+      </div>
+    </form>
+  {% endcall %}
+</main>
+
+<script>
+  /* Live readouts. Values are integers already via step="1", but round
+     defensively — anything reaching the screen goes through Math.round. */
+  ["music", "sfx"].forEach(function (k) {
+    var input = document.getElementById("vol-" + k);
+    var out = document.getElementById("vol-" + k + "-out");
+    if (!input || !out) return;
+    input.addEventListener("input", function () {
+      out.textContent = Math.round(input.value) + "%";
+    });
+  });
+
+  /* The game route does not exist yet. Store the choices and show the
+     LitRPG toast so the flow is demonstrable end to end. */
+  document.getElementById("options-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var settings = {
+      music: Math.round(document.getElementById("vol-music").value),
+      sfx: Math.round(document.getElementById("vol-sfx").value),
+      storage: document.getElementById("opt-storage").checked
+    };
+    if (settings.storage) {
+      try {
+        localStorage.setItem("mitchtopia.settings", JSON.stringify(settings));
+      } catch (err) {
+        /* Storage disabled or full. Play proceeds without persistence. */
+      }
+    }
+    window.MitchPanel.toast(
+      "Settings saved",
+      "Music " + settings.music + "%, SFX " + settings.sfx + "% — the game is not built yet."
+    );
+  });
+</script>

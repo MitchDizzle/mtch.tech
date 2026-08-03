@@ -1,59 +1,30 @@
 ---
-layout: layouts/base.njk
-title: Home
+layout: layouts/shell.njk
+title: false
+description: Mitchtopia — the personal site of Mitch Gardner. Software, motorcycles, baking, and games.
 ---
-<main class="content">
-  <section class="hero">
-    <h1>{{ site.name }}</h1>
-    <p class="hero-tagline">{{ site.tagline }}</p>
-    <p class="hero-bio">DevOps and software engineer focused on building reliable infrastructure and clean tooling. I work across cloud platforms, automation, and full-stack development.</p>
-    <div class="hero-actions">
-      <a class="btn" href="/projects/">View Projects</a>
-      <a class="btn btn-outline" href="/contact/">Get in Touch</a>
-    </div>
-  </section>
+{% from "components/panel.njk" import panel %}
 
-  <section class="skills-section">
-    <h2>Skills Snapshot</h2>
-    <div class="skills-grid">
-      {% for category in skills.categories %}
-      <div class="skills-category">
-        <h3>{{ category.name }}</h3>
-        <ul class="skills-list">
-          {% for item in category.items %}
-          <li>{{ item }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-      {% endfor %}
-    </div>
-  </section>
+<main class="landing">
+  <div class="title-card">
+    <h1 class="title-card__name">Mitchtopia</h1>
+    <p class="title-card__sub">Mitch Gardner</p>
+  </div>
 
-  {% if collections.featuredProjects | length %}
-  <section class="featured-section">
-    <div class="section-header">
-      <h2>Featured Projects</h2>
-      <a href="/projects/">View All &rarr;</a>
+  {% call panel({ variant: "prompt", label: "Choose how to view this site" }) %}
+    <p class="muted">
+      Software engineer of ten years. Motorcycles, baking, and games in
+      between. Pick how you would like to look around.
+    </p>
+    <div class="panel__actions">
+      <a class="btn btn--stack" href="/site/" data-panel-exit>
+        Simplified
+        <span class="btn__hint">More about Mitch</span>
+      </a>
+      <a class="btn btn--stack" href="/play/" data-panel-exit>
+        Interactive
+        <span class="btn__hint">Rougelike Game</span>
+      </a>
     </div>
-    <div class="card-grid">
-      {% for item in collections.featuredProjects %}
-        {% include "partials/project-card.njk" %}
-      {% endfor %}
-    </div>
-  </section>
-  {% endif %}
-
-  {% if collections.recentPosts | length %}
-  <section class="recent-section">
-    <div class="section-header">
-      <h2>Recent Posts</h2>
-      <a href="/blog/">View All &rarr;</a>
-    </div>
-    <div class="card-grid">
-      {% for item in collections.recentPosts %}
-        {% include "partials/post-card.njk" %}
-      {% endfor %}
-    </div>
-  </section>
-  {% endif %}
+  {% endcall %}
 </main>

@@ -1,0 +1,275 @@
+/* ==========================================================================
+   Landing / shell styles
+
+   Covers the animated dark background, the title card, and buttons.
+   Panel styling lives in panel.css.
+   ========================================================================== */
+
+:root {
+  --bg-base: #070910;
+  --title-fg: #e8ecf5;
+  --title-glow: rgb(126 178 235 / 0.35);
+
+  --btn-fg: #dce3f0;
+  --btn-border: rgb(180 190 210 / 0.45);
+  --btn-bg-hover: rgb(126 178 235 / 0.12);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--bg-base);
+  color: var(--title-fg);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --------------------------------------------------------------------------
+   Animated background
+
+   Composited layers only. Each blob animates transform and opacity, both of
+   which the compositor handles without repainting. Do NOT animate
+   background-image or background-position here — neither can be composited
+   and both will jank on mobile.
+
+   This whole layer is a placeholder for background art. Swapping it out
+   should not touch any other rule.
+   -------------------------------------------------------------------------- */
+
+.bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: var(--bg-base);
+}
+
+/* No filter: blur() here, deliberately.
+
+   A radial-gradient with a soft falloff is ALREADY soft — stacking a blur on
+   top of it buys nothing and costs a great deal. Worse, a blurred layer that
+   also animates scale() must re-rasterize the blur every frame, which on an
+   element this size saturates the compositor and makes the whole page feel
+   laggy, hover included.
+
+   Rule for this layer: translate and opacity only. No scale, no filter. */
+.bg__blob {
+  position: absolute;
+  width: 70vmax;
+  height: 70vmax;
+  border-radius: 50%;
+  opacity: 0.55;
+}
+
+.bg__blob--1 {
+  background: radial-gradient(circle closest-side, rgb(28 40 78 / 0.85), transparent);
+  top: -22vmax;
+  left: -16vmax;
+}
+
+.bg__blob--2 {
+  background: radial-gradient(circle closest-side, rgb(58 26 66 / 0.8), transparent);
+  bottom: -26vmax;
+  right: -18vmax;
+}
+
+.bg__blob--3 {
+  background: radial-gradient(circle closest-side, rgb(16 52 62 / 0.65), transparent);
+  top: 14vmax;
+  right: -24vmax;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* translate3d only — promotes to its own layer and moves a cached texture.
+     Opacity is composited too. Neither triggers repaint or re-raster. */
+  @keyframes drift-a {
+    0%, 100% { transform: translate3d(0, 0, 0); opacity: 0.5; }
+    50%      { transform: translate3d(7vmax, 5vmax, 0); opacity: 0.66; }
+  }
+  @keyframes drift-b {
+    0%, 100% { transform: translate3d(0, 0, 0); opacity: 0.42; }
+    50%      { transform: translate3d(-8vmax, -6vmax, 0); opacity: 0.6; }
+  }
+  @keyframes drift-c {
+    0%, 100% { transform: translate3d(0, 0, 0); opacity: 0.3; }
+    50%      { transform: translate3d(-5vmax, 8vmax, 0); opacity: 0.48; }
+  }
+
+  /* Long cycles on purpose. This is ambience, not an effect to be noticed. */
+  .bg__blob--1 { animation: drift-a 34s ease-in-out infinite; }
+  .bg__blob--2 { animation: drift-b 41s ease-in-out infinite; }
+  .bg__blob--3 { animation: drift-c 29s ease-in-out infinite; }
+}
+
+/* --------------------------------------------------------------------------
+   Landing layout
+   -------------------------------------------------------------------------- */
+
+.landing {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem 1.25rem;
+  padding-top: max(2rem, env(safe-area-inset-top));
+  padding-bottom: max(2rem, env(safe-area-inset-bottom));
+}
+
+/* Title card sits OUTSIDE the panel, like a game title screen. */
+.title-card {
+  text-align: center;
+}
+
+.title-card__name {
+  margin: 0;
+  font-size: clamp(2.5rem, 11vw, 4.5rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.05;
+  text-shadow: 0 0 32px var(--title-glow);
+}
+
+.title-card__sub {
+  margin: 0.35rem 0 0;
+  font-size: 0.85rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgb(158 166 184);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes title-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .title-card {
+    animation: title-in 700ms cubic-bezier(0.2, 0.8, 0.3, 1) both;
+  }
+  /* Panel opens after the title resolves, so the name is read first. */
+  .landing .panel.is-opening {
+    animation-delay: 500ms;
+    clip-path: inset(50% 50% 50% 50%);
+  }
+  .landing .panel.is-opening .panel__edge {
+    animation-delay: 500ms;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Buttons
+   -------------------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--btn-border);
+  border-radius: 3px;
+  background: transparent;
+  color: var(--btn-fg);
+  font: inherit;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.btn:hover,
+.btn:focus-visible {
+  background: var(--btn-bg-hover);
+  border-color: var(--panel-accent);
+}
+
+.btn__hint {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.72rem;
+  color: rgb(158 166 184);
+}
+
+.btn--stack {
+  flex-direction: column;
+  gap: 0;
+  padding-block: 0.5rem;
+}
+
+:where(a, button, input, [tabindex]):focus-visible {
+  outline: 2px solid var(--panel-accent);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Forms — used by the game options panel
+   -------------------------------------------------------------------------- */
+
+.field {
+  margin-bottom: 1.1rem;
+}
+
+.field__label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.4rem;
+  font-size: 0.9rem;
+}
+
+.field__value {
+  color: var(--panel-accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.field input[type="range"] {
+  width: 100%;
+  min-height: 44px;
+  accent-color: var(--panel-accent);
+}
+
+.field--check {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  font-size: 0.9rem;
+}
+
+.field--check input {
+  margin-top: 0.35rem;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--panel-accent);
+}
+
+.muted {
+  color: var(--panel-fg-muted);
+}
+
+.small {
+  font-size: 0.85rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
