@@ -71,6 +71,27 @@
   clip-path: inset(0 0 0 0);
 }
 
+/* Panels awaiting a swap take no layout space. Explicit because a future
+   display rule on .panel would otherwise beat the UA default for [hidden]. */
+.panel[hidden] {
+  display: none;
+}
+
+/* Start closed ONLY when JS is confirmed present.
+
+   The .js class is added by an inline blocking script in <head>, so this
+   applies before first paint — which is what stops a new page flashing an
+   open panel for a frame before the animation begins.
+
+   Without JS the class never lands, this rule never matches, and the panel
+   stays open and readable. The fallback is preserved by construction rather
+   than by hoping a script runs. */
+@media (prefers-reduced-motion: no-preference) {
+  .js .panel[data-panel]:not(.is-opening):not(.is-closing) {
+    clip-path: inset(50% 50% 50% 50%);
+  }
+}
+
 /* --- Frosting: OFF by default ------------------------------------------
    backdrop-filter must re-sample and re-blur everything behind it on every
    frame in which that backdrop changes. The landing background is animated
@@ -175,6 +196,71 @@
   --panel-padding: 1rem 1.25rem;
 }
 
+/* --- Overlay -------------------------------------------------------------
+   Takes a panel out of normal flow so it covers the page instead of pushing
+   siblings around. Without this, a taller panel reflows whatever sits above
+   it — the title card visibly jumps.
+
+   The wrapper scrolls, not the panel. Tall content on a short landscape
+   phone scrolls the overlay; the panel itself never gets a nested scroll
+   container and never clips its own frame. */
+
+.panel-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1.25rem;
+  padding-top: max(1.25rem, env(safe-area-inset-top));
+  padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+  background: rgb(3 4 8 / 0.72);
+}
+
+.panel-overlay[hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes scrim-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .panel-overlay {
+    animation: scrim-in 260ms ease-out both;
+  }
+  .panel-overlay.is-dismissing {
+    animation: scrim-in 220ms ease-in reverse both;
+  }
+}
+
+/* Everything behind an open overlay fades and stops responding.
+
+   The panel underneath is NOT hidden or closed — it stays in the flow,
+   merely invisible. Removing it from the flow would let the flex container
+   recentre and visibly shove the title card around. It is covered by the
+   scrim anyway, so leaving it in place costs nothing and returning to it
+   needs no animation at all.
+
+   The transition lives here rather than on the base rule so the fade is
+   one-way: out is animated, back in is instant. See the matching note in
+   landing.css. */
+.has-overlay .landing > :not(.panel-overlay) {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 240ms ease-out;
+}
+
+/* An overlay is a popup, not an entrance. It should feel quick both ways —
+   noticeably faster than the landing panel's ceremonial open. */
+.panel-overlay .panel {
+  --panel-open-duration: 380ms;
+  --panel-close-duration: 200ms;
+}
+
 /* Transient LitRPG system notification — "Hat acquired". Small, corner-
    anchored, auto-dismissing. Managed by panel.js. */
 .panel--toast {
@@ -220,16 +306,23 @@
     100% { scale: 1 1; opacity: 0; }
   }
 
+  /* fill-mode MUST be `both`, not `forwards`.
+
+     Adding .is-opening immediately breaks the :not(.is-opening) rule that was
+     holding the panel clipped shut. With `forwards`, nothing applies the 0%
+     keyframe during animation-delay, so the panel renders fully open for the
+     length of the delay and then snaps closed the instant the animation
+     starts. `both` applies the 0% keyframe backwards through the delay. */
   .panel.is-opening {
-    animation: panel-open var(--panel-open-duration) var(--panel-open-ease) forwards;
+    animation: panel-open var(--panel-open-duration) var(--panel-open-ease) both;
   }
 
   .panel.is-closing {
-    animation: panel-close var(--panel-close-duration) var(--panel-close-ease) forwards;
+    animation: panel-close var(--panel-close-duration) var(--panel-close-ease) both;
   }
 
   .panel.is-opening .panel__edge {
-    animation: panel-edge var(--panel-open-duration) var(--panel-open-ease) forwards;
+    animation: panel-edge var(--panel-open-duration) var(--panel-open-ease) both;
   }
 
   /* Toasts are quicker — they fire often and must not feel ceremonial. */

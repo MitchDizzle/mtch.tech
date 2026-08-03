@@ -21,10 +21,47 @@
 
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-  function duration(el, prop, fallback) {
-    var raw = getComputedStyle(el).getPropertyValue(prop).trim();
-    if (!raw) return fallback;
+  function ms(raw) {
+    if (!raw) return 0;
+    raw = raw.split(",")[0].trim();
+    if (!raw) return 0;
     return raw.indexOf("ms") > -1 ? parseFloat(raw) : parseFloat(raw) * 1000;
+  }
+
+  /* Resolve when the element's own animation actually finishes.
+
+     Timing on duration alone is not enough — an animation-delay pushes the
+     real end far past it. The landing panel has a 1500ms intro delay, so a
+     duration-only timer fired while the animation was still queued and any
+     cleanup that ran on it corrupted the animation mid-flight.
+
+     animationend is authoritative. The timeout is only a safety net for the
+     case where the animation never runs at all (reduced motion, a browser
+     that drops the event on a backgrounded tab). */
+  function afterAnimation(el) {
+    return new Promise(function (resolve) {
+      var settled = false;
+
+      function finish() {
+        if (settled) return;
+        settled = true;
+        el.removeEventListener("animationend", onEnd);
+        resolve();
+      }
+
+      /* The edge line animates too and its event bubbles. Only the panel's
+         own animation counts. */
+      function onEnd(e) {
+        if (e.target !== el) return;
+        finish();
+      }
+
+      el.addEventListener("animationend", onEnd);
+
+      var cs = getComputedStyle(el);
+      var budget = ms(cs.animationDuration) + Math.max(0, ms(cs.animationDelay));
+      setTimeout(finish, budget + 120);
+    });
   }
 
   /* Restart a CSS animation. Removing the class and reading offsetWidth
@@ -42,9 +79,7 @@
       return Promise.resolve();
     }
     restart(panel, OPEN);
-    return new Promise(function (resolve) {
-      setTimeout(resolve, duration(panel, "--panel-open-duration", 550));
-    });
+    return afterAnimation(panel);
   }
 
   function close(panel) {
@@ -53,9 +88,7 @@
       return Promise.resolve();
     }
     restart(panel, CLOSING);
-    return new Promise(function (resolve) {
-      setTimeout(resolve, duration(panel, "--panel-close-duration", 450));
-    });
+    return afterAnimation(panel);
   }
 
   /* Tabs swap content in place. The panel does NOT close and reopen on tab
@@ -95,21 +128,185 @@
     });
   }
 
-  /* Mode transitions: close the current panel, then navigate.
-     Marked up as a real link so it works with JS disabled, middle-click,
-     and open-in-new-tab. */
+  /* In-page panel swap. Closes the current panel and opens another on the
+     same page — no navigation, so nothing flashes, the background never
+     restarts, and the title card stays put.
+
+     Prefer this over a page load for anything that is really a step in a
+     flow rather than a destination:
+
+       <button data-panel-to="options">Interactive</button>
+  */
+  /* A panel wrapped in an overlay is shown and hidden via its wrapper, so
+     the scrim and the fixed positioning come and go with it. */
+  function shell(panel) {
+    var parent = panel.parentElement;
+    return parent && parent.hasAttribute("data-panel-overlay") ? parent : panel;
+  }
+
+  function isOverlay(panel) {
+    return shell(panel) !== panel;
+  }
+
+  var FOCUSABLE =
+    'a[href], button:not([disabled]), input:not([disabled]), select, ' +
+    'textarea, [tabindex]:not([tabindex="-1"])';
+
+  function focusInto(el) {
+    var target =
+      el.querySelector("[autofocus]") ||
+      el.querySelector(FOCUSABLE) ||
+      el;
+    if (target === el && !el.hasAttribute("tabindex")) {
+      el.setAttribute("tabindex", "-1");
+    }
+    target.focus({ preventScroll: true });
+  }
+
+  var activeModal = null;
+  var lastFocus = null;
+
+  /* Must match the .landing > * opacity transition in landing.css. */
+  var VEIL_MS = 240;
+
+  function wait(ms) {
+    return new Promise(function (r) { setTimeout(r, ms); });
+  }
+
+  /* Open a panel as a modal over whatever is already on screen.
+
+     The outgoing content is faded but deliberately left in the flow and left
+     open. Hiding it would let the flex container recentre and shove the
+     title card down; closing it would mean re-animating it on the way back
+     for no reason. */
+  function openModal(panel) {
+    lastFocus = document.activeElement;
+    activeModal = panel;
+    document.documentElement.classList.add("has-overlay");
+
+    var delay = reduceMotion.matches ? 0 : VEIL_MS;
+    return wait(delay).then(function () {
+      shell(panel).hidden = false;
+      return open(panel);
+    }).then(function () {
+      focusInto(panel);
+    });
+  }
+
+  /* Dismiss like a popup: quick close, then the backdrop fades straight back
+     in. Nothing behind it replays an entrance. */
+  function closeModal(panel) {
+    return close(panel).then(function () {
+      shell(panel).hidden = true;
+      if (activeModal === panel) activeModal = null;
+      document.documentElement.classList.remove("has-overlay");
+      if (lastFocus && document.contains(lastFocus)) {
+        lastFocus.focus({ preventScroll: true });
+        lastFocus = null;
+      }
+    });
+  }
+
+  /* In-flow swap: the outgoing panel really does go away and the incoming
+     one takes its place in the layout. */
+  function swapInFlow(from, to) {
+    return close(from).then(function () {
+      shell(from).hidden = true;
+      shell(to).hidden = false;
+      return open(to);
+    }).then(function () {
+      focusInto(to);
+    });
+  }
+
+  function initSwaps(panel) {
+    panel.querySelectorAll("[data-panel-to]").forEach(function (trigger) {
+      trigger.addEventListener("click", function (e) {
+        var target = document.getElementById(trigger.getAttribute("data-panel-to"));
+        if (!target) return;
+        e.preventDefault();
+        if (isOverlay(target)) openModal(target);
+        else swapInFlow(panel, target);
+      });
+    });
+
+    /* Dismiss the overlay this control sits inside, revealing what was
+       already behind it. */
+    panel.querySelectorAll("[data-panel-dismiss]").forEach(function (trigger) {
+      trigger.addEventListener("click", function (e) {
+        e.preventDefault();
+        closeModal(panel);
+      });
+    });
+  }
+
+  /* Modal conventions: Escape dismisses, and Tab stays inside.
+     Without containment, tabbing walks into the dimmed page behind the
+     scrim, where focus is invisible and the controls are inert. */
+  document.addEventListener("keydown", function (e) {
+    if (!activeModal) return;
+
+    if (e.key === "Escape") {
+      closeModal(activeModal);
+      return;
+    }
+
+    if (e.key !== "Tab") return;
+
+    var items = Array.prototype.filter.call(
+      activeModal.querySelectorAll(FOCUSABLE),
+      function (el) { return el.offsetParent !== null; }
+    );
+    if (!items.length) return;
+
+    var first = items[0];
+    var last = items[items.length - 1];
+
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  });
+
+  /* Mode transitions: fade out the title card, close the panel, then
+     navigate. The background is deliberately left alone — it is phase-locked
+     to wall clock in the head script, so it carries straight across the
+     navigation without restarting.
+
+     Links are real <a href> elements, so JS-off, middle-click, and
+     open-in-new-tab all behave normally. */
   function initTransitions(panel) {
     panel.querySelectorAll("[data-panel-exit]").forEach(function (link) {
       link.addEventListener("click", function (e) {
         if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
         if (reduceMotion.matches) return;
         e.preventDefault();
+
+        /* Drives the title/subtitle fade in CSS. Runs concurrently with the
+           panel close rather than before it, so the exit stays brisk. */
+        document.documentElement.classList.add("is-exiting");
+
         close(panel).then(function () {
           window.location.href = link.href;
         });
       });
     });
   }
+
+  /* Restoring from bfcache replays a cached frame of the outgoing page —
+     including the faded-out title and closed panel. Reset and reopen. */
+  window.addEventListener("pageshow", function (e) {
+    if (!e.persisted) return;
+    document.documentElement.classList.remove("is-exiting", "has-overlay");
+    activeModal = null;
+    document.querySelectorAll("[data-panel]").forEach(function (panel) {
+      if (isOverlay(panel)) shell(panel).hidden = true;
+      if (!panel.hasAttribute("data-panel-no-autoopen")) open(panel);
+    });
+  });
 
   /* LitRPG system notification. Transient, corner-anchored, auto-dismissing.
      Used for minigame rewards ("Hat acquired") and similar.
@@ -164,8 +361,15 @@
   function init() {
     document.querySelectorAll("[data-panel]").forEach(function (panel) {
       initTabs(panel);
+      initSwaps(panel);
       initTransitions(panel);
-      if (!panel.hasAttribute("data-panel-no-autoopen")) open(panel);
+      if (panel.hasAttribute("data-panel-no-autoopen")) return;
+
+      open(panel).then(function () {
+        /* The intro delay is a one-time entrance. Strip it so reopening this
+           panel — after dismissing a popup, say — is immediate. */
+        panel.classList.remove("is-intro");
+      });
     });
   }
 

@@ -11,7 +11,9 @@ description: Mitchtopia — the personal site of Mitch Gardner. Software, motorc
     <p class="title-card__sub">Mitch Gardner</p>
   </div>
 
-  {% call panel({ variant: "prompt", label: "Choose how to view this site" }) %}
+  {# Choice panel. "Interactive" swaps to the options panel in place rather
+     than navigating — it is a step in a flow, not a destination. #}
+  {% call panel({ id: "choose", variant: "prompt", class: "is-intro", label: "Choose how to view this site" }) %}
     <p class="muted">
       Software engineer of ten years. Motorcycles, baking, and games in
       between. Pick how you would like to look around.
@@ -21,10 +23,99 @@ description: Mitchtopia — the personal site of Mitch Gardner. Software, motorc
         Simplified
         <span class="btn__hint">More about Mitch</span>
       </a>
-      <a class="btn btn--stack" href="/play/" data-panel-exit>
+      <a class="btn btn--stack" href="/play/" data-panel-to="options">
         Interactive
         <span class="btn__hint">Rougelike Game</span>
       </a>
     </div>
   {% endcall %}
+
+  {# Confirmation before the game loads. Hidden until swapped in; the href on
+     the trigger above still points at /play/ so JS-off and middle-click work. #}
+  {% call panel({
+    id: "options",
+    variant: "dialog",
+    title: "Options",
+    labelledBy: "options-title",
+    autoOpen: false,
+    hidden: true,
+    overlay: true
+  }) %}
+    <p class="muted small">
+      Set these before you start. You can change them later from the pause
+      menu.
+    </p>
+
+    <form id="options-form" method="get" action="/play/">
+      <div class="field">
+        <label class="field__label" for="vol-music">
+          <span>Music</span>
+          <span class="field__value" id="vol-music-out">20%</span>
+        </label>
+        <input type="range" id="vol-music" name="music"
+               min="0" max="100" step="1" value="20">
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="vol-sfx">
+          <span>Sound effects</span>
+          <span class="field__value" id="vol-sfx-out">40%</span>
+        </label>
+        <input type="range" id="vol-sfx" name="sfx"
+               min="0" max="100" step="1" value="40">
+      </div>
+
+      <label class="field field--check">
+        <input type="checkbox" id="opt-storage" name="storage" checked>
+        <span>
+          Save my settings, hats, and best scores in this browser.
+          <span class="muted small">No account, nothing leaves your device.</span>
+        </span>
+      </label>
+
+      <div class="panel__actions">
+        <button class="btn" type="button" data-panel-dismiss>Cancel</button>
+        <button class="btn" type="submit">Accept and continue</button>
+      </div>
+    </form>
+  {% endcall %}
 </main>
+
+<script>
+  (function () {
+    ["music", "sfx"].forEach(function (k) {
+      var input = document.getElementById("vol-" + k);
+      var out = document.getElementById("vol-" + k + "-out");
+      if (!input || !out) return;
+      input.addEventListener("input", function () {
+        out.textContent = Math.round(input.value) + "%";
+      });
+    });
+
+    /* The game route is a placeholder. Persist the choices and show the
+       LitRPG toast so the flow is demonstrable end to end. */
+    var form = document.getElementById("options-form");
+    if (!form) return;
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var settings = {
+        music: Math.round(document.getElementById("vol-music").value),
+        sfx: Math.round(document.getElementById("vol-sfx").value),
+        storage: document.getElementById("opt-storage").checked
+      };
+      if (settings.storage) {
+        try {
+          localStorage.setItem("mitchtopia.settings", JSON.stringify(settings));
+        } catch (err) {
+          /* Storage disabled or full. Play proceeds without persistence. */
+        }
+      }
+      window.MitchPanel.toast(
+        "Settings saved",
+        "Music " + settings.music + "%, SFX " + settings.sfx +
+          "% — the game is not built yet."
+      );
+    });
+  })();
+</script>

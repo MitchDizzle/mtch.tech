@@ -19,16 +19,23 @@
      id        element id, needed if you drive it from JS
      tabs      array of { label, href } or { label, pane } — omit for none
      autoOpen  false to leave it closed until JS opens it (default: true)
+     hidden    true to render with the hidden attribute, for panels that are
+               swapped in later via data-panel-to
+     overlay   true to wrap in a fixed, scrimmed overlay so the panel covers
+               the page instead of pushing siblings around
      class     extra classes
      labelledBy / label  accessible name when there is no visible title
    ========================================================================= #}
 
 {% macro panel(opts = {}) %}
 {% set variant = opts.variant | default("prompt") %}
+{% if opts.overlay %}<div class="panel-overlay" data-panel-overlay{% if opts.hidden %} hidden{% endif %}>{% endif %}
 <div
   class="panel panel--{{ variant }}{% if opts.class %} {{ opts.class }}{% endif %}"
   {% if opts.id %}id="{{ opts.id }}"{% endif %}
   data-panel
+  {# When wrapped in an overlay the wrapper carries `hidden`, not the panel. #}
+  {% if opts.hidden and not opts.overlay %}hidden{% endif %}
   {% if opts.autoOpen === false %}data-panel-no-autoopen{% endif %}
   {% if variant == "dialog" %}role="dialog" aria-modal="true"{% endif %}
   {% if variant == "toast" %}role="status" aria-live="polite"{% endif %}
@@ -61,6 +68,7 @@
     {{ caller() }}
   </div>
 </div>
+{% if opts.overlay %}</div>{% endif %}
 {% endmacro %}
 
 
