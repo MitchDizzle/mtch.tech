@@ -158,14 +158,30 @@
   font-size: 0.95rem;
 }
 
-/* Toasts are small enough that a divider is noise. */
+/* Toasts are small enough that a divider is noise, and tight enough that the
+   header has to earn its space.
+
+   The display face is dropped here on purpose. Cinzel is wide and tall at
+   small sizes, so at toast scale it pushes the body text down and reads as a
+   second banner competing with the real one. The banner above already
+   carries the flavour; the title just needs to be legible. */
 .panel--toast .panel__header {
-  padding: 0.7rem 1rem 0;
+  padding: 0.6rem 1rem 0;
   border-bottom: 0;
 }
 
+/* Cinzel is wide and tall at small sizes — at toast scale the title competes
+   with the banner above it instead of supporting it. The banner carries the
+   flavour; the title only needs to be legible. Delete this rule to put the
+   display face back. */
 .panel--toast .panel__title {
-  font-size: 0.95rem;
+  font-family: var(--font-body, inherit);
+  font-size: 0.9rem;
+  letter-spacing: 0;
+}
+
+.panel--toast .panel__header + .panel__body {
+  padding-top: 0.15rem;
 }
 
 .panel__actions {
@@ -195,6 +211,10 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  /* It is a <p>. Without this the UA's default margin: 1em 0 pushes the
+     header away from the banner's rule and opens a gap under every banner
+     in the system. */
+  margin: 0;
   padding: 0.5rem var(--panel-padding);
   background: var(--panel-banner-bg, transparent);
   border-bottom: 1px solid var(--panel-rule-color);
