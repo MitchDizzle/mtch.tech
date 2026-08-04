@@ -115,10 +115,57 @@
   padding: var(--panel-padding);
 }
 
+/* --- Header --------------------------------------------------------------
+   A first-class region of the panel, not the first line of the body. This is
+   what "Options" sits in, what a page title sits in, and what a speaker name
+   sits in during game dialogue — one slot, three uses.
+
+   Order within a panel: banner (what KIND of message) -> header (WHOSE, or
+   WHICH) -> tabs -> body. */
+
+.panel__header {
+  padding: 0.8rem var(--panel-padding);
+  border-bottom: 1px solid var(--panel-rule-color);
+}
+
 .panel__title {
-  margin: 0 0 0.5rem;
-  font-size: 1.15rem;
+  margin: 0;
+  font-family: var(--font-display, inherit);
+  font-size: 1.05rem;
   font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* Flavour under the title — a speaker's role, a section descriptor. */
+.panel__subtitle {
+  margin: 0.15rem 0 0;
+  font-size: 0.8rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--panel-fg-muted);
+}
+
+/* Dialogue headers are compact and rule-less — the speaker should sit close
+   to their line, not be separated from it by a divider. */
+.panel--dialogue .panel__header {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.panel--dialogue .panel__title {
+  color: var(--panel-accent);
+  font-size: 0.95rem;
+}
+
+/* Toasts are small enough that a divider is noise. */
+.panel--toast .panel__header {
+  padding: 0.7rem 1rem 0;
+  border-bottom: 0;
+}
+
+.panel--toast .panel__title {
+  font-size: 0.95rem;
 }
 
 .panel__actions {
@@ -129,6 +176,103 @@
 
 .panel__actions > * {
   flex: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Banner — the LitRPG flavour line
+
+   "Warning!", "Notice", "Quest complete". Distinct from .panel__title: the
+   banner names the KIND of message, the title names the message itself. A
+   panel can carry either, both, or neither.
+
+   Placement constraint: the banner must stay inside the panel's box. The
+   panel is clipped with clip-path, which clips descendants too, so a classic
+   plaque straddling the top border would be sliced in half. The plaque
+   variant below sits just inside the edge instead.
+   -------------------------------------------------------------------------- */
+
+.panel__banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem var(--panel-padding);
+  background: var(--panel-banner-bg, transparent);
+  border-bottom: 1px solid var(--panel-rule-color);
+  color: var(--panel-accent);
+  font-family: var(--font-display, inherit);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* A hairline in the accent colour, so the tone reads even at a glance. */
+.panel__banner::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 3px;
+  align-self: stretch;
+  margin: -0.5rem 0.25rem -0.5rem calc(var(--panel-padding) * -1 + 0.25rem);
+  background: var(--panel-accent);
+}
+
+/* Centred plaque rather than a full-width strip. Inset from the top edge,
+   never overlapping it — see the clip-path note above. */
+.panel--banner-plaque .panel__banner {
+  justify-content: center;
+  margin: 0.75rem auto -0.25rem;
+  padding: 0.3rem 1.1rem;
+  width: fit-content;
+  border: 1px solid var(--panel-border-color);
+  border-radius: 2px;
+  background: var(--panel-banner-bg, transparent);
+}
+
+.panel--banner-plaque .panel__banner::before {
+  display: none;
+}
+
+/* --- Tones ---------------------------------------------------------------
+   Each tone retints the accent, the surface, and the border together. All
+   surfaces stay dark so body text keeps its contrast — the hue carries the
+   meaning, not the brightness.
+
+   Tone is decoration. It must never be the only thing communicating that
+   something went wrong; the banner text has to say so too. */
+
+.panel--notice {
+  --panel-accent: rgb(126 178 235);
+  --panel-banner-bg: rgb(126 178 235 / 0.12);
+  --panel-border-color: rgb(126 178 235 / 0.45);
+  --panel-bg: rgb(14 20 32 / 0.9);
+}
+
+.panel--warning {
+  --panel-accent: rgb(232 198 106);
+  --panel-banner-bg: rgb(232 198 106 / 0.12);
+  --panel-border-color: rgb(232 198 106 / 0.45);
+  --panel-bg: rgb(28 23 12 / 0.9);
+}
+
+.panel--danger {
+  --panel-accent: rgb(232 119 106);
+  --panel-banner-bg: rgb(232 119 106 / 0.13);
+  --panel-border-color: rgb(232 119 106 / 0.5);
+  --panel-bg: rgb(30 15 14 / 0.9);
+}
+
+.panel--success {
+  --panel-accent: rgb(126 226 168);
+  --panel-banner-bg: rgb(126 226 168 / 0.12);
+  --panel-border-color: rgb(126 226 168 / 0.45);
+  --panel-bg: rgb(12 26 20 / 0.9);
+}
+
+.panel--quest {
+  --panel-accent: rgb(186 154 236);
+  --panel-banner-bg: rgb(186 154 236 / 0.13);
+  --panel-border-color: rgb(186 154 236 / 0.45);
+  --panel-bg: rgb(22 17 34 / 0.9);
 }
 
 /* --- Tabs ---------------------------------------------------------------

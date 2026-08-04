@@ -15,7 +15,18 @@
 
    Options:
      variant   prompt | dialog | page | dialogue | toast   (default: prompt)
-     title     optional heading rendered inside the panel
+     banner    LitRPG flavour line naming the KIND of message — "Warning!",
+               "Notice", "Quest complete". Distinct from title, which names
+               the message itself. Either, both, or neither.
+     tone      notice | warning | danger | success | quest
+               Retints accent, surface, and border together. Decoration only —
+               the banner text must also say what happened, since colour is
+               not available to every reader.
+     bannerStyle  bar (default, full-width strip) | plaque (centred label)
+     title     header text in its own region at the top of the panel — the
+               "Options" slot. Also the page title on static pages and the
+               speaker name in game dialogue.
+     subtitle  flavour line under the title — a speaker's role, a descriptor
      id        element id, needed if you drive it from JS
      tabs      array of { label, href } or { label, pane } — omit for none
      autoOpen  false to leave it closed until JS opens it (default: true)
@@ -31,7 +42,7 @@
 {% set variant = opts.variant | default("prompt") %}
 {% if opts.overlay %}<div class="panel-overlay" data-panel-overlay{% if opts.hidden %} hidden{% endif %}>{% endif %}
 <div
-  class="panel panel--{{ variant }}{% if opts.class %} {{ opts.class }}{% endif %}"
+  class="panel panel--{{ variant }}{% if opts.tone %} panel--{{ opts.tone }}{% endif %}{% if opts.banner %} panel--banner-{{ opts.bannerStyle | default("bar") }}{% endif %}{% if opts.class %} {{ opts.class }}{% endif %}"
   {% if opts.id %}id="{{ opts.id }}"{% endif %}
   data-panel
   {# When wrapped in an overlay the wrapper carries `hidden`, not the panel. #}
@@ -43,6 +54,19 @@
   {% elif opts.label %}aria-label="{{ opts.label }}"{% endif %}
 >
   <span class="panel__edge" aria-hidden="true"></span>
+
+  {# The banner is real content, not decoration — it is often the only thing
+     stating that something is a warning. Left readable, never aria-hidden. #}
+  {% if opts.banner %}
+  <p class="panel__banner"{% if opts.id %} id="{{ opts.id }}-banner"{% endif %}>{{ opts.banner }}</p>
+  {% endif %}
+
+  {% if opts.title %}
+  <div class="panel__header">
+    <h2 class="panel__title"{% if opts.labelledBy %} id="{{ opts.labelledBy }}"{% endif %}>{{ opts.title }}</h2>
+    {% if opts.subtitle %}<p class="panel__subtitle">{{ opts.subtitle }}</p>{% endif %}
+  </div>
+  {% endif %}
 
   {% if opts.tabs %}
   <div class="panel__tabs" role="tablist">
@@ -62,9 +86,6 @@
   {% endif %}
 
   <div class="panel__body">
-    {% if opts.title %}
-    <h2 class="panel__title"{% if opts.labelledBy %} id="{{ opts.labelledBy }}"{% endif %}>{{ opts.title }}</h2>
-    {% endif %}
     {{ caller() }}
   </div>
 </div>

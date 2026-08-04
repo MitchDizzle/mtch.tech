@@ -309,46 +309,77 @@
   });
 
   /* LitRPG system notification. Transient, corner-anchored, auto-dismissing.
-     Used for minigame rewards ("Hat acquired") and similar.
+     Used for minigame rewards and similar.
 
-       MitchPanel.toast("Hat acquired", "Chef's hat — gold");
+       MitchPanel.toast("Chef's hat — gold", "Closest recipe yet.", {
+         banner: "Reward",
+         tone: "success"
+       });
+
+     opts: banner, tone (notice|warning|danger|success|quest), dwell (ms).
    */
-  function toast(title, body, ms) {
+  function toast(title, body, opts) {
     var region = document.getElementById("panel-toasts");
     if (!region) return null;
 
+    opts = opts || {};
+    /* Back-compat: the fourth argument used to be a plain dwell in ms. */
+    if (typeof opts === "number") opts = { dwell: opts };
+
     var el = document.createElement("div");
-    el.className = "panel panel--toast";
-    el.setAttribute("role", "status");
+    el.className =
+      "panel panel--toast" +
+      (opts.tone ? " panel--" + opts.tone : "") +
+      (opts.banner ? " panel--banner-bar" : "");
+
+    /* An error announces itself; anything else waits its turn. */
+    el.setAttribute("role", opts.tone === "danger" ? "alert" : "status");
 
     var edge = document.createElement("span");
     edge.className = "panel__edge";
     edge.setAttribute("aria-hidden", "true");
     el.appendChild(edge);
 
-    var inner = document.createElement("div");
-    inner.className = "panel__body";
+    if (opts.banner) {
+      var b = document.createElement("p");
+      b.className = "panel__banner";
+      b.textContent = opts.banner;
+      el.appendChild(b);
+    }
 
+    /* Same header region as the macro, so a toast is structurally identical
+       to any other panel rather than a lookalike assembled by hand. */
     if (title) {
+      var head = document.createElement("div");
+      head.className = "panel__header";
       var h = document.createElement("p");
       h.className = "panel__title";
       h.textContent = title;
-      inner.appendChild(h);
+      head.appendChild(h);
+      if (opts.subtitle) {
+        var sub = document.createElement("p");
+        sub.className = "panel__subtitle";
+        sub.textContent = opts.subtitle;
+        head.appendChild(sub);
+      }
+      el.appendChild(head);
     }
+
     if (body) {
+      var inner = document.createElement("div");
+      inner.className = "panel__body";
       var p = document.createElement("p");
       p.style.margin = "0";
       p.textContent = body;
       inner.appendChild(p);
+      el.appendChild(inner);
     }
-
-    el.appendChild(inner);
     region.appendChild(el);
     open(el);
 
     /* Reduced motion gets a longer dwell — there is no motion cueing the
        arrival, so the text has to carry it. */
-    var dwell = ms || (reduceMotion.matches ? 5000 : 4000);
+    var dwell = opts.dwell || (reduceMotion.matches ? 5000 : 4000);
     setTimeout(function () {
       close(el).then(function () {
         el.remove();
