@@ -49,6 +49,50 @@ ErrorDocument 404 /404.html
 </IfModule>
 
 # ---------------------------------------------------------------------------
+# Clean URLs
+#
+# Eleventy already writes /play/index.html, which Apache serves at /play/ —
+# so the site's own links contain no .html anywhere. These rules exist for
+# canonicalisation, not cosmetics: they make sure a page has exactly ONE
+# reachable URL, so /play/, /play.html and /play/index.html cannot all
+# resolve and split search rankings between them.
+#
+# THE_REQUEST is matched rather than REQUEST_URI on purpose. THE_REQUEST holds
+# the literal request line the browser sent, so these only fire on real
+# external requests — internal rewrites and the ErrorDocument subrequest do
+# not re-trigger them, which is what prevents a redirect loop.
+# ---------------------------------------------------------------------------
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Never rewrite the error document itself.
+  RewriteCond %{REQUEST_URI} !^/404\.html$
+
+  # /anything/index.html -> /anything/
+  RewriteCond %{THE_REQUEST} \s/([^?\s]*/)index\.html[\s?] [NC]
+  RewriteRule ^ /%1 [R=301,L]
+
+  RewriteCond %{REQUEST_URI} !^/404\.html$
+
+  # /anything.html -> /anything/
+  RewriteCond %{THE_REQUEST} \s/([^?\s]*)\.html[\s?] [NC]
+  RewriteRule ^ /%1/ [R=301,L]
+
+  # Serve /anything/ from its index.html without changing the URL.
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{DOCUMENT_ROOT}/$1/index.html -f
+  RewriteRule ^(.+?)/?$ /$1/index.html [L]
+</IfModule>
+
+# Content negotiation guesses at extensions and can serve the wrong file.
+# Nothing here needs it.
+<IfModule mod_negotiation.c>
+  Options -MultiViews
+</IfModule>
+
+# ---------------------------------------------------------------------------
 # Compression
 # ---------------------------------------------------------------------------
 
@@ -166,18 +210,60 @@ ErrorDocument 404 /404.html
 </IfModule>
 
 # ---------------------------------------------------------------------------
-# Hardening
+# Hardening / information disclosure
+#
+# THE MOST IMPORTANT CONTROL IS NOT IN THIS FILE: upload the contents of
+# _site/ only, never the repository root. Everything below is a backstop for
+# a mistaken upload, not a substitute for one. If the repo root is deployed,
+# .git/ alone exposes the entire source history — and a determined reader can
+# reconstruct it even with directory listing disabled.
 # ---------------------------------------------------------------------------
 
+# No directory listings.
 Options -Indexes
+
+# Trim the "Apache/2.4.x (Ubuntu) Server at ..." line from generated pages.
+ServerSignature Off
+
+# Default ETags leak the file's inode number and size.
+FileETag None
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  # Block access to dotfiles, except the ACME challenge directory used for
-  # certificate renewal.
-  RewriteRule "(^|/)\.(?!well-known/)" - [F]
+  # Block dotfiles and dot-directories — .git, .env, .htpasswd, .DS_Store —
+  # except the ACME challenge path certificate renewal needs.
+  RewriteRule "(^|/)\.(?!well-known/)" - [F,L]
 </IfModule>
 
-<FilesMatch "^(package(-lock)?\.json|\.eleventy\.js|\.gitignore|README\.md)$">
-  Require all denied
-</FilesMatch>
+# Source, config, and editor leftovers. None of these should ever reach the
+# server; denying them means a stray upload is inert rather than readable.
+<IfModule mod_authz_core.c>
+  <FilesMatch "(^\.|~$|\.(bak|orig|save|swp|swo|tmp|dist|inc|log|sql|sh|ini|conf|env|lock|yml|yaml|md|map|ts|njk)$)">
+    Require all denied
+  </FilesMatch>
+
+  <FilesMatch "^(package(-lock)?\.json|\.eleventy\.js|eleventy\.config\.[cm]?js|composer\.(json|lock)|Gemfile.*|Dockerfile|docker-compose\.ya?ml|LICENSE|CHANGELOG.*|README.*)$">
+    Require all denied
+  </FilesMatch>
+</IfModule>
+
+# Belt and braces for paths that would otherwise 403 with a revealing message.
+# A 404 tells a prober nothing about whether the path exists.
+<IfModule mod_alias.c>
+  RedirectMatch 404 (?i)/\.git(/|$)
+  RedirectMatch 404 (?i)/node_modules(/|$)
+  RedirectMatch 404 (?i)/src(/|$)
+  RedirectMatch 404 (?i)/docs(/|$)
+  RedirectMatch 404 (?i)/\.vscode(/|$)
+  RedirectMatch 404 (?i)/\.idea(/|$)
+</IfModule>
+
+# Stop other sites hotlinking your assets and billing you for the bandwidth.
+# Commented out — enable only if it becomes a problem, since it can break
+# legitimate embeds and previews.
+#
+# <IfModule mod_rewrite.c>
+#   RewriteCond %{HTTP_REFERER} !^$
+#   RewriteCond %{HTTP_REFERER} !^https?://(www\.)?mtch\.tech [NC]
+#   RewriteRule \.(png|jpe?g|webp|avif|svg|mp3|ogg)$ - [F,NC,L]
+# </IfModule>
