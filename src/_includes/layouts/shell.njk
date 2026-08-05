@@ -33,8 +33,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&display=swap">
 
-    <link rel="stylesheet" href="/assets/css/landing.css">
-    <link rel="stylesheet" href="/assets/css/panel.css">
+    <link rel="stylesheet" href="{{ '/assets/css/landing.css' | bust }}">
+    <link rel="stylesheet" href="{{ '/assets/css/panel.css' | bust }}">
   </head>
   <body>
     {# Animated background. Placeholder for background art — swapping this
@@ -49,8 +49,8 @@
 
     <div class="panel-toasts" id="panel-toasts" aria-live="polite" aria-atomic="false"></div>
 
-    <script src="/assets/js/panel.js" defer></script>
+    <script src="{{ '/assets/js/panel.js' | bust }}" defer></script>
     {# Dev only. Inert unless ?fps is in the URL or Ctrl+Shift+F is pressed. #}
-    <script src="/assets/js/fps.js" defer></script>
+    <script src="{{ '/assets/js/fps.js' | bust }}" defer></script>
   </body>
 </html>

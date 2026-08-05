@@ -1,0 +1,27 @@
+---
+layout: layouts/shell.njk
+permalink: /404.html
+title: Not found
+description: That page does not exist.
+eleventyExcludeFromCollections: true
+---
+{% from "components/panel.njk" import panel %}
+
+<main class="landing">
+  {% call panel({
+    variant: "prompt",
+    banner: "Error",
+    tone: "danger",
+    title: "404",
+    subtitle: "Page not found",
+    labelledBy: "e404"
+  }) %}
+    <p class="muted">
+      That page does not exist, or it did once and no longer does.
+    </p>
+    <div class="panel__actions">
+      <a class="btn" href="/" data-panel-exit>Mitchtopia</a>
+      <a class="btn" href="/site/" data-panel-exit>Simplified site</a>
+    </div>
+  {% endcall %}
+</main>

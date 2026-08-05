@@ -179,10 +179,28 @@
      open. Hiding it would let the flex container recentre and shove the
      title card down; closing it would mean re-animating it on the way back
      for no reason. */
+  /* True while a history entry exists purely to represent the open modal. */
+  var pushedState = false;
+
   function openModal(panel) {
     lastFocus = document.activeElement;
     activeModal = panel;
     document.documentElement.classList.add("has-overlay");
+
+    /* Back should close the popup, not leave the page. This is what the
+       browser Back button, a mouse's back button, and the Android back
+       gesture all expect — they all arrive as popstate.
+
+       The URL is deliberately left unchanged, so a reload or a shared link
+       still lands on the landing page rather than reopening a dialog. */
+    try {
+      history.pushState({ mitchModal: true }, "");
+      pushedState = true;
+    } catch (err) {
+      /* Some embedded//file: contexts refuse pushState. Back simply keeps
+         its default behaviour there; nothing else breaks. */
+      pushedState = false;
+    }
 
     var delay = reduceMotion.matches ? 0 : VEIL_MS;
     return wait(delay).then(function () {
@@ -191,6 +209,21 @@
     }).then(function () {
       focusInto(panel);
     });
+  }
+
+  /* Every dismissal — Cancel, Escape, Back — routes through here.
+
+     When a history entry was pushed for the modal, the dismissal is handed
+     to history.back() and the popstate handler does the real work. Closing
+     directly instead would leave that entry behind, and the next Back press
+     would appear to do nothing. */
+  function dismiss(panel) {
+    if (pushedState) {
+      pushedState = false;
+      history.back();
+      return;
+    }
+    closeModal(panel);
   }
 
   /* Dismiss like a popup: quick close, then the backdrop fades straight back
@@ -235,7 +268,7 @@
     panel.querySelectorAll("[data-panel-dismiss]").forEach(function (trigger) {
       trigger.addEventListener("click", function (e) {
         e.preventDefault();
-        closeModal(panel);
+        dismiss(panel);
       });
     });
   }
@@ -247,7 +280,7 @@
     if (!activeModal) return;
 
     if (e.key === "Escape") {
-      closeModal(activeModal);
+      dismiss(activeModal);
       return;
     }
 
@@ -296,12 +329,20 @@
     });
   }
 
+  /* Back button, mouse back button, and the Android back gesture all land
+     here. If a modal is open, consume the navigation to close it instead. */
+  window.addEventListener("popstate", function () {
+    pushedState = false;
+    if (activeModal) closeModal(activeModal);
+  });
+
   /* Restoring from bfcache replays a cached frame of the outgoing page —
      including the faded-out title and closed panel. Reset and reopen. */
   window.addEventListener("pageshow", function (e) {
     if (!e.persisted) return;
     document.documentElement.classList.remove("is-exiting", "has-overlay");
     activeModal = null;
+    pushedState = false;
     document.querySelectorAll("[data-panel]").forEach(function (panel) {
       if (isOverlay(panel)) shell(panel).hidden = true;
       if (!panel.hasAttribute("data-panel-no-autoopen")) open(panel);

@@ -1,0 +1,183 @@
+# mtch.tech — Apache configuration
+#
+# Copied to the site root at build time (see .eleventy.js passthrough).
+#
+# Directives are wrapped in <IfModule> so a host missing a module degrades
+# rather than throwing a 500. If the whole site 500s after uploading this,
+# comment out sections from the bottom up to find the offender.
+
+# ---------------------------------------------------------------------------
+# Errors
+# ---------------------------------------------------------------------------
+
+ErrorDocument 404 /404.html
+
+# ---------------------------------------------------------------------------
+# HTTPS
+#
+# `eleventy --serve` runs its own dev server and never reads this file, so
+# local development is unaffected. The localhost exclusions below only matter
+# if a local Apache (XAMPP/WAMP) is ever pointed at _site — without them it
+# would try to redirect http://localhost to https and fail.
+#
+# Both conditions are required. Many hosts terminate TLS at a proxy, so
+# %{HTTPS} is never "on" even on a secure request; without the
+# X-Forwarded-Proto check that produces an infinite redirect loop.
+# ---------------------------------------------------------------------------
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  RewriteCond %{HTTP_HOST} !^localhost [NC]
+  RewriteCond %{HTTP_HOST} !^127\.0\.0\.1
+  RewriteCond %{HTTP_HOST} !\.local$ [NC]
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+  # Canonical host — leave commented until HTTPS is confirmed working.
+  # Enable ONE of these, never both. If the host already canonicalises,
+  # enabling this too causes a redirect loop.
+  #
+  # Strip www:
+  # RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+  # RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
+  #
+  # Force www:
+  # RewriteCond %{HTTP_HOST} !^www\. [NC]
+  # RewriteRule ^ https://www.%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+</IfModule>
+
+# ---------------------------------------------------------------------------
+# Compression
+# ---------------------------------------------------------------------------
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
+  AddOutputFilterByType DEFLATE application/javascript application/json
+  AddOutputFilterByType DEFLATE application/xml application/rss+xml
+  AddOutputFilterByType DEFLATE image/svg+xml
+  # Fonts and images are already compressed — recompressing wastes CPU.
+</IfModule>
+
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/css application/javascript image/svg+xml
+</IfModule>
+
+# ---------------------------------------------------------------------------
+# Caching
+#
+# CSS and JS are requested with a ?v=<contenthash> query string, so their URL
+# changes whenever the file changes. That makes a long max-age safe: a stale
+# copy can never be served for a file that has been edited.
+#
+# HTML is never cached. It is the document that carries the new hashed asset
+# URLs, so if HTML were cached the whole scheme would stall.
+# ---------------------------------------------------------------------------
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault                          "access plus 1 month"
+
+  ExpiresByType text/html                 "access plus 0 seconds"
+  ExpiresByType application/json          "access plus 0 seconds"
+  ExpiresByType text/xml                  "access plus 0 seconds"
+
+  ExpiresByType text/css                  "access plus 1 year"
+  ExpiresByType application/javascript    "access plus 1 year"
+  ExpiresByType text/javascript           "access plus 1 year"
+
+  ExpiresByType image/png                 "access plus 6 months"
+  ExpiresByType image/jpeg                "access plus 6 months"
+  ExpiresByType image/webp                "access plus 6 months"
+  ExpiresByType image/avif                "access plus 6 months"
+  ExpiresByType image/svg+xml             "access plus 6 months"
+  ExpiresByType image/x-icon              "access plus 6 months"
+
+  ExpiresByType font/woff2                "access plus 1 year"
+  ExpiresByType font/woff                 "access plus 1 year"
+
+  # Audio for the game, once it exists.
+  ExpiresByType audio/mpeg                "access plus 6 months"
+  ExpiresByType audio/ogg                 "access plus 6 months"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+
+  <FilesMatch "\.(css|js|woff2?|png|jpe?g|webp|avif|svg|ico|mp3|ogg)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>
+
+# ---------------------------------------------------------------------------
+# MIME types
+#
+# Older Apache configs miss some of these and serve them as octet-stream,
+# which browsers then refuse to use.
+# ---------------------------------------------------------------------------
+
+<IfModule mod_mime.c>
+  AddType text/css                        .css
+  AddType application/javascript          .js
+  AddType image/svg+xml                   .svg
+  AddType font/woff                       .woff
+  AddType font/woff2                      .woff2
+  AddType image/webp                      .webp
+  AddType image/avif                      .avif
+  AddType audio/mpeg                      .mp3
+  AddType audio/ogg                       .ogg
+  AddType application/manifest+json       .webmanifest
+
+  AddCharset UTF-8                        .html .css .js .svg .json .xml
+</IfModule>
+
+# ---------------------------------------------------------------------------
+# Security headers
+#
+# No Content-Security-Policy yet. Adding one now would break the inline
+# <script> in the head layout and the inline styles, and a CSP that has to be
+# loosened to `unsafe-inline` is not worth having. Revisit when the inline
+# script can be hashed.
+# ---------------------------------------------------------------------------
+
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+
+  # HSTS — leave commented until HTTPS has been stable for a while.
+  #
+  # This is the one directive here that is not trivially reversible. Once a
+  # browser has seen it, that browser refuses plain http for the full
+  # max-age, even if the certificate later lapses or is misconfigured.
+  # Removing the header does not undo it.
+  #
+  # If enabling: start with a short max-age (300), confirm nothing breaks,
+  # then raise it. Do not add `preload` unless you intend to stay on HTTPS
+  # permanently — getting off the preload list takes months.
+  #
+  # Header always set Strict-Transport-Security "max-age=300"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+  Header always unset X-Powered-By
+  Header unset X-Powered-By
+</IfModule>
+
+# ---------------------------------------------------------------------------
+# Hardening
+# ---------------------------------------------------------------------------
+
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # Block access to dotfiles, except the ACME challenge directory used for
+  # certificate renewal.
+  RewriteRule "(^|/)\.(?!well-known/)" - [F]
+</IfModule>
+
+<FilesMatch "^(package(-lock)?\.json|\.eleventy\.js|\.gitignore|README\.md)$">
+  Require all denied
+</FilesMatch>

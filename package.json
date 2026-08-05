@@ -4,7 +4,8 @@
   "description": "Personal portfolio site for Mitch Gardner",
   "scripts": {
     "start": "eleventy --serve",
-    "build": "eleventy"
+    "clean": "node -e \"require('fs').rmSync('_site',{recursive:true,force:true})\"",
+    "build": "npm run clean && eleventy"
   },
   "devDependencies": {
     "@11ty/eleventy": "^3.0.0",
