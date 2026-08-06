@@ -45,7 +45,11 @@
       <span class="bg__blob bg__blob--3"></span>
     </div>
 
+    {% include "partials/icons.njk" %}
+
     {{ content | safe }}
+
+    {% include "partials/site-footer.njk" %}
 
     <div class="panel-toasts" id="panel-toasts" aria-live="polite" aria-atomic="false"></div>
 

@@ -1,0 +1,35 @@
+{# Themed footer. Ornamental divider rather than a plain rule, so it reads as
+   part of the fantasy panel language instead of a bolted-on browser default.
+
+   Links come from site.json. Each renders as an icon when its symbol exists
+   in the sprite and as a text label otherwise, so an unfilled brand mark
+   degrades to a readable link rather than an empty box. Toggle by adding or
+   removing the symbol in partials/icons.njk — no change needed here. #}
+
+<footer class="site-footer">
+  <div class="site-footer__rule" aria-hidden="true">
+    <span class="site-footer__diamond"></span>
+  </div>
+
+  <div class="site-footer__inner">
+    <p class="site-footer__line">
+      &copy; {{ site.year }} {{ site.name }}
+    </p>
+
+    <nav class="site-footer__links" aria-label="Elsewhere">
+      {% for link in site.footer_links %}
+      <a class="site-footer__link{% if link.icon %} site-footer__link--icon{% endif %}"
+         href="{{ link.url }}"
+         rel="noopener"
+         title="{{ link.label }}">
+        {% if link.icon %}
+        <svg class="site-footer__icon" aria-hidden="true"><use href="#i-{{ link.icon }}"/></svg>
+        <span class="sr-only">{{ link.label }}</span>
+        {% else %}
+        {{ link.label }}
+        {% endif %}
+      </a>
+      {% endfor %}
+    </nav>
+  </div>
+</footer>

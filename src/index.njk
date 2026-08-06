@@ -6,8 +6,23 @@ description: Mitchtopia — the personal site of Mitch Gardner. Software, motorc
 {% from "components/panel.njk" import panel %}
 
 <main class="landing">
+  {# The wordmark is Breathe Fire III, converted to outlines.
+
+     It is NOT loaded as a webfont: the licence is non-commercial and an
+     @font-face rule would distribute the font binary to every visitor.
+     Outlines ship no font file, and cost one small request instead.
+
+     Drop the exported file at src/assets/img/mitchtopia.svg and it is used
+     automatically; until then the styled text below stands in. #}
   <div class="title-card">
+    {% set wordmark = "/assets/img/mitchtopia.svg" %}
+    {% if wordmark | hasAsset %}
+    <h1 class="title-card__name title-card__name--art">
+      <img src="{{ wordmark | bust }}" alt="Mitchtopia" width="640" height="140">
+    </h1>
+    {% else %}
     <h1 class="title-card__name">Mitchtopia</h1>
+    {% endif %}
     <p class="title-card__sub">Mitch Gardner</p>
   </div>
 

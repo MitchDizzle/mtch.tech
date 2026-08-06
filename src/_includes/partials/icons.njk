@@ -1,0 +1,99 @@
+{# =========================================================================
+   Icon sprite
+
+   Inlined once per page, hidden, then referenced with <use href="#i-name">.
+   Inline rather than an external file so there is no extra request and no
+   flash of missing icons, and no icon font to load.
+
+   All icons are 24x24, stroke-based, and inherit currentColor. Keep new ones
+   on the same grid and stroke width or they will not sit together.
+   ========================================================================= #}
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 11 12 3l9 8"/>
+    <path d="M5.5 9.5V20h13V9.5"/>
+    <path d="M10 20v-5h4v5"/>
+  </symbol>
+
+  <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="8.5" r="3.75"/>
+    <path d="M4.5 20c0-3.9 3.4-6 7.5-6s7.5 2.1 7.5 6"/>
+  </symbol>
+
+  <symbol id="i-projects" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 7.5a1.5 1.5 0 0 1 1.5-1.5h4L11 8.5h8A1.5 1.5 0 0 1 20.5 10v8a1.5 1.5 0 0 1-1.5 1.5H4.5A1.5 1.5 0 0 1 3 18Z"/>
+  </symbol>
+
+  <symbol id="i-writing" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 4.5h9.5L19 9v10.5H5Z"/>
+    <path d="M14 4.5V9h5"/>
+    <path d="M8.5 13h7M8.5 16h4.5"/>
+  </symbol>
+
+  <symbol id="i-contact" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="5.5" width="18" height="13" rx="1.5"/>
+    <path d="m3.5 6.5 8.5 6.5 8.5-6.5"/>
+  </symbol>
+
+  <symbol id="i-source" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m8.5 8.5-4.5 3.5 4.5 3.5"/>
+    <path d="m15.5 8.5 4.5 3.5-4.5 3.5"/>
+    <path d="m13.5 5.5-3 13"/>
+  </symbol>
+
+  {# ---------------------------------------------------------------------
+     BRAND MARKS — paste your downloaded paths here.
+
+     Deliberately left empty rather than approximated. GitHub and LinkedIn
+     marks are trademarks with exact letterforms; drawing them from memory
+     produces something recognisably wrong, which looks worse than plain
+     text links. Simple Icons (simpleicons.org) publishes accurate paths
+     under CC0 if you do not already have them to hand.
+
+     Using either mark to link to your own profile is ordinary nominative
+     use and fine. Follow their brand guidelines: keep the shape unmodified
+     and leave clear space around it. Do not restyle them into the site
+     palette beyond a flat single colour.
+
+     To wire one up: paste the <path> from the downloaded SVG below, match
+     its viewBox to the source file, and set fill="currentColor". These are
+     filled marks, not stroked, so they do not take the stroke attributes
+     the interface icons above use.
+
+  <symbol id="i-github" viewBox="0 0 24 24" fill="currentColor">
+    <path d="assets/icons/instagram-with-circle.svg"/>
+  </symbol>
+
+  <symbol id="i-linkedin" viewBox="0 0 24 24" fill="currentColor">
+    <path d="assets/icons/linkedin-with-circle.svg"/>
+  </symbol>
+
+     --------------------------------------------------------------------- #}
+
+  {# Reserved for the hobby domains once those sections exist. #}
+  <symbol id="i-garage" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="5.5" cy="16" r="3.5"/>
+    <circle cx="18.5" cy="16" r="3.5"/>
+    <path d="M5.5 16h5l4-6h-3M14 10l2.5 6M13 7h3.5l1.5 3"/>
+  </symbol>
+
+  <symbol id="i-bakery" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 12a3.5 3.5 0 0 1 3-3.5c.4-1.5 2-2.5 3.8-2.5h2.4c1.8 0 3.4 1 3.8 2.5A3.5 3.5 0 0 1 20 12v5.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5Z"/>
+    <path d="M9 8.6v10M15 8.6v10"/>
+  </symbol>
+
+  <symbol id="i-games" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7.5 7.5h9a4.5 4.5 0 0 1 4.5 4.5v3a3 3 0 0 1-5.4 1.8L14.5 15h-5l-1.1 1.8A3 3 0 0 1 3 15v-3a4.5 4.5 0 0 1 4.5-4.5Z"/>
+    <path d="M7.5 11v2.5M6.25 12.25h2.5M16 11.5h.01M18 13.5h.01"/>
+  </symbol>
+</svg>

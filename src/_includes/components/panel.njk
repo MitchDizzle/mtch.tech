@@ -61,27 +61,42 @@
   <p class="panel__banner"{% if opts.id %} id="{{ opts.id }}-banner"{% endif %}>{{ opts.banner }}</p>
   {% endif %}
 
-  {% if opts.title %}
-  <div class="panel__header">
-    <h2 class="panel__title"{% if opts.labelledBy %} id="{{ opts.labelledBy }}"{% endif %}>{{ opts.title }}</h2>
-    {% if opts.subtitle %}<p class="panel__subtitle">{{ opts.subtitle }}</p>{% endif %}
-  </div>
-  {% endif %}
+  {% if opts.title or opts.tabs %}
+  <div class="panel__header{% if opts.tabs %} panel__header--nav{% endif %}">
+    {% if opts.title %}
+    <div class="panel__heading">
+      <h2 class="panel__title"{% if opts.labelledBy %} id="{{ opts.labelledBy }}"{% endif %}>{{ opts.title }}</h2>
+      {% if opts.subtitle %}<p class="panel__subtitle">{{ opts.subtitle }}</p>{% endif %}
+    </div>
+    {% endif %}
 
-  {% if opts.tabs %}
-  <div class="panel__tabs" role="tablist">
-    {% for tab in opts.tabs %}
-      {% if tab.href %}
-    <a class="panel__tab" href="{{ tab.href }}"
-       {% if tab.current %}aria-current="page"{% endif %}>{{ tab.label }}</a>
-      {% else %}
-    <button class="panel__tab" type="button" role="tab"
-            id="tab-{{ tab.pane }}"
-            aria-controls="{{ tab.pane }}"
-            aria-selected="{{ 'true' if loop.first else 'false' }}"
-            tabindex="{{ '0' if loop.first else '-1' }}">{{ tab.label }}</button>
-      {% endif %}
-    {% endfor %}
+    {% if opts.tabs %}
+    {# Site navigation, not an ARIA tablist. These are links to other
+       documents; role="tab" would promise in-page panel switching that does
+       not happen and would mislead screen reader users. #}
+    <nav class="panel__tabs" aria-label="{{ opts.tabsLabel | default('Sections') }}">
+      {% for tab in opts.tabs %}
+        {% if tab.href %}
+      <a class="panel__tab{% if tab.current %} is-current{% endif %}"
+         href="{{ tab.href }}"
+         {% if tab.current %}aria-current="page"{% endif %}
+         title="{{ tab.label }}">
+        {% if tab.icon %}<svg class="panel__tab-icon" aria-hidden="true"><use href="#i-{{ tab.icon }}"/></svg>{% endif %}
+        <span class="panel__tab-label{% if tab.icon %} sr-only{% endif %}">{{ tab.label }}</span>
+      </a>
+        {% else %}
+      <button class="panel__tab" type="button" role="tab"
+              id="tab-{{ tab.pane }}"
+              aria-controls="{{ tab.pane }}"
+              aria-selected="{{ 'true' if loop.first else 'false' }}"
+              tabindex="{{ '0' if loop.first else '-1' }}">
+        {% if tab.icon %}<svg class="panel__tab-icon" aria-hidden="true"><use href="#i-{{ tab.icon }}"/></svg>{% endif %}
+        <span class="panel__tab-label{% if tab.icon %} sr-only{% endif %}">{{ tab.label }}</span>
+      </button>
+        {% endif %}
+      {% endfor %}
+    </nav>
+    {% endif %}
   </div>
   {% endif %}
 

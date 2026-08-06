@@ -43,6 +43,14 @@ module.exports = function (eleventyConfig) {
     return out;
   });
 
+  // True if an asset exists in src/. Lets a template use a hand-made file
+  // when it is present and fall back to markup when it is not, without a
+  // manual flag to remember to flip.
+  eleventyConfig.addFilter("hasAsset", (url) => {
+    if (!url || typeof url !== "string") return false;
+    return fs.existsSync(path.join(__dirname, "src", url.replace(/^\//, "")));
+  });
+
   // Filters
   eleventyConfig.addFilter("readableDate", (dateObj) => {
     return DateTime.fromJSDate(dateObj, { zone: "utc" }).toFormat("LLLL d, yyyy");

@@ -14,6 +14,7 @@ Current branch: `reimagined`. Main is the old iteration and is being largely scr
 | [02-interactive-mode.md](02-interactive-mode.md) | The 2D game version: genre, scope, settings gate |
 | [03-static-mode.md](03-static-mode.md) | The non-game version — partly superseded by 08 |
 | [08-static-site.md](08-static-site.md) | Confirmed static design: panel component, fantasy UI, sections |
+| [09-background.md](09-background.md) | Planned galaxy/sunset sky, complexity tiers, perf constraints |
 | [04-world-map.md](04-world-map.md) | Street layout, detail falloff tiers, background composition |
 | [05-controls.md](05-controls.md) | Movement model, verbs, desktop and mobile input |
 | [06-rooms-and-minigames.md](06-rooms-and-minigames.md) | Room contents, NPCs, minigames, the hat reward system |
@@ -41,6 +42,21 @@ the static site, Mitchtopia on the landing and Mitch Gardner inside.
   `/site/` static hub placeholder
 
 Verified on desktop and mobile.
+
+### In progress
+
+- Wordmark: "Mitchtopia" in Breathe Fire III, converted to outlines in
+  Inkscape. Drops at `src/assets/img/mitchtopia.svg` and is picked up
+  automatically; styled text stands in until then. The font is
+  non-commercial — outlines avoid distributing the binary, but a commercial
+  licence is still needed before the bakery takes an order.
+- Brand icons: GitHub and LinkedIn symbols are empty commented slots in
+  `partials/icons.njk`. Footer renders text labels until they are filled.
+
+### Planned
+
+- [Galaxy/sunset background](09-background.md) — tiered by surface, blocked on
+  a description of the Forge of Heavens reference.
 
 ### Next session — static site
 

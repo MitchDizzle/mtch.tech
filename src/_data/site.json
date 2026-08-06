@@ -8,5 +8,11 @@
   "site_repo": "https://github.com/mitchdizzle/mtch.tech",
   "linkedin_url": "https://linkedin.com/in/mitchgardner",
   "instagram_url": "https://linkedin.com/in/mitchgardner",
-  "year": "2026"
+  "year": "2026",
+
+  "footer_links": [
+    { "label": "GitHub",   "url": "https://github.com/mitchdizzle",             "icon": "github" },
+    { "label": "LinkedIn", "url": "https://linkedin.com/in/mitchgardner",       "icon": "linkedin" },
+    { "label": "Source",   "url": "https://github.com/mitchdizzle/mtch.tech",   "icon": "source" }
+  ]
 }

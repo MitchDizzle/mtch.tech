@@ -295,28 +295,100 @@
   --panel-bg: rgb(22 17 34 / 0.9);
 }
 
-/* --- Tabs ---------------------------------------------------------------
-   Static hub and interior pages only. The landing panel has no tabs. */
+/* --- Header with navigation ---------------------------------------------
+   Title on the left, icon tabs on the right, sharing the header row. */
+
+.panel__header--nav {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  /* Tabs overlap the header's own rule to produce the folder effect below,
+     so the padding has to leave room for them to sit flush at the bottom. */
+  padding-bottom: 0;
+}
+
+.panel__heading {
+  padding-bottom: 0.8rem;
+  min-width: 0;
+}
+
+/* --- Tabs — the folder metaphor -----------------------------------------
+   Each tab is a file tab. The current one has no bottom edge and shares the
+   body's background, so it reads as continuous with the page beneath rather
+   than as a button sitting above it.
+
+   The mechanism: the tab row is pushed down by 1px so the tabs straddle the
+   header's border-bottom, then the current tab paints over that border with
+   its own background. */
 
 .panel__tabs {
   display: flex;
-  border-bottom: 1px solid var(--panel-rule-color);
+  align-items: flex-end;
+  gap: 2px;
+  margin-bottom: -1px;
+  flex: 0 0 auto;
 }
 
 .panel__tab {
-  flex: 1;
-  padding: 0.6rem 0.5rem;
-  border: 0;
-  border-bottom: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  border-radius: 3px 3px 0 0;
   background: none;
   color: var(--panel-fg-muted);
   font: inherit;
+  line-height: 1;
+  text-decoration: none;
   cursor: pointer;
+  /* Touch target. The visual tab stays compact; the hit area does not. */
+  min-height: 40px;
+  transition: color 140ms ease, background-color 140ms ease;
 }
 
+.panel__tab:hover,
+.panel__tab:focus-visible {
+  color: var(--panel-fg);
+  background: rgb(255 255 255 / 0.05);
+}
+
+/* The current tab: bordered on three sides, background matching the body,
+   and one pixel of that background covering the header rule underneath. */
+.panel__tab.is-current,
 .panel__tab[aria-selected="true"] {
   color: var(--panel-accent);
-  border-bottom-color: var(--panel-accent);
+  border-color: var(--panel-rule-color);
+  background: var(--panel-bg-solid);
+  padding-bottom: calc(0.5rem + 1px);
+}
+
+.panel__tab-icon {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+}
+
+.panel__tab-label {
+  font-size: 0.85rem;
+}
+
+/* Narrow screens: tabs get the full width of the row and the title shrinks
+   rather than the tabs wrapping under it. */
+@media (max-width: 34rem) {
+  .panel__header--nav {
+    gap: 0.5rem;
+  }
+
+  .panel__tab {
+    padding-inline: 0.55rem;
+  }
+
+  .panel__title {
+    font-size: 0.95rem;
+  }
 }
 
 /* --- Leading edge -------------------------------------------------------
