@@ -7,12 +7,13 @@
   "github_url": "https://github.com/mitchdizzle",
   "site_repo": "https://github.com/mitchdizzle/mtch.tech",
   "linkedin_url": "https://linkedin.com/in/mitchgardner",
-  "instagram_url": "https://linkedin.com/in/mitchgardner",
+  "instagram_url": "https://instagram.com/MitchDizzle",
   "year": "2026",
 
   "footer_links": [
-    { "label": "GitHub",   "url": "https://github.com/mitchdizzle",             "icon": "github" },
-    { "label": "LinkedIn", "url": "https://linkedin.com/in/mitchgardner",       "icon": "linkedin" },
-    { "label": "Source",   "url": "https://github.com/mitchdizzle/mtch.tech",   "icon": "source" }
+    { "label": "GitHub",    "url": "https://github.com/mitchdizzle",           "icon": "github-with-circle" },
+    { "label": "LinkedIn",  "url": "https://linkedin.com/in/mitchgardner",     "icon": "linkedin-with-circle" },
+    { "label": "Instagram", "url": "https://instagram.com/MitchDizzle",        "icon": "instagram-with-circle" },
+    { "label": "Source",    "url": "https://github.com/mitchdizzle/mtch.tech", "icon": "github" }
   ]
 }

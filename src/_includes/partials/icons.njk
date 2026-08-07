@@ -49,33 +49,30 @@
   </symbol>
 
   {# ---------------------------------------------------------------------
-     BRAND MARKS — paste your downloaded paths here.
+     Imported icons — everything in src/assets/icons/
 
-     Deliberately left empty rather than approximated. GitHub and LinkedIn
-     marks are trademarks with exact letterforms; drawing them from memory
-     produces something recognisably wrong, which looks worse than plain
-     text links. Simple Icons (simpleicons.org) publishes accurate paths
-     under CC0 if you do not already have them to hand.
+     Each .svg in that folder is inlined below at build time as
+     <symbol id="i-<filename>">. So linkedin-with-circle.svg becomes
+     <use href="#i-linkedin-with-circle">. Drop a file in and it works; to
+     update an icon, replace the file. No path data is copied by hand.
 
-     Using either mark to link to your own profile is ordinary nominative
-     use and fine. Follow their brand guidelines: keep the shape unmodified
-     and leave clear space around it. Do not restyle them into the site
-     palette beyond a flat single colour.
+     A path's `d` attribute takes drawing commands, not a filename — which
+     is why referencing the file there could never work. This reads the
+     file and pulls its real geometry in.
 
-     To wire one up: paste the <path> from the downloaded SVG below, match
-     its viewBox to the source file, and set fill="currentColor". These are
-     filled marks, not stroked, so they do not take the stroke attributes
-     the interface icons above use.
+     The importer also strips <title>/<desc> so they do not surface as
+     tooltips, namespaces internal ids so two icons cannot collide over
+     id="a", and rewrites hardcoded black fills to currentColor so an icon
+     takes the colour of the link containing it.
 
-  <symbol id="i-github" viewBox="0 0 24 24" fill="currentColor">
-    <path d="assets/icons/instagram-with-circle.svg"/>
-  </symbol>
+     Tip: name files after the id you want. github.svg is nicer to reference
+     than github-with-circle-and-shadow.svg.
 
-  <symbol id="i-linkedin" viewBox="0 0 24 24" fill="currentColor">
-    <path d="assets/icons/linkedin-with-circle.svg"/>
-  </symbol>
-
+     Brand marks: using the GitHub or LinkedIn logo to link to your own
+     profile is ordinary nominative use. Keep the shape unmodified and leave
+     clear space around it.
      --------------------------------------------------------------------- #}
+  {% iconSprite %}
 
   {# Reserved for the hobby domains once those sections exist. #}
   <symbol id="i-garage" viewBox="0 0 24 24" fill="none" stroke="currentColor"
