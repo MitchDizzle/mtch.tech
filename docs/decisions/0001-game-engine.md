@@ -1,9 +1,9 @@
-# 0001 — 2D engine for interactive mode
+# 0001 - 2D engine for interactive mode
 
 - **Status:** Proposed. Not decided.
 - **Date:** 2026-07-28
 - **Unblocked:** genre settled as a side-scrolling hub with beat-em-up
-  locomotion — see [../02-interactive-mode.md](../02-interactive-mode.md)
+  locomotion - see [../02-interactive-mode.md](../02-interactive-mode.md)
 
 ## Context
 
@@ -13,7 +13,7 @@ mid-range phones over cellular, and support touch input, audio with independent
 music/SFX buses, and sprite animation.
 
 The genre decision changes what the engine has to provide. Beat-em-up
-locomotion — 8-directional movement on a ground plane with Y-sorted draw order —
+locomotion - 8-directional movement on a ground plane with Y-sorted draw order -
 needs no gravity, no jump arcs, and no tile-based platform collision. Collision
 is AABB overlap on a walkable band.
 
@@ -41,7 +41,7 @@ Roughly 300 KB. Smaller community than Phaser, so fewer worked examples when
 something goes wrong, but strong typing and good docs.
 
 Best fit if the value of a well-typed, structured codebase outweighs ecosystem
-size — plausible here, since the site doubles as a portfolio piece.
+size - plausible here, since the site doubles as a portfolio piece.
 
 ### Kaplay
 
@@ -54,7 +54,7 @@ possibly for shipping if the game stays small.
 
 ### PixiJS + hand-rolled game layer
 
-Pixi is a renderer, not an engine — fast and small, but collision, physics,
+Pixi is a renderer, not an engine - fast and small, but collision, physics,
 scenes, and input are all yours to write. Maximum control, maximum work.
 
 Only worth it if the "game" turns out to be light enough that an engine is
@@ -78,12 +78,12 @@ commissioned.
 
 Then decide between:
 
-- **Excalibur** if the prototype shows the project wants structure — TypeScript
+- **Excalibur** if the prototype shows the project wants structure - TypeScript
   actors and scenes, ~300 KB, and a codebase that reads well as a portfolio
   artifact in its own right.
 - **Kaplay shipped as-is** if the hub stays small and the prototype is already
   close to right. Fewer moving parts than migrating for its own sake.
-- **Phaser** only if something in the prototype turns out to need the ecosystem —
+- **Phaser** only if something in the prototype turns out to need the ecosystem -
   a specific plugin, an asset pipeline, or a solved problem nobody else has
   solved.
 
@@ -95,7 +95,7 @@ Deferring the final call costs nothing, since the landing page and static mode
 can be built first and neither depends on the engine.
 
 The risk is prototype code becoming shipped code by default. That is an
-acceptable outcome here if it is chosen deliberately — but it must be chosen.
+acceptable outcome here if it is chosen deliberately - but it must be chosen.
 Mark the prototype as disposable in its README, and revisit this ADR once the
 movement feels right rather than letting the decision lapse.
 

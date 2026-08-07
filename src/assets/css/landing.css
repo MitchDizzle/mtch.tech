@@ -5,7 +5,7 @@
    Panel styling lives in panel.css.
    ========================================================================== */
 
-/* TEMPORARY — warm palette trial ahead of the galaxy/sunset background.
+/* TEMPORARY - warm palette trial ahead of the galaxy/sunset background.
    See docs/09-background.md. The blue values are kept in comments so the
    previous look can be restored in one edit. */
 :root {
@@ -18,7 +18,7 @@
   --btn-bg-hover: rgb(235 160 96 / 0.12);  /* was rgb(126 178 235 / .12) */
 
   /* Display face for the title card only. Panel and body copy stay on the
-     system stack — legibility there is non-negotiable. */
+     system stack - legibility there is non-negotiable. */
   --font-display: "Cinzel", Georgia, "Times New Roman", serif;
   --font-body: system-ui, -apple-system, "Segoe UI", sans-serif;
 }
@@ -48,7 +48,7 @@ body {
 
    Composited layers only. Each blob animates transform and opacity, both of
    which the compositor handles without repainting. Do NOT animate
-   background-image or background-position here — neither can be composited
+   background-image or background-position here - neither can be composited
    and both will jank on mobile.
 
    This whole layer is a placeholder for background art. Swapping it out
@@ -64,7 +64,7 @@ body {
 }
 
 /* Opens on black, then the colour wells up. The fade lives on the container,
-   not the blobs — putting it on the blobs would fight the drift keyframes for
+   not the blobs - putting it on the blobs would fight the drift keyframes for
    control of opacity, and the later animation in the list would win. */
 @media (prefers-reduced-motion: no-preference) {
   @keyframes bg-in {
@@ -78,7 +78,7 @@ body {
 
 /* No filter: blur() here, deliberately.
 
-   A radial-gradient with a soft falloff is ALREADY soft — stacking a blur on
+   A radial-gradient with a soft falloff is ALREADY soft - stacking a blur on
    top of it buys nothing and costs a great deal. Worse, a blurred layer that
    also animates scale() must re-rasterize the blur every frame, which on an
    element this size saturates the compositor and makes the whole page feel
@@ -118,7 +118,7 @@ body {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  /* translate3d only — promotes to its own layer and moves a cached texture.
+  /* translate3d only - promotes to its own layer and moves a cached texture.
      Opacity is composited too. Neither triggers repaint or re-raster. */
   @keyframes drift-a {
     0%, 100% { transform: translate3d(0, 0, 0); opacity: 0.5; }
@@ -191,7 +191,7 @@ body {
 
 /* Outlined wordmark. text-shadow does not apply to an <img>, so the glow
    moves to drop-shadow. It is a static filter on a non-animating property,
-   so it rasterises once — unlike a blur on a moving element. */
+   so it rasterises once - unlike a blur on a moving element. */
 .title-card__name--art {
   line-height: 0;
 }
@@ -212,7 +212,7 @@ body {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  /* Fade only. No translate — the previous version bumped upward on entry,
+  /* Fade only. No translate - the previous version bumped upward on entry,
      which fought the floating idle that follows it. */
   @keyframes fade-in {
     from { opacity: 0; }
@@ -246,7 +246,7 @@ body {
   }
 
   /* Opening delay applies ONLY to the first-load panel, so the name is read
-     before the choice appears. Scoped to .is-intro — JS strips that class
+     before the choice appears. Scoped to .is-intro - JS strips that class
      after the first open, so swapped-in and reopened panels are immediate.
      Without this scope the rule matched every panel in .landing and made the
      options popup wait a second and a half. */
@@ -329,7 +329,7 @@ body {
 }
 
 /* --------------------------------------------------------------------------
-   Forms — used by the game options panel
+   Forms - used by the game options panel
    -------------------------------------------------------------------------- */
 
 .field {
@@ -404,7 +404,7 @@ body {
   color: var(--panel-fg-muted, rgb(158 166 184));
 }
 
-/* Ornamental divider — a hairline that fades at both ends with a diamond at
+/* Ornamental divider - a hairline that fades at both ends with a diamond at
    the centre. Reads as part of the fantasy panel language rather than a
    default <hr>. Built from borders and a rotated square, so no image. */
 .site-footer__rule {
@@ -465,7 +465,7 @@ body {
 }
 
 /* Icon links get a real touch target rather than a 20px hit area, and no
-   underline — the border would sit awkwardly under a glyph. */
+   underline - the border would sit awkwardly under a glyph. */
 .site-footer__link--icon {
   display: inline-flex;
   align-items: center;

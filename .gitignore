@@ -14,6 +14,10 @@ dist-ssr
 _site/
 .cache/
 
+# Orphaned inodes left behind when a file is replaced while another process
+# still has it open. Harmless, and they vanish once that process exits.
+.fuse_hidden*
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -6,7 +6,7 @@ Name the site, set tone, and hand the visitor a mode choice. It carries no
 content of its own. It should be small, fast, and fully rendered without
 JavaScript.
 
-## Form — settled
+## Form - settled
 
 Three layers, back to front:
 
@@ -15,13 +15,13 @@ Three layers, back to front:
    page background.
 2. **Title card.** "Mitchtopia", sitting **outside and above the panel**, like a
    game's title screen. It is not panel content.
-3. **Panel.** Centred, contains a brief summary of the site and two buttons —
+3. **Panel.** Centred, contains a brief summary of the site and two buttons -
    **Static site** and **Play game**. Both equally weighted, neither default.
 
 **No tabs on the landing page.** Tabs belong to the static hub and interior
 pages. The landing panel is a prompt with two choices and nothing else.
 
-The panel component is shared with the game options screen and the static site —
+The panel component is shared with the game options screen and the static site -
 see [08-static-site.md](08-static-site.md).
 
 ## Sequence
@@ -29,7 +29,7 @@ see [08-static-site.md](08-static-site.md).
 1. **Background** is present from the start, gradient already animating.
 2. **Title card** appears. Timing and entrance TBD, but it resolves before the
    panel so the name is read first.
-3. **Panel opens** with the LitRPG animation — horizontal line expands from
+3. **Panel opens** with the LitRPG animation - horizontal line expands from
    centre, then extends vertically. Summary and buttons are already inside and
    are revealed by the clip, not faded in separately.
 
@@ -37,7 +37,7 @@ Leaving the panel plays the animation in reverse before navigating.
 
 ## Background gradient
 
-- Dark, slow, continuous transition. Long cycle — this is ambience, not an
+- Dark, slow, continuous transition. Long cycle - this is ambience, not an
   effect to be noticed.
 - Implement as its own element or pseudo-element so background art can replace
   it without touching layout.
@@ -48,7 +48,7 @@ Leaving the panel plays the animation in reverse before navigating.
 ## Motion and reduced motion
 
 `prefers-reduced-motion: reduce` collapses the entire sequence to the final
-state — title in position, buttons visible, no slide, no idle bounce, no fade.
+state - title in position, buttons visible, no slide, no idle bounce, no fade.
 Not a shortened animation; no animation.
 
 Implementation constraints:
@@ -73,7 +73,7 @@ Requirements:
 ### Play game
 
 Goes to the game options screen (first visit only), then the game.
-**The game itself is a no-op for now** — the options screen is built, accepted
+**The game itself is a no-op for now** - the options screen is built, accepted
 settings are stored, and the game route is a placeholder. This lets the entire
 landing and options flow be finished and shipped before any game work starts.
 
@@ -84,14 +84,14 @@ Goes to the static hub panel. See [08-static-site.md](08-static-site.md).
 ## Naming
 
 **Mitchtopia** on the landing panel. Once inside the static side, the site
-presents as **Mitch Gardner** — personality at the front door, credibility where
+presents as **Mitch Gardner** - personality at the front door, credibility where
 someone is actually reading about your work. Mitchtopia also remains the name of
 the game world.
 
 ## Layout
 
 Designed at mobile width and scaled up. At desktop widths the composition should
-gain space rather than gain elements — no extra columns, no revealed sidebar.
+gain space rather than gain elements - no extra columns, no revealed sidebar.
 
 The panel must not exceed the viewport on small screens. Its contents scroll
 inside the frame rather than the frame growing off-screen.

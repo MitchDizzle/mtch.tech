@@ -1,5 +1,5 @@
 /* ==========================================================================
-   FPS meter — development only
+   FPS meter - development only
 
    Inert unless explicitly switched on, so it never costs anything in
    production:
@@ -9,7 +9,7 @@
 
    Shows current, average, and worst frame rate over a rolling window, plus a
    dropped-frame count against a 60Hz budget. On a high-refresh display the
-   target is your monitor's rate, not 60 — read the numbers relative to that.
+   target is your monitor's rate, not 60 - read the numbers relative to that.
    ========================================================================== */
 
 (function () {

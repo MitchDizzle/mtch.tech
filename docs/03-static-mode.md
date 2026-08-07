@@ -24,13 +24,13 @@ and then the game can never be optional.
 
 The current `reimagined` branch is an Eleventy 3 site with `posts` and
 `projects` collections, a tag filter, and page/post/project layouts. That
-structure is a reasonable base for static mode — it mostly needs the content
+structure is a reasonable base for static mode - it mostly needs the content
 model extended so an item can declare which domain it belongs to (software,
 games, motorcycles, baking) and, later, where it sits in the game world.
 
 Adding a `domain` field to front matter and deriving collections from it is
 cheaper than building four parallel section trees, and it keeps cross-domain
-items possible — a piece can belong to more than one.
+items possible - a piece can belong to more than one.
 
 ## Open questions
 

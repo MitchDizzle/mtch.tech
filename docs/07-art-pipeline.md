@@ -10,8 +10,8 @@ These cannot be changed later without redoing work. Decide them first.
 
 | Constraint | Why it must be first |
 | --- | --- |
-| **Palette** — a fixed list of hex values | Every asset gets quantized to it. Assets generated in different sessions will not match without this |
-| **Canvas resolution** — e.g. 320×180 or 480×270 logical pixels, integer-scaled | Determines how large every sprite is drawn and how much detail is even visible |
+| **Palette** - a fixed list of hex values | Every asset gets quantized to it. Assets generated in different sessions will not match without this |
+| **Canvas resolution** - e.g. 320×180 or 480×270 logical pixels, integer-scaled | Determines how large every sprite is drawn and how much detail is even visible |
 | **Character height in pixels** | Everything else scales relative to the player. Doors, counters, bikes, hats |
 | **Head anchor convention** | Hats depend on it. See below |
 | **Ground line / horizon height** | Storefronts must share a baseline or the street will not line up |
@@ -21,7 +21,7 @@ These cannot be changed later without redoing work. Decide them first.
 AI image generation will not produce consistent colour across sessions. The fix
 is not better prompting; it is post-processing.
 
-Define a palette once — 24 to 40 colours is a reasonable range for this style —
+Define a palette once - 24 to 40 colours is a reasonable range for this style -
 then run every generated asset through a quantizer that snaps each pixel to the
 nearest palette entry. This is a short script and it is what will make assets
 from different generation sessions read as one game.
@@ -40,7 +40,7 @@ Every frame of every player animation needs a head anchor exported with it:
 `{ frame, x, y, rotation }`. Hats render at that point.
 
 Produce this as a JSON sidecar per animation. Aseprite can export slice data
-alongside a sprite sheet, which is the natural mechanism — define a slice named
+alongside a sprite sheet, which is the natural mechanism - define a slice named
 `head` and move it per frame.
 
 **This must exist before the character sheet is considered finished.** Retrofitting
@@ -51,18 +51,18 @@ anchors onto a completed sheet means opening every frame again.
 The instinct that animation is the hard part is correct, but most of the
 animation on the street costs no frames at all.
 
-### Free — transform and shader only, zero drawn frames
+### Free - transform and shader only, zero drawn frames
 
-- **Neon sign** — one sprite, modulate opacity or tint on a noise curve.
-- **Steam** — particle emitter. Procedural, no art beyond a single soft puff.
-- **Garage door** — one sprite, translate or scale on an ease curve.
-- **CRT glow** — one sprite, subtle scale and opacity pulse.
-- **Idle bob** — vertical translate plus slight squash. Works on NPCs, props,
+- **Neon sign** - one sprite, modulate opacity or tint on a noise curve.
+- **Steam** - particle emitter. Procedural, no art beyond a single soft puff.
+- **Garage door** - one sprite, translate or scale on an ease curve.
+- **CRT glow** - one sprite, subtle scale and opacity pulse.
+- **Idle bob** - vertical translate plus slight squash. Works on NPCs, props,
   and the title on the landing page.
-- **Signs swinging** — rotation around an offset pivot.
-- **Parallax** — layer scroll speed. Free depth.
+- **Signs swinging** - rotation around an offset pivot.
+- **Parallax** - layer scroll speed. Free depth.
 
-### Costs real frames — spend here, and only here
+### Costs real frames - spend here, and only here
 
 - **Player walk cycle.** Unavoidable. 4 frames is workable, 6 is comfortable.
   Side-on is the priority; the depth band can reuse the side view rather than
@@ -89,7 +89,7 @@ Mitigations for character frames:
   skill ask than drawing a character from nothing.
 - Keep the character small. Fewer pixels is less to keep consistent, and it is
   genre-appropriate.
-- Consider a design that hides the hard parts — a helmet or hood removes facial
+- Consider a design that hides the hard parts - a helmet or hood removes facial
   consistency as a problem entirely, and fits a site whose reward system is hats.
 
 ## Blank templates
@@ -106,6 +106,6 @@ with placeholder art, better art will not fix it.
 
 - Final palette.
 - Logical resolution and character height.
-- Art style: how "pixel" is the pixel art — chunky and limited, or higher
+- Art style: how "pixel" is the pixel art - chunky and limited, or higher
   resolution with more shading?
 - Time of day, which affects every facade asset. Decide before generating.

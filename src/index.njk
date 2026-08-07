@@ -1,7 +1,7 @@
 ---
 layout: layouts/shell.njk
 title: false
-description: Mitchtopia — the personal site of Mitch Gardner. Software, motorcycles, baking, and games.
+description: Mitchtopia - the personal site of Mitch Gardner. Software, motorcycles, baking, and games.
 ---
 {% from "components/panel.njk" import panel %}
 
@@ -27,7 +27,7 @@ description: Mitchtopia — the personal site of Mitch Gardner. Software, motorc
   </div>
 
   {# Choice panel. "Interactive" swaps to the options panel in place rather
-     than navigating — it is a step in a flow, not a destination. #}
+     than navigating - it is a step in a flow, not a destination. #}
   {% call panel({ id: "choose", variant: "prompt", class: "is-intro", label: "Choose how to view this site" }) %}
     <p class="muted">
       Software engineer of ten years. Motorcycles, baking, and games in
@@ -129,7 +129,7 @@ description: Mitchtopia — the personal site of Mitch Gardner. Software, motorc
       window.MitchPanel.toast(
         "Settings saved",
         "Music " + settings.music + "%, SFX " + settings.sfx +
-          "% — the game is not built yet.",
+          "% - the game is not built yet.",
         { banner: "Notice", tone: "notice"}
       );
     });

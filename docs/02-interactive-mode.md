@@ -6,12 +6,12 @@ places.
 ## Feasibility
 
 Both a platformer and a beat-em-up are well within what HTML5 does. A 2D game of
-this scale is a solved problem on the web — canvas rendering, sprite animation,
+this scale is a solved problem on the web - canvas rendering, sprite animation,
 a fixed-timestep loop, tile collision, audio, and gamepad/touch input are all
 standard browser capability, and mature engines package all of it. The hard part
 of this project is not technical feasibility. It is content and scope.
 
-## Genre — side-scrolling hub, beat-em-up presentation
+## Genre - side-scrolling hub, beat-em-up presentation
 
 **Decided in principle.** The deciding argument is art, not mechanics: the
 motorcycle and the garage need to be recognisable, and a bike only reads as a
@@ -19,7 +19,7 @@ bike in side profile. Top-down turns it into a blob; a platformer reduces it to
 scenery you run past. Side view puts it at the centre of a scene.
 
 The structure is a single side-scrolling level acting as the site's hub. The
-domains — software, games, motorcycles, baking — are places within it. Optional
+domains - software, games, motorcycles, baking - are places within it. Optional
 secret areas branch off the main path and hold minigames.
 
 ### Why beat-em-up locomotion rather than platformer physics
@@ -40,7 +40,7 @@ or a kitchen than a platformer's single flat plane.
 ### Scope discipline
 
 What is being built is a side-scrolling hub with beat-em-up *presentation* and
-*optional* combat — not a beat-em-up in the full sense. This distinction is the
+*optional* combat - not a beat-em-up in the full sense. This distinction is the
 budget. It means the project does not owe anyone enemy variety, combo systems,
 juggling, difficulty curves, or balance passes. Combat is a texture, not a
 system. If combat becomes load-bearing, scope has escaped.
@@ -79,7 +79,7 @@ reachable again from a pause menu once play begins.
 
 ## Mobile controls
 
-On-screen controls in the style of a handheld — d-pad on the left, action
+On-screen controls in the style of a handheld - d-pad on the left, action
 buttons on the right, framing the play area rather than overlapping it where
 screen height allows.
 
@@ -89,7 +89,7 @@ Constraints:
 - Multi-touch required: moving and jumping simultaneously must work. This needs
   explicit pointer-event handling; naive touch handlers drop the second input.
 - The controls must not sit where a thumb naturally rests over content.
-- Suppress the browser's default touch behaviours over the play area — double-tap
+- Suppress the browser's default touch behaviours over the play area - double-tap
   zoom, pull-to-refresh, text selection, and the iOS callout menu will all fire
   otherwise.
 - Keyboard is the desktop path. Gamepad support is a nice-to-have, cheap to add
@@ -112,7 +112,7 @@ crawlable, linkable, and honest.
 
 ## Open questions
 
-- Engine — see [decisions/0001-game-engine.md](decisions/0001-game-engine.md).
+- Engine - see [decisions/0001-game-engine.md](decisions/0001-game-engine.md).
   Genre is now settled, so this is unblocked.
 - Art: pixel art is the obvious fit, but sourcing or making a consistent sprite
   set is the single largest unestimated cost in this whole project. The bike and
@@ -122,6 +122,6 @@ crawlable, linkable, and honest.
 - How many secret areas, and how are they hinted? A secret nobody finds is
   wasted work.
 - Does the level have an end, or does it loop / stay open?
-- How does a visitor get from inside the game to a specific piece of writing —
+- How does a visitor get from inside the game to a specific piece of writing -
   does the page open as an overlay, or does the game hand off to the static site?
 - Does the player character represent Mitch, or is it deliberately anonymous?

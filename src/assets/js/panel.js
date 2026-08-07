@@ -30,7 +30,7 @@
 
   /* Resolve when the element's own animation actually finishes.
 
-     Timing on duration alone is not enough — an animation-delay pushes the
+     Timing on duration alone is not enough - an animation-delay pushes the
      real end far past it. The landing panel has a 1500ms intro delay, so a
      duration-only timer fired while the animation was still queued and any
      cleanup that ran on it corrupted the animation mid-flight.
@@ -92,7 +92,7 @@
   }
 
   /* Tabs swap content in place. The panel does NOT close and reopen on tab
-     change — watching the animation on every click gets old fast. Only mode
+     change - watching the animation on every click gets old fast. Only mode
      transitions play the full close/open. */
   function initTabs(panel) {
     var tabs = panel.querySelectorAll("[role='tab']");
@@ -129,7 +129,7 @@
   }
 
   /* In-page panel swap. Closes the current panel and opens another on the
-     same page — no navigation, so nothing flashes, the background never
+     same page - no navigation, so nothing flashes, the background never
      restarts, and the title card stays put.
 
      Prefer this over a page load for anything that is really a step in a
@@ -189,7 +189,7 @@
 
     /* Back should close the popup, not leave the page. This is what the
        browser Back button, a mouse's back button, and the Android back
-       gesture all expect — they all arrive as popstate.
+       gesture all expect - they all arrive as popstate.
 
        The URL is deliberately left unchanged, so a reload or a shared link
        still lands on the landing page rather than reopening a dialog. */
@@ -211,7 +211,7 @@
     });
   }
 
-  /* Every dismissal — Cancel, Escape, Back — routes through here.
+  /* Every dismissal - Cancel, Escape, Back - routes through here.
 
      When a history entry was pushed for the modal, the dismissal is handed
      to history.back() and the popstate handler does the real work. Closing
@@ -305,7 +305,7 @@
   });
 
   /* Mode transitions: fade out the title card, close the panel, then
-     navigate. The background is deliberately left alone — it is phase-locked
+     navigate. The background is deliberately left alone - it is phase-locked
      to wall clock in the head script, so it carries straight across the
      navigation without restarting.
 
@@ -336,7 +336,7 @@
     if (activeModal) closeModal(activeModal);
   });
 
-  /* Restoring from bfcache replays a cached frame of the outgoing page —
+  /* Restoring from bfcache replays a cached frame of the outgoing page -
      including the faded-out title and closed panel. Reset and reopen. */
   window.addEventListener("pageshow", function (e) {
     if (!e.persisted) return;
@@ -352,7 +352,7 @@
   /* LitRPG system notification. Transient, corner-anchored, auto-dismissing.
      Used for minigame rewards and similar.
 
-       MitchPanel.toast("Chef's hat — gold", "Closest recipe yet.", {
+       MitchPanel.toast("Chef's hat - gold", "Closest recipe yet.", {
          banner: "Reward",
          tone: "success"
        });
@@ -418,7 +418,7 @@
     region.appendChild(el);
     open(el);
 
-    /* Reduced motion gets a longer dwell — there is no motion cueing the
+    /* Reduced motion gets a longer dwell - there is no motion cueing the
        arrival, so the text has to carry it. */
     var dwell = opts.dwell || (reduceMotion.matches ? 5000 : 4000);
     setTimeout(function () {
@@ -439,7 +439,7 @@
 
       open(panel).then(function () {
         /* The intro delay is a one-time entrance. Strip it so reopening this
-           panel — after dismissing a popup, say — is immediate. */
+           panel - after dismissing a popup, say - is immediate. */
         panel.classList.remove("is-intro");
       });
     });

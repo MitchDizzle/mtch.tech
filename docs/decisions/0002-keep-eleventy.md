@@ -1,4 +1,4 @@
-# 0002 — Keep Eleventy as the build tool
+# 0002 - Keep Eleventy as the build tool
 
 - **Status:** Accepted
 - **Date:** 2026-08-02
@@ -25,7 +25,7 @@ machine, not the site.
 **The panel wraps every page.** Without templates, changing the panel markup or
 the border treatment means editing every HTML file by hand. This is precisely the
 duplication templates exist to prevent, and the panel is the site's signature
-component — it will change.
+component - it will change.
 
 **There is markdown content and there will be more.** Posts and projects already
 exist as markdown collections. Hand-authoring article HTML is the thing people
@@ -39,7 +39,7 @@ and it can emit JSON for the game at build time.
 
 ## Repo state at time of decision
 
-Checked and healthy — no restructuring needed:
+Checked and healthy - no restructuring needed:
 
 - `node_modules` and `_site` are gitignored and untracked.
 - Build runs clean in roughly 5 seconds.
@@ -55,7 +55,7 @@ Added as an explicit devDependency.
 Content and templates from the previous iteration are being scrapped per the
 project brief, but that is content work, not restructuring. Candidates:
 
-- `src/_data/skills.json` — a skills-grid list from the old design. Keep only if
+- `src/_data/skills.json` - a skills-grid list from the old design. Keep only if
   a skills display survives into the new one.
 - Existing layouts and partials will mostly be replaced by the panel component
   rather than edited.
@@ -68,6 +68,6 @@ runs one. Every static host worth using does this natively.
 ## Future: bakery ordering system
 
 A static site generator does not block this. The ordering system will be a
-separate dynamic service — serverless functions or a small API with its own
-database — that the static pages talk to. Eleventy renders the storefront; it
+separate dynamic service - serverless functions or a small API with its own
+database - that the static pages talk to. Eleventy renders the storefront; it
 does not need to render the orders. Revisit as its own ADR when that work starts.

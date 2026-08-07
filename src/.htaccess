@@ -1,4 +1,4 @@
-# mtch.tech — Apache configuration
+# mtch.tech - Apache configuration
 #
 # Copied to the site root at build time (see .eleventy.js passthrough).
 #
@@ -17,7 +17,7 @@ ErrorDocument 404 /404.html
 #
 # `eleventy --serve` runs its own dev server and never reads this file, so
 # local development is unaffected. The localhost exclusions below only matter
-# if a local Apache (XAMPP/WAMP) is ever pointed at _site — without them it
+# if a local Apache (XAMPP/WAMP) is ever pointed at _site - without them it
 # would try to redirect http://localhost to https and fail.
 #
 # Both conditions are required. Many hosts terminate TLS at a proxy, so
@@ -35,7 +35,7 @@ ErrorDocument 404 /404.html
   RewriteCond %{HTTP:X-Forwarded-Proto} !https
   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
-  # Canonical host — leave commented until HTTPS is confirmed working.
+  # Canonical host - leave commented until HTTPS is confirmed working.
   # Enable ONE of these, never both. If the host already canonicalises,
   # enabling this too causes a redirect loop.
   #
@@ -51,7 +51,7 @@ ErrorDocument 404 /404.html
 # ---------------------------------------------------------------------------
 # Clean URLs
 #
-# Eleventy already writes /play/index.html, which Apache serves at /play/ —
+# Eleventy already writes /play/index.html, which Apache serves at /play/ -
 # so the site's own links contain no .html anywhere. These rules exist for
 # canonicalisation, not cosmetics: they make sure a page has exactly ONE
 # reachable URL, so /play/, /play.html and /play/index.html cannot all
@@ -59,7 +59,7 @@ ErrorDocument 404 /404.html
 #
 # THE_REQUEST is matched rather than REQUEST_URI on purpose. THE_REQUEST holds
 # the literal request line the browser sent, so these only fire on real
-# external requests — internal rewrites and the ErrorDocument subrequest do
+# external requests - internal rewrites and the ErrorDocument subrequest do
 # not re-trigger them, which is what prevents a redirect loop.
 # ---------------------------------------------------------------------------
 
@@ -101,7 +101,7 @@ ErrorDocument 404 /404.html
   AddOutputFilterByType DEFLATE application/javascript application/json
   AddOutputFilterByType DEFLATE application/xml application/rss+xml
   AddOutputFilterByType DEFLATE image/svg+xml
-  # Fonts and images are already compressed — recompressing wastes CPU.
+  # Fonts and images are already compressed - recompressing wastes CPU.
 </IfModule>
 
 <IfModule mod_brotli.c>
@@ -191,7 +191,7 @@ ErrorDocument 404 /404.html
   Header set X-Content-Type-Options "nosniff"
   Header set Referrer-Policy "strict-origin-when-cross-origin"
 
-  # HSTS — leave commented until HTTPS has been stable for a while.
+  # HSTS - leave commented until HTTPS has been stable for a while.
   #
   # This is the one directive here that is not trivially reversible. Once a
   # browser has seen it, that browser refuses plain http for the full
@@ -200,7 +200,7 @@ ErrorDocument 404 /404.html
   #
   # If enabling: start with a short max-age (300), confirm nothing breaks,
   # then raise it. Do not add `preload` unless you intend to stay on HTTPS
-  # permanently — getting off the preload list takes months.
+  # permanently - getting off the preload list takes months.
   #
   # Header always set Strict-Transport-Security "max-age=300"
   Header set X-Frame-Options "SAMEORIGIN"
@@ -215,7 +215,7 @@ ErrorDocument 404 /404.html
 # THE MOST IMPORTANT CONTROL IS NOT IN THIS FILE: upload the contents of
 # _site/ only, never the repository root. Everything below is a backstop for
 # a mistaken upload, not a substitute for one. If the repo root is deployed,
-# .git/ alone exposes the entire source history — and a determined reader can
+# .git/ alone exposes the entire source history - and a determined reader can
 # reconstruct it even with directory listing disabled.
 # ---------------------------------------------------------------------------
 
@@ -230,7 +230,7 @@ FileETag None
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  # Block dotfiles and dot-directories — .git, .env, .htpasswd, .DS_Store —
+  # Block dotfiles and dot-directories - .git, .env, .htpasswd, .DS_Store -
   # except the ACME challenge path certificate renewal needs.
   RewriteRule "(^|/)\.(?!well-known/)" - [F,L]
 </IfModule>
@@ -259,7 +259,7 @@ FileETag None
 </IfModule>
 
 # Stop other sites hotlinking your assets and billing you for the bandwidth.
-# Commented out — enable only if it becomes a problem, since it can break
+# Commented out - enable only if it becomes a problem, since it can break
 # legitimate embeds and previews.
 #
 # <IfModule mod_rewrite.c>

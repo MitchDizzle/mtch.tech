@@ -13,7 +13,7 @@
   if (!buttons.length || !cards.length) return;
 
   /* Announced when a filter changes. Without it, a screen reader user gets no
-     feedback that anything happened — the buttons look pressed but the result
+     feedback that anything happened - the buttons look pressed but the result
      is silent. */
   var status = document.createElement("p");
   status.className = "sr-only";

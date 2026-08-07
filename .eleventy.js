@@ -7,7 +7,7 @@ module.exports = function (eleventyConfig) {
   // Passthrough copies
   eleventyConfig.addPassthroughCopy("src/assets");
 
-  // Server config files. Dotfiles need an explicit mapping — Eleventy will
+  // Server config files. Dotfiles need an explicit mapping - Eleventy will
   // not pick up .htaccess from a directory glob.
   eleventyConfig.addPassthroughCopy({ "src/.htaccess": ".htaccess" });
   eleventyConfig.addPassthroughCopy("src/robots.txt");
@@ -16,7 +16,7 @@ module.exports = function (eleventyConfig) {
   //
   // Appends a short content hash to an asset URL, so a changed file gets a
   // new URL and browsers and CDNs are forced to refetch it. Without this,
-  // shipping a CSS change is invisible to anyone who has already visited —
+  // shipping a CSS change is invisible to anyone who has already visited -
   // the classic "it works locally but not on the live site" failure.
   //
   // The hash is content-based, not a timestamp, so rebuilding without
@@ -51,7 +51,7 @@ module.exports = function (eleventyConfig) {
   // data is ever copied by hand.
   //
   // Downloaded icons are not safe to inline verbatim, so each one is
-  // normalised first — see the steps inline below.
+  // normalised first - see the steps inline below.
   // ---------------------------------------------------------------------
   const ICON_DIR = path.join(__dirname, "src", "assets", "icons");
 
@@ -101,7 +101,7 @@ module.exports = function (eleventyConfig) {
         (m, attr, id) => `${attr}="#${name}-${id}"`);
 
     // 6. Hardcoded black fills stop the icon inheriting the link's colour.
-    //    fill="none" is left alone — it is structural on stroked icons.
+    //    fill="none" is left alone - it is structural on stroked icons.
     inner = inner.replace(
       /\bfill\s*=\s*["'](#0{3,8}|black|rgb\(0,\s*0,\s*0\))["']/gi,
       'fill="currentColor"'

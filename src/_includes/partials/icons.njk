@@ -49,14 +49,14 @@
   </symbol>
 
   {# ---------------------------------------------------------------------
-     Imported icons — everything in src/assets/icons/
+     Imported icons - everything in src/assets/icons/
 
      Each .svg in that folder is inlined below at build time as
      <symbol id="i-<filename>">. So linkedin-with-circle.svg becomes
      <use href="#i-linkedin-with-circle">. Drop a file in and it works; to
      update an icon, replace the file. No path data is copied by hand.
 
-     A path's `d` attribute takes drawing commands, not a filename — which
+     A path's `d` attribute takes drawing commands, not a filename - which
      is why referencing the file there could never work. This reads the
      file and pulls its real geometry in.
 

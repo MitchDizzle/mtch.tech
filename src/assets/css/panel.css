@@ -1,5 +1,5 @@
 /* ==========================================================================
-   LitRPG panel — shared component
+   LitRPG panel - shared component
 
    The site's signature element. Used for:
      - the landing prompt
@@ -31,7 +31,7 @@
      backdrop the panel can sit on. Do not push below ~0.85 without
      re-checking contrast. */
   /* TEMPORARY warm trial, matching the background in landing.css.
-     Panels stay near-neutral with a warm bias rather than going orange —
+     Panels stay near-neutral with a warm bias rather than going orange -
      body text has to stay comfortable to read at length. Previous cool
      values kept in comments. */
   --panel-bg: rgb(26 20 16 / 0.88);        /* was rgb(16 18 26 / .88) */
@@ -41,7 +41,7 @@
   --panel-rule-color: rgb(210 190 175 / 0.22);  /* was rgb(180 190 210 / .22) */
   --panel-accent: rgb(235 160 96);         /* was rgb(126 178 235) */
 
-  /* Optional frosting. Costly on low-end mobile — see the guard below. */
+  /* Optional frosting. Costly on low-end mobile - see the guard below. */
   --panel-blur: 6px;
 
   --panel-padding: 1.25rem;
@@ -71,7 +71,7 @@
 
   /* Default state is OPEN and fully visible. Everything must be readable
      with no JS, no CSS animation support, or a failed bundle. The animation
-     is progressive enhancement layered on top — never the other way round. */
+     is progressive enhancement layered on top - never the other way round. */
   clip-path: inset(0 0 0 0);
 }
 
@@ -84,7 +84,7 @@
 /* Start closed ONLY when JS is confirmed present.
 
    The .js class is added by an inline blocking script in <head>, so this
-   applies before first paint — which is what stops a new page flashing an
+   applies before first paint - which is what stops a new page flashing an
    open panel for a frame before the animation begins.
 
    Without JS the class never lands, this rule never matches, and the panel
@@ -113,7 +113,7 @@
 }
 
 /* Panel grows to content height; the PAGE scrolls. Never give the panel its
-   own internal scroll container — nested scrolling on mobile is hostile and
+   own internal scroll container - nested scrolling on mobile is hostile and
    the frame would clip long content. */
 .panel__body {
   padding: var(--panel-padding);
@@ -122,7 +122,7 @@
 /* --- Header --------------------------------------------------------------
    A first-class region of the panel, not the first line of the body. This is
    what "Options" sits in, what a page title sits in, and what a speaker name
-   sits in during game dialogue — one slot, three uses.
+   sits in during game dialogue - one slot, three uses.
 
    Order within a panel: banner (what KIND of message) -> header (WHOSE, or
    WHICH) -> tabs -> body. */
@@ -140,7 +140,7 @@
   letter-spacing: 0.02em;
 }
 
-/* Flavour under the title — a speaker's role, a section descriptor. */
+/* Flavour under the title - a speaker's role, a section descriptor. */
 .panel__subtitle {
   margin: 0.15rem 0 0;
   font-size: 0.8rem;
@@ -150,7 +150,7 @@
   color: var(--panel-fg-muted);
 }
 
-/* Dialogue headers are compact and rule-less — the speaker should sit close
+/* Dialogue headers are compact and rule-less - the speaker should sit close
    to their line, not be separated from it by a divider. */
 .panel--dialogue .panel__header {
   padding-bottom: 0;
@@ -174,7 +174,7 @@
   border-bottom: 0;
 }
 
-/* Cinzel is wide and tall at small sizes — at toast scale the title competes
+/* Cinzel is wide and tall at small sizes - at toast scale the title competes
    with the banner above it instead of supporting it. The banner carries the
    flavour; the title only needs to be legible. Delete this rule to put the
    display face back. */
@@ -199,7 +199,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   Banner — the LitRPG flavour line
+   Banner - the LitRPG flavour line
 
    "Warning!", "Notice", "Quest complete". Distinct from .panel__title: the
    banner names the KIND of message, the title names the message itself. A
@@ -241,7 +241,7 @@
 }
 
 /* Centred plaque rather than a full-width strip. Inset from the top edge,
-   never overlapping it — see the clip-path note above. */
+   never overlapping it - see the clip-path note above. */
 .panel--banner-plaque .panel__banner {
   justify-content: center;
   margin: 0.75rem auto -0.25rem;
@@ -258,7 +258,7 @@
 
 /* --- Tones ---------------------------------------------------------------
    Each tone retints the accent, the surface, and the border together. All
-   surfaces stay dark so body text keeps its contrast — the hue carries the
+   surfaces stay dark so body text keeps its contrast - the hue carries the
    meaning, not the brightness.
 
    Tone is decoration. It must never be the only thing communicating that
@@ -317,7 +317,7 @@
   min-width: 0;
 }
 
-/* --- Tabs — the folder metaphor -----------------------------------------
+/* --- Tabs - the folder metaphor -----------------------------------------
    Each tab is a file tab. The current one has no bottom edge and shares the
    body's background, so it reads as continuous with the page beneath rather
    than as a button sitting above it.
@@ -439,7 +439,7 @@
 /* --- Overlay -------------------------------------------------------------
    Takes a panel out of normal flow so it covers the page instead of pushing
    siblings around. Without this, a taller panel reflows whatever sits above
-   it — the title card visibly jumps.
+   it - the title card visibly jumps.
 
    The wrapper scrolls, not the panel. Tall content on a short landscape
    phone scrolls the overlay; the panel itself never gets a nested scroll
@@ -479,7 +479,7 @@
 
 /* Everything behind an open overlay fades and stops responding.
 
-   The panel underneath is NOT hidden or closed — it stays in the flow,
+   The panel underneath is NOT hidden or closed - it stays in the flow,
    merely invisible. Removing it from the flow would let the flex container
    recentre and visibly shove the title card around. It is covered by the
    scrim anyway, so leaving it in place costs nothing and returning to it
@@ -494,14 +494,14 @@
   transition: opacity 240ms ease-out;
 }
 
-/* An overlay is a popup, not an entrance. It should feel quick both ways —
+/* An overlay is a popup, not an entrance. It should feel quick both ways -
    noticeably faster than the landing panel's ceremonial open. */
 .panel-overlay .panel {
   --panel-open-duration: 380ms;
   --panel-close-duration: 200ms;
 }
 
-/* Transient LitRPG system notification — "Hat acquired". Small, corner-
+/* Transient LitRPG system notification - "Hat acquired". Small, corner-
    anchored, auto-dismissing. Managed by panel.js. */
 .panel--toast {
   --panel-max-width: 22rem;
@@ -523,7 +523,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   Animation — progressive enhancement only
+   Animation - progressive enhancement only
    -------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: no-preference) {
@@ -565,7 +565,7 @@
     animation: panel-edge var(--panel-open-duration) var(--panel-open-ease) both;
   }
 
-  /* Toasts are quicker — they fire often and must not feel ceremonial. */
+  /* Toasts are quicker - they fire often and must not feel ceremonial. */
   .panel--toast {
     --panel-open-duration: 320ms;
     --panel-close-duration: 260ms;
@@ -585,7 +585,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   Fantasy border — swap-in point
+   Fantasy border - swap-in point
    Uncomment once the Kenney symbols are extracted. Corners stay fixed and
    edges repeat; do NOT scale the whole border SVG uniformly or the corner
    ornaments squash.

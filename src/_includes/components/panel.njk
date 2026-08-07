@@ -1,7 +1,7 @@
 {# =========================================================================
    Panel macro
 
-   Usage — wrap content with {% call %} so the body is arbitrary markup:
+   Usage - wrap content with {% call %} so the body is arbitrary markup:
 
      {% from "components/panel.njk" import panel %}
 
@@ -15,20 +15,20 @@
 
    Options:
      variant   prompt | dialog | page | dialogue | toast   (default: prompt)
-     banner    LitRPG flavour line naming the KIND of message — "Warning!",
+     banner    LitRPG flavour line naming the KIND of message - "Warning!",
                "Notice", "Quest complete". Distinct from title, which names
                the message itself. Either, both, or neither.
      tone      notice | warning | danger | success | quest
-               Retints accent, surface, and border together. Decoration only —
+               Retints accent, surface, and border together. Decoration only -
                the banner text must also say what happened, since colour is
                not available to every reader.
      bannerStyle  bar (default, full-width strip) | plaque (centred label)
-     title     header text in its own region at the top of the panel — the
+     title     header text in its own region at the top of the panel - the
                "Options" slot. Also the page title on static pages and the
                speaker name in game dialogue.
-     subtitle  flavour line under the title — a speaker's role, a descriptor
+     subtitle  flavour line under the title - a speaker's role, a descriptor
      id        element id, needed if you drive it from JS
-     tabs      array of { label, href } or { label, pane } — omit for none
+     tabs      array of { label, href } or { label, pane } - omit for none
      autoOpen  false to leave it closed until JS opens it (default: true)
      hidden    true to render with the hidden attribute, for panels that are
                swapped in later via data-panel-to
@@ -55,7 +55,7 @@
 >
   <span class="panel__edge" aria-hidden="true"></span>
 
-  {# The banner is real content, not decoration — it is often the only thing
+  {# The banner is real content, not decoration - it is often the only thing
      stating that something is a warning. Left readable, never aria-hidden. #}
   {% if opts.banner %}
   <p class="panel__banner"{% if opts.id %} id="{{ opts.id }}-banner"{% endif %}>{{ opts.banner }}</p>

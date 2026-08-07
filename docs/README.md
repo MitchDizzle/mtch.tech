@@ -12,7 +12,7 @@ Current branch: `reimagined`. Main is the old iteration and is being largely scr
 | [00-vision.md](00-vision.md) | What the site is for, who it's for, the two-mode concept |
 | [01-landing-page.md](01-landing-page.md) | Landing page behaviour, animation, mode selection |
 | [02-interactive-mode.md](02-interactive-mode.md) | The 2D game version: genre, scope, settings gate |
-| [03-static-mode.md](03-static-mode.md) | The non-game version — partly superseded by 08 |
+| [03-static-mode.md](03-static-mode.md) | The non-game version - partly superseded by 08 |
 | [08-static-site.md](08-static-site.md) | Confirmed static design: panel component, fantasy UI, sections |
 | [09-background.md](09-background.md) | Planned galaxy/sunset sky, complexity tiers, perf constraints |
 | [04-world-map.md](04-world-map.md) | Street layout, detail falloff tiers, background composition |
@@ -30,14 +30,14 @@ the static site, Mitchtopia on the landing and Mitch Gardner inside.
 
 ### Built and working
 
-- `layouts/shell.njk` — head script (adds `.js` before first paint, phase-locks
+- `layouts/shell.njk` - head script (adds `.js` before first paint, phase-locks
   the background drift to wall clock), fonts, background layer, toast region
-- `components/panel.njk` — the panel macro. Variants: `prompt`, `dialog`,
+- `components/panel.njk` - the panel macro. Variants: `prompt`, `dialog`,
   `page`, `dialogue`, `toast`. Options include `overlay`, `hidden`, `autoOpen`
-- `assets/css/panel.css`, `assets/js/panel.js` — LitRPG open/close, in-flow
+- `assets/css/panel.css`, `assets/js/panel.js` - LitRPG open/close, in-flow
   swaps, modal overlays with focus containment and Escape, toasts
-- `assets/css/landing.css` — animated background, title card, buttons, forms
-- `assets/js/fps.js` — dev FPS meter, `?fps` or Ctrl+Shift+F
+- `assets/css/landing.css` - animated background, title card, buttons, forms
+- `assets/js/fps.js` - dev FPS meter, `?fps` or Ctrl+Shift+F
 - Routes: `/` landing with in-place options popup, `/play/` game placeholder,
   `/site/` static hub placeholder
 
@@ -48,17 +48,17 @@ Verified on desktop and mobile.
 - Wordmark: "Mitchtopia" in Breathe Fire III, converted to outlines in
   Inkscape. Drops at `src/assets/img/mitchtopia.svg` and is picked up
   automatically; styled text stands in until then. The font is
-  non-commercial — outlines avoid distributing the binary, but a commercial
+  non-commercial - outlines avoid distributing the binary, but a commercial
   licence is still needed before the bakery takes an order.
 - Brand icons: GitHub and LinkedIn symbols are empty commented slots in
   `partials/icons.njk`. Footer renders text labels until they are filled.
 
 ### Planned
 
-- [Galaxy/sunset background](09-background.md) — tiered by surface, blocked on
+- [Galaxy/sunset background](09-background.md) - tiered by surface, blocked on
   a description of the Forge of Heavens reference.
 
-### Next session — static site
+### Next session - static site
 
 `/site/` is a placeholder. Needed: the section list, the `domain` field on the
 content model, converting `/blog/`, `/projects/`, and `/contact/` off the old
@@ -76,7 +76,7 @@ Worth not rediscovering:
 - Panel animations use `fill-mode: both`, never `forwards`. With `forwards`,
   nothing applies the 0% keyframe during `animation-delay`, so a delayed panel
   renders open and then snaps shut.
-- `open()`/`close()` resolve on `animationend`, not a duration timer — a
+- `open()`/`close()` resolve on `animationend`, not a duration timer - a
   duration-only timer fires while a delayed animation is still queued.
 - Never remove and restore an `animation` to hide something. Re-applying an
   animation restarts it from zero. Fade a parent instead; parent opacity

@@ -611,7 +611,7 @@ footer p {
 }
 
 /* ===========================
-   Responsive — 720px
+   Responsive - 720px
    =========================== */
 @media screen and (max-width: 720px) {
   body {
@@ -644,7 +644,7 @@ footer p {
 }
 
 /* ===========================
-   Responsive — 480px
+   Responsive - 480px
    =========================== */
 @media screen and (max-width: 480px) {
   .navigation ul {

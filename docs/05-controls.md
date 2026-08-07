@@ -9,7 +9,7 @@ band. Draw order sorts by Y so walking "behind" a lamp post works.
 No gravity, no jump, no platform collision. Collision is AABB overlap against a
 walkable region plus solid props.
 
-Movement must be frame-rate independent — fixed timestep, velocity in units per
+Movement must be frame-rate independent - fixed timestep, velocity in units per
 second, never per frame.
 
 ## Verbs
@@ -22,20 +22,20 @@ reachable with movement plus one button.
 | Move | Walk the street and rooms | Yes |
 | Interact | Doors, NPCs, objects, minigames, advancing dialogue | Yes |
 | Pause / menu | Settings, hat inventory, exit to static mode | Yes |
-| Attack | Optional combat texture | No — later |
+| Attack | Optional combat texture | No - later |
 
 `Interact` is context-sensitive: one button, meaning derived from what is in
 range. Never require the player to choose between interaction types.
 
 ## Interaction prompt
 
-When the player enters range of an interactable, show a prompt above it —
+When the player enters range of an interactable, show a prompt above it -
 the button glyph plus a verb ("Enter", "Talk", "Read", "Play"). The prompt must
 name the action, since it is the only affordance telling a non-gamer that
 anything is possible.
 
 Only one interactable can be prompted at a time. If ranges overlap, pick the
-nearest by centre distance and do not flicker between them — add hysteresis so
+nearest by centre distance and do not flicker between them - add hysteresis so
 standing on the boundary does not strobe the prompt.
 
 ## Desktop
@@ -58,7 +58,7 @@ Hard requirements:
 - **Multi-touch.** Moving and interacting at once must work. Use pointer events
   with captured pointer IDs; naive `touchstart` handlers drop the second input.
   Test with two thumbs on a real device, not in a desktop emulator.
-- **Touch targets** at least 44px, and the directional control larger — 100px+
+- **Touch targets** at least 44px, and the directional control larger - 100px+
   of active area with a smaller visual footprint is fine and feels better.
 - **Analogue or 8-way, not 4-way.** A d-pad that only does cardinals makes the
   depth band frustrating.
@@ -85,5 +85,5 @@ Hard requirements:
 
 - Landscape lock, or support both orientations?
 - Does the pause menu stop simulation, or is it a non-blocking overlay?
-- Is there a run/sprint? The street may be long enough to want one — but it adds
+- Is there a run/sprint? The street may be long enough to want one - but it adds
   a second movement state to animate.
