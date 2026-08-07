@@ -5,6 +5,7 @@ title: Credits
 description: Attribution for fonts, assets, and tools used on this site, and what it does with your data.
 ---
 {% from "components/panel.njk" import panel %}
+{% set repo = site.profiles | findBy("id", "repo") %}
 
 <main class="landing">
   {% call panel({
@@ -51,12 +52,13 @@ description: Attribution for fonts, assets, and tools used on this site, and wha
 
       <ul>
         <li>
-          <strong>Cinzel</strong> by Natanael Gama - headings and display
-          text. Licensed under the SIL Open Font License, via Google Fonts.
+          <strong><a href="{{ site.external.cinzel }}" rel="noopener">Cinzel</a></strong>
+          by Natanael Gama - headings and display text. Licensed under the SIL
+          Open Font License, via Google Fonts.
         </li>
         <li>
           <strong>Breathe Fire III</strong> by
-          <a href="https://chequered.ink/" rel="noopener">Chequered Ink</a> -
+          <a href="{{ site.external.chequered_ink }}" rel="noopener">Chequered Ink</a> -
           used only for the Mitchtopia wordmark, converted to vector outlines.
           Free for personal and non-profit use; the font file itself is not
           distributed by this site.
@@ -68,7 +70,7 @@ description: Attribution for fonts, assets, and tools used on this site, and wha
       <ul>
         <li>
           <strong>Fantasy UI borders</strong> by
-          <a href="https://kenney.nl/" rel="noopener">Kenney</a> - panel
+          <a href="{{ site.external.kenney }}" rel="noopener">Kenney</a> - panel
           frames. Released under CC0.
         </li>
         <li>
@@ -86,13 +88,13 @@ description: Attribution for fonts, assets, and tools used on this site, and wha
 
       <ul>
         <li>
-          <a href="https://www.11ty.dev/" rel="noopener">Eleventy</a> - static
+          <a href="{{ site.external.eleventy }}" rel="noopener">Eleventy</a> - static
           site generator. MIT licensed.
         </li>
         <li>
           No frameworks, no build-time CSS or JS tooling. Everything shipped to
           the browser is hand-written and readable in the
-          <a href="{{ site.site_repo }}" rel="noopener">source</a>.
+          <a href="{{ repo.url }}" rel="noopener">source</a>.
         </li>
       </ul>
 

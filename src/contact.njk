@@ -6,6 +6,9 @@ description: How to reach Mitch Gardner.
 ---
 {% from "components/panel.njk" import panel %}
 
+{# Every row is generated from site.profiles in _data/site.json. URLs, handles,
+   and descriptions live there so nothing has to be updated in two places. #}
+
 <main class="landing">
   {% call panel({
     variant: "page",
@@ -21,38 +24,26 @@ description: How to reach Mitch Gardner.
     </p>
 
     <ul class="link-list">
+      {% for profile in site.profiles %}
+        {% if profile.contact %}
       <li>
-        <a class="link-row" href="{{ site.github_url }}" rel="me noopener">
-          <svg class="link-row__icon" aria-hidden="true"><use href="#i-github-with-circle"/></svg>
+        <a class="link-row" href="{{ profile.url }}" rel="{% if profile.me %}me {% endif %}noopener">
+          {% if profile.icon %}
+          <svg class="link-row__icon" aria-hidden="true"><use href="#i-{{ profile.icon }}"/></svg>
+          {% endif %}
           <span class="link-row__text">
-            <span class="link-row__label">GitHub</span>
-            <span class="link-row__desc">Code, side projects, and whatever I am currently breaking.</span>
-            <span class="link-row__handle">github.com/mitchdizzle</span>
+            <span class="link-row__label">{{ profile.label }}</span>
+            {% if profile.description %}
+            <span class="link-row__desc">{{ profile.description }}</span>
+            {% endif %}
+            {% if profile.handle %}
+            <span class="link-row__handle">{{ profile.handle }}</span>
+            {% endif %}
           </span>
         </a>
       </li>
-
-      <li>
-        <a class="link-row" href="{{ site.linkedin_url }}" rel="me noopener">
-          <svg class="link-row__icon" aria-hidden="true"><use href="#i-linkedin-with-circle"/></svg>
-          <span class="link-row__text">
-            <span class="link-row__label">LinkedIn</span>
-            <span class="link-row__desc">Work history, and the best place for anything professional.</span>
-            <span class="link-row__handle">linkedin.com/in/mitchgardner</span>
-          </span>
-        </a>
-      </li>
-
-      <li>
-        <a class="link-row" href="{{ site.instagram_url }}" rel="me noopener">
-          <svg class="link-row__icon" aria-hidden="true"><use href="#i-instagram-with-circle"/></svg>
-          <span class="link-row__text">
-            <span class="link-row__label">Instagram</span>
-            <span class="link-row__desc">Motorcycles, baking, and the occasional finished project.</span>
-            <span class="link-row__handle">@MitchDizzle</span>
-          </span>
-        </a>
-      </li>
+        {% endif %}
+      {% endfor %}
     </ul>
   {% endcall %}
 </main>

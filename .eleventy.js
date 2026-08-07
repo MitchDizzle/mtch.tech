@@ -120,6 +120,18 @@ module.exports = function (eleventyConfig) {
       .join("\n  ");
   });
 
+  // Find one entry in an array of objects by a key/value pair.
+  //
+  // Nunjucks has no selectattr (that is Jinja2), so pulling a single profile
+  // out of site.profiles otherwise means duplicating its URL at the top level
+  // of site.json - which is the duplication this data shape exists to remove.
+  //
+  //   {% set repo = site.profiles | findBy("id", "repo") %}
+  eleventyConfig.addFilter("findBy", (arr, key, value) => {
+    if (!Array.isArray(arr)) return null;
+    return arr.find((item) => item && item[key] === value) || null;
+  });
+
   // True if an asset exists in src/. Lets a template use a hand-made file
   // when it is present and fall back to markup when it is not, without a
   // manual flag to remember to flip.
