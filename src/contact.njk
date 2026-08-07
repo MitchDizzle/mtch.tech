@@ -1,19 +1,58 @@
 ---
-layout: layouts/base.njk
+layout: layouts/shell.njk
+permalink: /contact/
 title: Contact
+description: How to reach Mitch Gardner.
 ---
-<main class="content">
-  <h1>Contact</h1>
-  <p>The best way to reach me is through GitHub or LinkedIn. I'm open to conversations about DevOps roles, infrastructure projects, and open source collaboration.</p>
+{% from "components/panel.njk" import panel %}
 
-  <ul class="contact-list">
-    <li>
-      <strong>GitHub:</strong>
-      <a href="{{ site.github_url }}" target="_blank" rel="noopener">{{ site.github_url }}</a>
-    </li>
-    <li>
-      <strong>LinkedIn:</strong>
-      <a href="{{ site.linkedin_url }}" target="_blank" rel="noopener">{{ site.linkedin_url }}</a>
-    </li>
-  </ul>
+<main class="landing">
+  {% call panel({
+    variant: "page",
+    title: "Contact",
+    labelledBy: "contact-title",
+    tabs: nav,
+    currentUrl: page.url
+  }) %}
+    <p class="section-lead">
+      The quickest way to reach me is GitHub or LinkedIn. Happy to talk about
+      engineering roles, infrastructure work, open source, or any of the
+      things on the rest of this site.
+    </p>
+
+    <ul class="link-list">
+      <li>
+        <a class="link-row" href="{{ site.github_url }}" rel="me noopener">
+          <svg class="link-row__icon" aria-hidden="true"><use href="#i-github-with-circle"/></svg>
+          <span class="link-row__text">
+            <span class="link-row__label">GitHub</span>
+            <span class="link-row__desc">Code, side projects, and whatever I am currently breaking.</span>
+            <span class="link-row__handle">github.com/mitchdizzle</span>
+          </span>
+        </a>
+      </li>
+
+      <li>
+        <a class="link-row" href="{{ site.linkedin_url }}" rel="me noopener">
+          <svg class="link-row__icon" aria-hidden="true"><use href="#i-linkedin-with-circle"/></svg>
+          <span class="link-row__text">
+            <span class="link-row__label">LinkedIn</span>
+            <span class="link-row__desc">Work history, and the best place for anything professional.</span>
+            <span class="link-row__handle">linkedin.com/in/mitchgardner</span>
+          </span>
+        </a>
+      </li>
+
+      <li>
+        <a class="link-row" href="{{ site.instagram_url }}" rel="me noopener">
+          <svg class="link-row__icon" aria-hidden="true"><use href="#i-instagram-with-circle"/></svg>
+          <span class="link-row__text">
+            <span class="link-row__label">Instagram</span>
+            <span class="link-row__desc">Motorcycles, baking, and the occasional finished project.</span>
+            <span class="link-row__handle">@MitchDizzle</span>
+          </span>
+        </a>
+      </li>
+    </ul>
+  {% endcall %}
 </main>

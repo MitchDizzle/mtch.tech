@@ -1,12 +1,16 @@
 <article class="card" data-tags="{{ item.data.tags | join(' ') }}">
   {% if item.data.image %}
-  <img class="card-img" src="{{ item.data.image }}" alt="{{ item.data.title }}">
+  <img class="card-img" src="{{ item.data.image }}" alt="" loading="lazy">
   {% endif %}
   <div class="card-body">
+    {# The title link is stretched over the whole card in CSS, so the card is
+       clickable without nesting interactive elements or duplicating the link. #}
     <h3 class="card-title"><a href="{{ item.url }}">{{ item.data.title }}</a></h3>
+
     {% if item.data.description %}
     <p class="card-desc">{{ item.data.description }}</p>
     {% endif %}
+
     {% if item.data.tags %}
     <ul class="tag-list">
       {% for tag in item.data.tags %}
@@ -14,11 +18,16 @@
       {% endfor %}
     </ul>
     {% endif %}
+
+    {% if item.data.github_url or item.data.live_url %}
     <div class="card-actions">
-      <a class="btn btn-sm" href="{{ item.url }}">View Project</a>
       {% if item.data.github_url %}
-      <a class="btn btn-outline btn-sm" href="{{ item.data.github_url }}" target="_blank" rel="noopener">GitHub</a>
+      <a class="btn btn--sm" href="{{ item.data.github_url }}" rel="noopener">Code</a>
+      {% endif %}
+      {% if item.data.live_url %}
+      <a class="btn btn--sm" href="{{ item.data.live_url }}" rel="noopener">Live</a>
       {% endif %}
     </div>
+    {% endif %}
   </div>
 </article>

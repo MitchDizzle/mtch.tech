@@ -1,0 +1,338 @@
+/* ==========================================================================
+   Content styles
+
+   Prose, cards, tags, and filters for pages that live inside a page panel.
+   Panel chrome itself is in panel.css; page shell is in landing.css.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Prose
+   -------------------------------------------------------------------------- */
+
+.prose > * + * {
+  margin-top: 1rem;
+}
+
+.prose p,
+.prose li {
+  color: var(--panel-fg-muted);
+}
+
+.prose h2,
+.prose h3 {
+  margin-top: 1.75rem;
+  margin-bottom: 0.25rem;
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--panel-fg);
+}
+
+.prose h2 { font-size: 1.05rem; }
+.prose h3 { font-size: 0.95rem; }
+
+.prose a {
+  color: var(--panel-accent);
+  text-underline-offset: 3px;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.2rem;
+}
+
+.prose li + li {
+  margin-top: 0.35rem;
+}
+
+.prose code {
+  padding: 0.1em 0.35em;
+  border-radius: 2px;
+  background: rgb(255 255 255 / 0.07);
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 0.9em;
+}
+
+.prose pre {
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--panel-rule-color);
+  border-radius: 3px;
+  background: rgb(0 0 0 / 0.3);
+  overflow-x: auto;
+}
+
+.prose pre code {
+  padding: 0;
+  background: none;
+}
+
+.prose hr {
+  margin: 1.75rem 0;
+  border: 0;
+  border-top: 1px solid var(--panel-rule-color);
+}
+
+.prose blockquote {
+  margin-left: 0;
+  padding-left: 1rem;
+  border-left: 2px solid var(--panel-accent);
+  color: var(--panel-fg-muted);
+  font-style: italic;
+}
+
+/* --------------------------------------------------------------------------
+   Section heading inside a panel body
+   -------------------------------------------------------------------------- */
+
+.section-lead {
+  margin: 0 0 1.25rem;
+  color: var(--panel-fg-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Cards
+   -------------------------------------------------------------------------- */
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+  gap: 0.85rem;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--panel-rule-color);
+  border-radius: 3px;
+  background: rgb(255 255 255 / 0.03);
+  overflow: hidden;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.card:hover,
+.card:focus-within {
+  border-color: var(--panel-accent);
+  background: rgb(255 255 255 / 0.06);
+}
+
+.card-img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-bottom: 1px solid var(--panel-rule-color);
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.9rem 1rem 1rem;
+  flex: 1;
+}
+
+.card-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.card-title a {
+  color: var(--panel-fg);
+  text-decoration: none;
+}
+
+/* Whole card is clickable via the title's stretched link, so the hover state
+   on .card is honest rather than decorative. */
+.card-title a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.card {
+  position: relative;
+}
+
+.card-title a:hover,
+.card-title a:focus-visible {
+  color: var(--panel-accent);
+}
+
+.card-desc {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--panel-fg-muted);
+}
+
+.card-meta {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--panel-fg-muted);
+}
+
+/* Secondary links must sit above the stretched link to stay clickable. */
+.card-actions {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 0.25rem;
+}
+
+/* --------------------------------------------------------------------------
+   Tags
+   -------------------------------------------------------------------------- */
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tag {
+  padding: 0.15rem 0.5rem;
+  border: 1px solid var(--panel-rule-color);
+  border-radius: 2px;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--panel-fg-muted);
+}
+
+/* --------------------------------------------------------------------------
+   Filter bar
+   -------------------------------------------------------------------------- */
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--panel-rule-color);
+}
+
+.filter-btn {
+  min-height: 34px;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--panel-rule-color);
+  border-radius: 2px;
+  background: none;
+  color: var(--panel-fg-muted);
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: color 140ms ease, border-color 140ms ease, background-color 140ms ease;
+}
+
+.filter-btn:hover,
+.filter-btn:focus-visible {
+  color: var(--panel-fg);
+  border-color: var(--panel-fg-muted);
+}
+
+.filter-btn.active,
+.filter-btn[aria-pressed="true"] {
+  color: var(--panel-accent);
+  border-color: var(--panel-accent);
+  background: rgb(255 255 255 / 0.05);
+}
+
+/* --------------------------------------------------------------------------
+   Definition-style contact list
+   -------------------------------------------------------------------------- */
+
+.link-list {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.link-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--panel-rule-color);
+  border-radius: 3px;
+  background: rgb(255 255 255 / 0.03);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.link-row:hover,
+.link-row:focus-visible {
+  border-color: var(--panel-accent);
+  background: rgb(255 255 255 / 0.06);
+}
+
+.link-row__icon {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  margin-top: 0.1rem;
+  color: var(--panel-accent);
+}
+
+.link-row__text {
+  min-width: 0;
+}
+
+.link-row__label {
+  margin: 0;
+  font-weight: 500;
+}
+
+.link-row__desc {
+  margin: 0.1rem 0 0;
+  font-size: 0.85rem;
+  color: var(--panel-fg-muted);
+}
+
+.link-row__handle {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.8rem;
+  color: var(--panel-accent);
+  /* Long URLs must not force the panel wider on a phone. */
+  overflow-wrap: anywhere;
+}
+
+/* --------------------------------------------------------------------------
+   Empty state
+   -------------------------------------------------------------------------- */
+
+.empty {
+  padding: 2rem 1rem;
+  border: 1px dashed var(--panel-rule-color);
+  border-radius: 3px;
+  text-align: center;
+  color: var(--panel-fg-muted);
+}
+
+/* Filtered-out cards. The [hidden] attribute is set alongside this class by
+   filter.js; the class exists because a future display rule on .card would
+   otherwise beat the UA default for [hidden]. */
+.hidden,
+.card[hidden] {
+  display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Small button
+   -------------------------------------------------------------------------- */
+
+.btn--sm {
+  min-height: 34px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+}

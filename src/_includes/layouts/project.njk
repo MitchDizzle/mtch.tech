@@ -1,15 +1,22 @@
 ---
-layout: layouts/base.njk
+layout: layouts/shell.njk
 ---
-<main class="content">
-  <article class="project-detail">
-    {% if image %}
-    <img class="detail-banner" src="{{ image }}" alt="{{ title }}">
-    {% endif %}
+{% from "components/panel.njk" import panel %}
 
-    <h1>{{ title }}</h1>
+<main class="landing">
+  {% call panel({
+    variant: "page",
+    title: title,
+    subtitle: date | readableDate,
+    labelledBy: "project-title",
+    tabs: nav,
+    currentUrl: "/projects/"
+  }) %}
+    <article class="prose">
+      {% if image %}
+      <img class="card-img" src="{{ image }}" alt="" style="border-radius:3px">
+      {% endif %}
 
-    <div class="post-meta">
       {% if tags %}
       <ul class="tag-list">
         {% for tag in tags %}
@@ -17,20 +24,19 @@ layout: layouts/base.njk
         {% endfor %}
       </ul>
       {% endif %}
-      <div class="detail-links">
+
+      {{ content | safe }}
+
+      {% if github_url or live_url %}
+      <div class="panel__actions">
         {% if github_url %}
-        <a class="btn btn-outline btn-sm" href="{{ github_url }}" target="_blank" rel="noopener">GitHub</a>
+        <a class="btn" href="{{ github_url }}" rel="noopener">View code</a>
         {% endif %}
         {% if live_url %}
-        <a class="btn btn-sm" href="{{ live_url }}" target="_blank" rel="noopener">Live Site</a>
+        <a class="btn" href="{{ live_url }}" rel="noopener">Visit site</a>
         {% endif %}
       </div>
-    </div>
-
-    <div class="post-body">
-      {{ content | safe }}
-    </div>
-
-    <p class="back-link"><a href="/projects/">&larr; Back to Projects</a></p>
-  </article>
+      {% endif %}
+    </article>
+  {% endcall %}
 </main>

@@ -5,14 +5,17 @@
    Panel styling lives in panel.css.
    ========================================================================== */
 
+/* TEMPORARY — warm palette trial ahead of the galaxy/sunset background.
+   See docs/09-background.md. The blue values are kept in comments so the
+   previous look can be restored in one edit. */
 :root {
-  --bg-base: #04050a;
-  --title-fg: #e8ecf5;
-  --title-glow: rgb(126 178 235 / 0.35);
+  --bg-base: #0a0503;              /* was #04050a */
+  --title-fg: #f5ece4;             /* was #e8ecf5 */
+  --title-glow: rgb(235 152 86 / 0.4);   /* was rgb(126 178 235 / .35) */
 
-  --btn-fg: #dce3f0;
-  --btn-border: rgb(180 190 210 / 0.45);
-  --btn-bg-hover: rgb(126 178 235 / 0.12);
+  --btn-fg: #efe2d6;                       /* was #dce3f0 */
+  --btn-border: rgb(210 190 175 / 0.45);   /* was rgb(180 190 210 / .45) */
+  --btn-bg-hover: rgb(235 160 96 / 0.12);  /* was rgb(126 178 235 / .12) */
 
   /* Display face for the title card only. Panel and body copy stay on the
      system stack — legibility there is non-negotiable. */
@@ -90,20 +93,26 @@ body {
   opacity: 0.55;
 }
 
+/* TEMPORARY warm trial. Deep ember at top, burnt orange low and warm, with a
+   dull red as the third layer so it does not read as a single hue. Previous
+   blues kept in comments. */
 .bg__blob--1 {
-  background: radial-gradient(circle closest-side, rgb(28 40 78 / 0.85), transparent);
+  /* was rgb(28 40 78 / .85) */
+  background: radial-gradient(circle closest-side, rgb(112 48 14 / 0.85), transparent);
   top: -22vmax;
   left: -16vmax;
 }
 
 .bg__blob--2 {
-  background: radial-gradient(circle closest-side, rgb(58 26 66 / 0.8), transparent);
+  /* was rgb(58 26 66 / .8) */
+  background: radial-gradient(circle closest-side, rgb(138 66 20 / 0.8), transparent);
   bottom: -26vmax;
   right: -18vmax;
 }
 
 .bg__blob--3 {
-  background: radial-gradient(circle closest-side, rgb(16 52 62 / 0.65), transparent);
+  /* was rgb(16 52 62 / .65) */
+  background: radial-gradient(circle closest-side, rgb(86 26 22 / 0.7), transparent);
   top: 14vmax;
   right: -24vmax;
 }

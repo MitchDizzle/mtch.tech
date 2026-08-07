@@ -1,0 +1,108 @@
+---
+layout: layouts/shell.njk
+permalink: /credits/
+title: Credits
+description: Attribution for fonts, assets, and tools used on this site, and what it does with your data.
+---
+{% from "components/panel.njk" import panel %}
+
+<main class="landing">
+  {% call panel({
+    variant: "page",
+    title: "Credits",
+    subtitle: "Attribution and privacy",
+    labelledBy: "credits-title",
+    tabs: nav,
+    currentUrl: page.url
+  }) %}
+    <div class="prose">
+      <p class="section-lead">
+        Everything borrowed to build this site, and what the site does with
+        your data. Short version on the second one: almost nothing.
+      </p>
+
+      <h2>Privacy</h2>
+
+      <p>
+        This site has no analytics, no tracking pixels, no advertising, and
+        sets no cookies. Nothing you do here is recorded or sent anywhere.
+      </p>
+
+      <p>
+        If you open interactive mode and accept the options screen, your audio
+        settings and any progress are saved in your own browser's local
+        storage. That data stays on your device, is never transmitted, and can
+        be cleared at any time through your browser settings. Declining simply
+        means those settings reset each visit.
+      </p>
+
+      <p>
+        Fonts are currently served by Google Fonts, which means your browser
+        makes a request to <code>fonts.gstatic.com</code>. That is the only
+        third-party request on the site. Self-hosting is on the list.
+      </p>
+
+      <p>
+        Standard web server logs — IP address, page requested, timestamp —
+        are kept by the host as part of normal operation.
+      </p>
+
+      <h2>Fonts</h2>
+
+      <ul>
+        <li>
+          <strong>Cinzel</strong> by Natanael Gama — headings and display
+          text. Licensed under the SIL Open Font License, via Google Fonts.
+        </li>
+        <li>
+          <strong>Breathe Fire III</strong> by
+          <a href="https://chequered.ink/" rel="noopener">Chequered Ink</a> —
+          used only for the Mitchtopia wordmark, converted to vector outlines.
+          Free for personal and non-profit use; the font file itself is not
+          distributed by this site.
+        </li>
+      </ul>
+
+      <h2>Interface assets</h2>
+
+      <ul>
+        <li>
+          <strong>Fantasy UI borders</strong> by
+          <a href="https://kenney.nl/" rel="noopener">Kenney</a> — panel
+          frames. Released under CC0.
+        </li>
+        <li>
+          <strong>Interface icons</strong> — home, user, projects, contact,
+          and the reserved hobby icons are drawn for this site.
+        </li>
+        <li>
+          <strong>Brand marks</strong> — the GitHub, LinkedIn, and Instagram
+          logos are trademarks of their respective owners, used here only to
+          link to my own profiles.
+        </li>
+      </ul>
+
+      <h2>Built with</h2>
+
+      <ul>
+        <li>
+          <a href="https://www.11ty.dev/" rel="noopener">Eleventy</a> — static
+          site generator. MIT licensed.
+        </li>
+        <li>
+          No frameworks, no build-time CSS or JS tooling. Everything shipped to
+          the browser is hand-written and readable in the
+          <a href="{{ site.site_repo }}" rel="noopener">source</a>.
+        </li>
+      </ul>
+
+      <h2>Corrections</h2>
+
+      <p>
+        If something here is attributed wrongly, or an asset of yours is used
+        without proper credit, please
+        <a href="/contact/">get in touch</a> and I will fix or remove it.
+      </p>
+    </div>
+  {% endcall %}
+</main>

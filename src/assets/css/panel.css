@@ -30,12 +30,16 @@
      enough that body text keeps its contrast ratio against the darkest
      backdrop the panel can sit on. Do not push below ~0.85 without
      re-checking contrast. */
-  --panel-bg: rgb(16 18 26 / 0.88);
-  --panel-bg-solid: rgb(16 18 26);
-  --panel-fg: rgb(228 232 240);
-  --panel-fg-muted: rgb(158 166 184);
-  --panel-rule-color: rgb(180 190 210 / 0.22);
-  --panel-accent: rgb(126 178 235);
+  /* TEMPORARY warm trial, matching the background in landing.css.
+     Panels stay near-neutral with a warm bias rather than going orange —
+     body text has to stay comfortable to read at length. Previous cool
+     values kept in comments. */
+  --panel-bg: rgb(26 20 16 / 0.88);        /* was rgb(16 18 26 / .88) */
+  --panel-bg-solid: rgb(26 20 16);         /* was rgb(16 18 26) */
+  --panel-fg: rgb(240 233 226);            /* was rgb(228 232 240) */
+  --panel-fg-muted: rgb(184 170 158);      /* was rgb(158 166 184) */
+  --panel-rule-color: rgb(210 190 175 / 0.22);  /* was rgb(180 190 210 / .22) */
+  --panel-accent: rgb(235 160 96);         /* was rgb(126 178 235) */
 
   /* Optional frosting. Costly on low-end mobile — see the guard below. */
   --panel-blur: 6px;

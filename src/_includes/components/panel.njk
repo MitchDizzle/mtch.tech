@@ -76,10 +76,14 @@
        not happen and would mislead screen reader users. #}
     <nav class="panel__tabs" aria-label="{{ opts.tabsLabel | default('Sections') }}">
       {% for tab in opts.tabs %}
+        {# Pass currentUrl: page.url and the active tab marks itself. Doing it
+           per-page by hand means every new page is one forgotten flag away
+           from highlighting the wrong section. #}
+        {% set isCurrent = tab.current or (opts.currentUrl and tab.href == opts.currentUrl) %}
         {% if tab.href %}
-      <a class="panel__tab{% if tab.current %} is-current{% endif %}"
+      <a class="panel__tab{% if isCurrent %} is-current{% endif %}"
          href="{{ tab.href }}"
-         {% if tab.current %}aria-current="page"{% endif %}
+         {% if isCurrent %}aria-current="page"{% endif %}
          title="{{ tab.label }}">
         {% if tab.icon %}<svg class="panel__tab-icon" aria-hidden="true"><use href="#i-{{ tab.icon }}"/></svg>{% endif %}
         <span class="panel__tab-label{% if tab.icon %} sr-only{% endif %}">{{ tab.label }}</span>

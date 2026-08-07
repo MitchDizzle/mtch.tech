@@ -1,0 +1,6 @@
+[
+  { "label": "Home",     "href": "/",          "icon": "home" },
+  { "label": "About",    "href": "/site/",     "icon": "user" },
+  { "label": "Projects", "href": "/projects/", "icon": "projects" },
+  { "label": "Contact",  "href": "/contact/",  "icon": "contact" }
+]

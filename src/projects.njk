@@ -1,26 +1,41 @@
 ---
-layout: layouts/base.njk
+layout: layouts/shell.njk
+permalink: /projects/
 title: Projects
+description: Personal and professional projects — infrastructure, tooling, and software.
 ---
-<main class="content">
-  <h1>Projects</h1>
-  <p>A collection of personal and professional projects spanning DevOps, infrastructure, and software development.</p>
+{% from "components/panel.njk" import panel %}
 
-  {% if collections.projects | length %}
-  <div class="filter-bar">
-    <button class="filter-btn active" data-tag="all">All</button>
-    {% for tag in collections.projects | allTags %}
-    <button class="filter-btn" data-tag="{{ tag }}">{{ tag }}</button>
-    {% endfor %}
-  </div>
+<main class="landing">
+  {% call panel({
+    variant: "page",
+    title: "Projects",
+    labelledBy: "projects-title",
+    tabs: nav,
+    currentUrl: page.url
+  }) %}
+    <p class="section-lead">
+      Personal and professional work spanning infrastructure, tooling, and
+      whatever else seemed worth building.
+    </p>
 
-  <div class="card-grid" id="card-grid">
-    {% for item in collections.projects %}
-      {% include "partials/project-card.njk" %}
-    {% endfor %}
-  </div>
-  {% else %}
-  <p>No projects yet. Check back soon.</p>
-  {% endif %}
+    {% if collections.projects | length %}
+    <div class="filter-bar" role="group" aria-label="Filter projects by tag">
+      <button class="filter-btn active" type="button" data-tag="all" aria-pressed="true">All</button>
+      {% for tag in collections.projects | allTags %}
+      <button class="filter-btn" type="button" data-tag="{{ tag }}" aria-pressed="false">{{ tag }}</button>
+      {% endfor %}
+    </div>
+
+    <div class="card-grid" id="card-grid">
+      {% for item in collections.projects %}
+        {% include "partials/project-card.njk" %}
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty">No projects yet.</p>
+    {% endif %}
+  {% endcall %}
 </main>
-<script src="/assets/js/filter.js"></script>
+
+<script src="{{ '/assets/js/filter.js' | bust }}" defer></script>
