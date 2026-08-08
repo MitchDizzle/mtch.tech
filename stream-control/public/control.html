@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0503">
+<title>Stream control</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&display=swap">
+<link rel="stylesheet" href="/site-assets/css/panel.css">
+<link rel="stylesheet" href="/control.css">
+</head>
+<body>
+
+<header class="ctl-head">
+  <h1>Mitchtopia</h1>
+  <span class="ctl-status" id="status" data-state="off">connecting</span>
+</header>
+
+<!-- Token gate. Shown only if the server has a token configured. -->
+<section class="ctl-card" id="auth-card" hidden>
+  <h2>Token</h2>
+  <p class="ctl-muted">Stored on this phone, asked once.</p>
+  <div class="ctl-row">
+    <input type="password" id="token-input" placeholder="token" autocomplete="off">
+    <button class="ctl-btn ctl-btn--primary" id="token-save">Save</button>
+  </div>
+</section>
+
+<main id="panel" hidden>
+
+  <section class="ctl-card">
+    <h2>Camera frame</h2>
+
+    <div class="ctl-toggles">
+      <button class="ctl-toggle" data-toggle="visible">Frame</button>
+      <button class="ctl-toggle" data-toggle="shine">Shine</button>
+      <button class="ctl-toggle" data-toggle="corners">Corners</button>
+    </div>
+
+    <label class="ctl-slider">
+      <span>Shine cycle <b id="speed-out">7s</b></span>
+      <input type="range" id="speed" min="2" max="20" step="1" value="7">
+    </label>
+
+    <label class="ctl-slider">
+      <span>Border <b id="frame-out">4px</b></span>
+      <input type="range" id="frame" min="0" max="14" step="1" value="4">
+    </label>
+
+    <div class="ctl-tones" id="tones">
+      <button class="ctl-tone" data-tone="default" style="--t:#d2beaf">Default</button>
+      <button class="ctl-tone" data-tone="notice"  style="--t:#7eb2eb">Notice</button>
+      <button class="ctl-tone" data-tone="warning" style="--t:#e8c66a">Warning</button>
+      <button class="ctl-tone" data-tone="danger"  style="--t:#e8776a">Danger</button>
+      <button class="ctl-tone" data-tone="success" style="--t:#7ee2a8">Success</button>
+      <button class="ctl-tone" data-tone="quest"   style="--t:#ba9aec">Quest</button>
+    </div>
+  </section>
+
+  <section class="ctl-card">
+    <h2>Trigger</h2>
+    <div class="ctl-row">
+      <button class="ctl-btn" data-event="flash">Flash shine</button>
+    </div>
+    <div class="ctl-row">
+      <input type="text" id="toast-title" placeholder="Toast title">
+    </div>
+    <div class="ctl-row">
+      <input type="text" id="toast-body" placeholder="Toast body">
+      <button class="ctl-btn ctl-btn--primary" id="toast-send">Send</button>
+    </div>
+  </section>
+
+  <section class="ctl-card" id="obs-card" hidden>
+    <h2>OBS</h2>
+    <div class="ctl-scenes" id="scenes"></div>
+    <div class="ctl-row">
+      <button class="ctl-btn" data-obs="transition">Transition</button>
+    </div>
+    <p class="ctl-muted" id="obs-msg"></p>
+  </section>
+
+</main>
+
+<script src="/control.js"></script>
+</body>
+</html>

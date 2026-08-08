@@ -29,10 +29,11 @@ eleventyExcludeFromCollections: true
 
       <ul class="link-list" style="margin-bottom:1.5rem">
         {% set scenes = [
+          { name: "Camera frame", path: "/overlay/cam/", note: "Just the frame with a shine sweep. Fills the browser source - size it over your camera." },
           { name: "Starting soon", path: "/overlay/starting/", note: "Full-screen holding card. Add ?mins=10 for a countdown." },
           { name: "Be right back",  path: "/overlay/brb/",      note: "Full-screen holding card, warning tone." },
           { name: "Ending",         path: "/overlay/ending/",   note: "Full-screen sign-off card." },
-          { name: "Live",           path: "/overlay/live/",     note: "Transparent. Camera frame, lower third, clock." }
+          { name: "Live",           path: "/overlay/live/",     note: "Full 1920x1080 scene: camera frame, lower third, clock." }
         ] %}
         {% for s in scenes %}
         <li>
@@ -47,7 +48,42 @@ eleventyExcludeFromCollections: true
         {% endfor %}
       </ul>
 
-      <h2>OBS setup</h2>
+      <h2>Camera frame setup</h2>
+
+      <p>
+        This one is different from the others: it fills whatever size you give
+        the browser source, so you size it to your camera instead of matching
+        the full canvas.
+      </p>
+
+      <ol>
+        <li><strong>Sources &rarr; + &rarr; Browser</strong>, paste
+          <code>{{ site.url }}/overlay/cam/</code>.</li>
+        <li>Set Width and Height to your camera's on-screen size - for a
+          480&times;270 camera box, use 480 and 270. Matching them exactly
+          keeps the border an even thickness on all four sides.</li>
+        <li>Drag the browser source <strong>above</strong> your camera in the
+          source list, then position it over the camera. The centre is
+          transparent, so the camera shows through.</li>
+        <li>Tick <strong>Shutdown source when not visible</strong>.</li>
+      </ol>
+
+      <p>Frame options:</p>
+
+      <table>
+        <thead><tr><th>Parameter</th><th>Effect</th></tr></thead>
+        <tbody>
+          <tr><td><code>label</code></td><td>Caption text. <code>?label=</code> with nothing after it removes it</td></tr>
+          <tr><td><code>shine=off</code></td><td>Disable the sweep</td></tr>
+          <tr><td><code>speed</code></td><td>Seconds per sweep cycle, default 7</td></tr>
+          <tr><td><code>frame</code></td><td>Border thickness in px, default 4</td></tr>
+          <tr><td><code>corners=off</code></td><td>Hide the corner ticks</td></tr>
+        </tbody>
+      </table>
+
+      <pre><code>{{ site.url }}/overlay/cam/?label=Mitch&amp;speed=9</code></pre>
+
+      <h2>Full-screen scene setup</h2>
 
       <ol>
         <li>In the scene, <strong>Sources &rarr; + &rarr; Browser</strong>.</li>

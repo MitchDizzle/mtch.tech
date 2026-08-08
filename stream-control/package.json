@@ -1,0 +1,13 @@
+{
+  "name": "mtch-stream-control",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local control server for the Mitchtopia stream overlays. Runs on the streaming PC, serves the overlay to OBS and a control panel to your phone.",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

@@ -1,0 +1,207 @@
+/* ==========================================================================
+   Phone control panel
+
+   Built for one-handed use on a phone while something else has your
+   attention. Big targets, no confirmation dialogs, no small text.
+   ========================================================================== */
+
+:root {
+  --font-display: "Cinzel", Georgia, serif;
+  --bg: #0a0503;
+  --card: rgb(26 20 16 / 0.9);
+  --fg: #f0e9e2;
+  --muted: #b8aa9e;
+  --line: rgb(210 190 175 / 0.28);
+  --accent: rgb(235 160 96);
+  --ok: #7ee2a8;
+  --bad: #e8776a;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 0 12px 40px;
+  padding-bottom: max(40px, env(safe-area-inset-bottom));
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+.ctl-head {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 4px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+
+.ctl-head h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.ctl-status {
+  font-size: 13px;
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  color: var(--muted);
+}
+
+.ctl-status[data-state="on"] { color: var(--ok); border-color: rgb(126 226 168 / .5); }
+.ctl-status[data-state="off"] { color: var(--bad); border-color: rgb(232 119 106 / .5); }
+
+.ctl-card {
+  margin: 14px 0;
+  padding: 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+}
+
+.ctl-card h2 {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.ctl-muted { color: var(--muted); font-size: 14px; margin: 0 0 10px; }
+
+.ctl-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.ctl-row:last-child { margin-bottom: 0; }
+
+input[type="text"],
+input[type="password"] {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  padding: 0 12px;
+  background: rgb(255 255 255 / 0.05);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--fg);
+  font: inherit;
+}
+
+/* 48px minimum everywhere. Anything smaller is a miss waiting to happen when
+   you are not looking at the phone. */
+.ctl-btn {
+  min-height: 48px;
+  padding: 0 16px;
+  background: rgb(255 255 255 / 0.05);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--fg);
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ctl-btn:active { background: rgb(255 255 255 / 0.14); }
+.ctl-btn--primary { border-color: var(--accent); color: var(--accent); }
+
+.ctl-toggles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.ctl-toggle {
+  min-height: 56px;
+  background: rgb(255 255 255 / 0.04);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* On/off has to be readable in a glance, so it changes colour AND weight
+   rather than relying on a subtle border difference. */
+.ctl-toggle[aria-pressed="true"] {
+  color: var(--bg);
+  background: var(--accent);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.ctl-slider { display: block; margin-bottom: 16px; }
+.ctl-slider span { display: block; margin-bottom: 6px; font-size: 14px; color: var(--muted); }
+.ctl-slider b { color: var(--accent); font-weight: 500; }
+
+input[type="range"] {
+  width: 100%;
+  height: 48px;
+  accent-color: var(--accent);
+}
+
+.ctl-tones {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.ctl-tone {
+  min-height: 48px;
+  background: rgb(255 255 255 / 0.04);
+  border: 2px solid var(--t);
+  border-radius: 4px;
+  color: var(--t);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ctl-tone[aria-pressed="true"] {
+  background: var(--t);
+  color: var(--bg);
+  font-weight: 600;
+}
+
+.ctl-scenes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.ctl-scene {
+  min-height: 58px;
+  background: rgb(255 255 255 / 0.04);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--fg);
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ctl-scene[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.ctl-scene:active { background: rgb(255 255 255 / 0.14); }

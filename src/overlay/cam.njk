@@ -1,0 +1,30 @@
+---
+permalink: /overlay/cam/
+title: Camera frame
+bodyClass: overlay--cam
+stage: false
+---
+{# Camera frame only.
+
+   Fills the browser source, so in OBS you size and drag this over your
+   camera rather than matching coordinates in code. The centre is fully
+   transparent - put this source ABOVE the camera in the source list and the
+   camera shows through.
+
+   Configure by URL:
+     ?shine=off        disable the sweep
+     ?speed=9          seconds per sweep cycle (default 7)
+     ?frame=6          border thickness in px (default 4)
+     ?corners=off      hide the corner ticks
+#}
+
+<div class="cam" id="cam">
+  <div class="cam__ring" aria-hidden="true">
+    <span class="cam__sweep"></span>
+  </div>
+
+  <span class="cam__corner cam__corner--tl" aria-hidden="true"></span>
+  <span class="cam__corner cam__corner--tr" aria-hidden="true"></span>
+  <span class="cam__corner cam__corner--bl" aria-hidden="true"></span>
+  <span class="cam__corner cam__corner--br" aria-hidden="true"></span>
+</div>

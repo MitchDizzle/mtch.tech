@@ -37,11 +37,35 @@
      resampled. In a browser window the same stage shrinks to fit, which is
      what makes previewing on a laptop meaningful. */
   function fitStage() {
+    /* Scenes without a stage (the camera frame) fill the browser source and
+       need no scaling - they are sized in OBS, not here. */
+    if (!document.getElementById("stage")) return;
     const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
     document.documentElement.style.setProperty("--overlay-scale", scale);
   }
   fitStage();
   window.addEventListener("resize", fitStage);
+
+  /* ------------------------------------------------------- camera frame */
+
+  function applyCam() {
+    const cam = document.getElementById("cam");
+    if (!cam) return;
+    const body = document.body;
+
+    if (p("shine") === "off") body.setAttribute("data-shine", "off");
+    if (p("corners") === "off") body.setAttribute("data-corners", "off");
+
+    const speed = parseFloat(p("speed"));
+    if (!isNaN(speed) && speed > 0) {
+      body.style.setProperty("--cam-shine", `${speed}s`);
+    }
+
+    const frame = parseFloat(p("frame"));
+    if (!isNaN(frame) && frame >= 0) {
+      body.style.setProperty("--cam-frame", `${frame}px`);
+    }
+  }
 
   /* ------------------------------------------------------------------- text */
 
@@ -165,6 +189,7 @@
   }
 
   applyText();
+  applyCam();
   startClock();
   startCountdown();
 

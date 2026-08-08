@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Camera overlay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&display=swap">
+
+<!-- Reuses the site's stylesheets rather than copying them, so a theme change
+     shows up here without a second edit. -->
+<link rel="stylesheet" href="/site-assets/css/panel.css">
+<link rel="stylesheet" href="/site-assets/css/overlay.css">
+</head>
+<body class="overlay-body overlay--cam">
+
+<div class="cam" id="cam">
+  <div class="cam__ring" aria-hidden="true"><span class="cam__sweep"></span></div>
+  <span class="cam__corner cam__corner--tl"></span>
+  <span class="cam__corner cam__corner--tr"></span>
+  <span class="cam__corner cam__corner--bl"></span>
+  <span class="cam__corner cam__corner--br"></span>
+</div>
+
+<div class="panel-toasts" id="panel-toasts"></div>
+
+<script src="/site-assets/js/panel.js"></script>
+<script>
+/* ==========================================================================
+   Overlay client
+
+   Holds a WebSocket to the local server and renders whatever state arrives.
+   Reconnects on its own - OBS may load this before the server is up, and the
+   server may restart while OBS keeps the page open.
+   ========================================================================== */
+(function () {
+  "use strict";
+
+  var cam = document.getElementById("cam");
+  var body = document.body;
+  var ws = null;
+  var retry = 1000;
+
+  function apply(state) {
+    var c = state.cam || {};
+
+    cam.style.display = c.visible === false ? "none" : "";
+    body.setAttribute("data-shine", c.shine === false ? "off" : "on");
+    body.setAttribute("data-corners", c.corners === false ? "off" : "on");
+
+    if (typeof c.speed === "number") body.style.setProperty("--cam-shine", c.speed + "s");
+    if (typeof c.frame === "number") body.style.setProperty("--cam-frame", c.frame + "px");
+
+    /* Tone retints the frame by borrowing the panel palette. */
+    var tones = ["notice", "warning", "danger", "success", "quest"];
+    tones.forEach(function (t) { body.classList.remove("panel--" + t); });
+    if (c.tone && tones.indexOf(c.tone) !== -1) body.classList.add("panel--" + c.tone);
+  }
+
+  function onEvent(name, payload) {
+    if (name === "toast" && window.MitchPanel) {
+      window.MitchPanel.toast(payload.title || "", payload.body || "", {
+        banner: payload.banner || "Notice",
+        tone: payload.tone || "notice",
+        dwell: payload.dwell || 6000
+      });
+      return;
+    }
+
+    if (name === "flash") {
+      /* Restart the sweep from the top rather than waiting for the cycle. */
+      var sweep = document.querySelector(".cam__sweep");
+      if (!sweep) return;
+      sweep.style.animation = "none";
+      void sweep.offsetWidth;
+      sweep.style.animation = "";
+    }
+  }
+
+  function connect() {
+    ws = new WebSocket("ws://" + location.host + "/?role=overlay");
+
+    ws.onopen = function () { retry = 1000; };
+
+    ws.onmessage = function (e) {
+      var msg;
+      try { msg = JSON.parse(e.data); } catch (err) { return; }
+      if (msg.type === "state") apply(msg.state);
+      else if (msg.type === "event") onEvent(msg.name, msg.payload);
+      else if (msg.type === "auth-required") {
+        /* The overlay is served by the same machine as the server, so it
+           authenticates with the token embedded in its own URL if present. */
+        var t = new URLSearchParams(location.search).get("token");
+        ws.send(JSON.stringify({ type: "auth", token: t || "" }));
+      }
+    };
+
+    /* Back off gradually so a server that is down does not get hammered,
+       but stay responsive enough that a restart reconnects quickly. */
+    ws.onclose = function () {
+      setTimeout(connect, retry);
+      retry = Math.min(retry * 1.5, 10000);
+    };
+
+    ws.onerror = function () { try { ws.close(); } catch (e) {} };
+  }
+
+  connect();
+})();
+</script>
+</body>
+</html>

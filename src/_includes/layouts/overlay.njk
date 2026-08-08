@@ -17,12 +17,20 @@
     <link rel="stylesheet" href="{{ '/assets/css/overlay.css' | bust }}">
   </head>
   <body class="overlay-body {{ bodyClass }}">
-    {# Everything lives inside a fixed 1920x1080 stage. OBS renders it 1:1;
-       a browser preview scales it down to fit. Designing at broadcast
-       resolution means what you see in the editor is what goes out. #}
+    {# Full-frame scenes sit inside a fixed 1920x1080 stage: OBS renders it
+       1:1 and a browser preview scales it to fit.
+
+       Scenes that set `stage: false` fill the browser source instead. That
+       is right for a single element like the camera frame - you size and
+       place the source over your camera in OBS rather than positioning it
+       by coordinates here. #}
+    {% if stage === false %}
+      {{ content | safe }}
+    {% else %}
     <div class="stage" id="stage">
       {{ content | safe }}
     </div>
+    {% endif %}
 
     <script src="{{ '/assets/js/panel.js' | bust }}" defer></script>
     <script src="{{ '/assets/js/overlay.js' | bust }}" defer></script>

@@ -18,6 +18,9 @@ _site/
 # still has it open. Harmless, and they vanish once that process exits.
 .fuse_hidden*
 
+# Holds the OBS websocket password and the control panel token.
+stream-control/config.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
