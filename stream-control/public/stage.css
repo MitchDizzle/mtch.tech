@@ -1,0 +1,83 @@
+/* ==========================================================================
+   Full-scene stage
+
+   The overlay is now one 1920x1080 browser source covering the whole canvas
+   rather than a small source sized to the camera. Element positions come
+   from the server in stage coordinates and are applied as inline styles.
+
+   Add the SAME source to every scene in OBS rather than creating one per
+   scene. OBS shares a single instance, so the page never reloads on a scene
+   cut - which is what lets a transition animation survive the cut.
+   ========================================================================== */
+
+.overlay--stage .stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1920px;
+  height: 1080px;
+  transform: translate(-50%, -50%) scale(var(--overlay-scale, 1));
+  transform-origin: center center;
+}
+
+/* The camera frame is no longer inset:0 - it is positioned and sized from
+   state, so it can sit anywhere on the canvas.
+
+   content-box on purpose, overriding the global border-box. The stored width
+   and height describe the transparent HOLE, with the border drawn outside it.
+
+   With border-box a 480x270 box and a 4px frame left a 472x262 hole, which is
+   not 16:9 - so a 16:9 camera fitted to it would letterbox. Sizing the hole
+   directly means the camera transform is exactly the stored w and h. */
+.overlay--stage .cam {
+  position: absolute;
+  inset: auto;
+  box-sizing: content-box;
+}
+
+.overlay--stage .cam[hidden] { display: none; }
+
+/* --------------------------------------------------------------------------
+   Persistent info panel
+   -------------------------------------------------------------------------- */
+
+.info {
+  position: absolute;
+}
+
+.info[hidden] { display: none; }
+
+.info .panel {
+  --panel-max-width: none;
+  width: 100%;
+}
+
+.info .panel__banner { font-size: 15px; letter-spacing: 0.2em; }
+.info .panel__title { font-size: 27px; }
+.info .panel__subtitle { font-size: 16px; }
+.info .panel__body { padding: 14px 22px; font-size: 19px; }
+
+/* Collapse empty regions rather than leaving dead padding behind. An empty
+   subtitle would otherwise reserve a line and push the panel out of shape. */
+.info .panel__subtitle:empty,
+.info .panel__title:empty { display: none; }
+.info .panel__header:has(.panel__title:empty):has(.panel__subtitle:empty) { display: none; }
+.info .panel__body:has(#info-body:empty) { display: none; }
+
+/* --------------------------------------------------------------------------
+   Toast rail
+   -------------------------------------------------------------------------- */
+
+/* Position comes from state, so the rail can sit anywhere on the canvas. */
+.overlay--stage .panel-toasts {
+  position: absolute;
+  top: 48px;
+  left: 1412px;
+  right: auto;
+  padding: 0;
+}
+
+.overlay--stage .panel--toast { --panel-max-width: var(--toast-width, 460px); }
+.overlay--stage .panel--toast .panel__title { font-size: 23px; }
+.overlay--stage .panel--toast .panel__body { font-size: 18px; padding: 4px 20px 16px; }
+.overlay--stage .panel--toast .panel__banner { font-size: 14px; letter-spacing: 0.18em; }

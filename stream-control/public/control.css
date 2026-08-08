@@ -61,6 +61,77 @@ body {
 .ctl-status[data-state="on"] { color: var(--ok); border-color: rgb(126 226 168 / .5); }
 .ctl-status[data-state="off"] { color: var(--bad); border-color: rgb(232 119 106 / .5); }
 
+/* --------------------------------------------------------------------------
+   Tabs
+
+   Triggers is what you press mid-stream; Settings is what you set beforehand.
+   Keeping them apart means the live controls never scroll off under a thumb.
+   -------------------------------------------------------------------------- */
+
+.ctl-tabs {
+  position: sticky;
+  top: 57px;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 10px 0;
+  background: var(--bg);
+}
+
+.ctl-tab {
+  min-height: 46px;
+  background: rgb(255 255 255 / 0.04);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ctl-tab[aria-selected="true"] {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: rgb(255 255 255 / 0.07);
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Position controls
+   -------------------------------------------------------------------------- */
+
+.ctl-corners {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+/* Nine-point placement grid. Laid out as a 3x3 so the button's position on
+   screen matches where the element lands - far quicker to hit than reading
+   nine labels. */
+.ctl-pos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.ctl-pos .ctl-btn {
+  min-height: 48px;
+  padding: 0;
+  font-size: 19px;
+  line-height: 1;
+}
+
+/* The centre is a different kind of action from the eight edges, so it reads
+   differently rather than hiding among them. */
+.ctl-pos .ctl-btn[data-corner="mc"] {
+  color: var(--accent);
+  font-size: 13px;
+}
+
 .ctl-card {
   margin: 14px 0;
   padding: 16px;
@@ -146,14 +217,105 @@ input[type="password"] {
   font-weight: 600;
 }
 
-.ctl-slider { display: block; margin-bottom: 16px; }
-.ctl-slider span { display: block; margin-bottom: 6px; font-size: 14px; color: var(--muted); }
-.ctl-slider b { color: var(--accent); font-weight: 500; }
+/* --------------------------------------------------------------------------
+   Stepper rows
 
-input[type="range"] {
-  width: 100%;
-  height: 48px;
-  accent-color: var(--accent);
+   These replaced range sliders entirely. A slider in a scrolling page eats
+   vertical drags, so going to scroll changes a value instead - live, on
+   stream. Buttons cannot be grabbed by a scroll gesture.
+   -------------------------------------------------------------------------- */
+
+.ctl-stepper {
+  display: grid;
+  grid-template-columns: 1fr 52px 76px 52px;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+/* When an inherit button is present the row gains a fifth column. */
+.ctl-stepper:has(.ctl-stepper__inherit:not([hidden])) {
+  grid-template-columns: 1fr 52px 76px 52px 46px;
+}
+
+.ctl-stepper__label {
+  font-size: 15px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* A dot rather than a word - the row is already tight and the inherit button
+   next to it explains what the marker means. */
+.ctl-override {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex: 0 0 auto;
+}
+
+.ctl-stepper__btn {
+  min-height: 46px;
+  padding: 0;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.ctl-stepper__val {
+  min-height: 46px;
+  padding: 0;
+  background: rgb(255 255 255 / 0.05);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--accent);
+  font: inherit;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ctl-stepper__inherit {
+  min-height: 46px;
+  padding: 0;
+  font-size: 17px;
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* --------------------------------------------------------------------------
+   Profiles
+   -------------------------------------------------------------------------- */
+
+.ctl-profiles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.ctl-editing {
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: rgb(235 160 96 / 0.08);
+  font-size: 14px;
+  color: var(--fg);
+}
+
+/* Editing Base touches everything, so it gets a louder treatment than
+   editing a profile that only overrides a few keys. */
+.ctl-editing[data-base="true"] {
+  border-color: var(--bad);
+  background: rgb(232 119 106 / 0.08);
+}
+
+.ctl-btn--danger {
+  border-color: var(--bad);
+  color: var(--bad);
 }
 
 .ctl-tones {
@@ -178,6 +340,49 @@ input[type="range"] {
   background: var(--t);
   color: var(--bg);
   font-weight: 600;
+}
+
+/* A custom accent overrides the tone, so the preset row is dimmed to show it
+   is not what is currently on screen. */
+.ctl-tones[data-muted="true"] { opacity: 0.4; }
+
+/* --------------------------------------------------------------------------
+   Custom accent
+   -------------------------------------------------------------------------- */
+
+.ctl-accent {
+  display: grid;
+  grid-template-columns: 1fr 64px auto;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.ctl-accent__label {
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.ctl-accent[data-active="true"] .ctl-accent__label {
+  color: var(--accent);
+}
+
+/* The native picker is the one control worth keeping - every phone OS gives
+   a good full-screen colour UI for it, and nothing hand-rolled would beat
+   that on a small screen. */
+.ctl-accent input[type="color"] {
+  width: 64px;
+  height: 48px;
+  padding: 2px;
+  background: rgb(255 255 255 / 0.05);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.ctl-accent .ctl-btn {
+  padding: 0 12px;
+  font-size: 14px;
 }
 
 .ctl-scenes {

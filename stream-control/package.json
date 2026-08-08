@@ -4,8 +4,10 @@
   "private": true,
   "description": "Local control server for the Mitchtopia stream overlays. Runs on the streaming PC, serves the overlay to OBS and a control panel to your phone.",
   "type": "module",
+  "_comment_scripts": "Use `npm run dev` while building - Node's built-in --watch restarts the server whenever a watched file changes, so there is no Ctrl+C and re-run cycle. Use `npm start` when actually streaming: a stray file save should not drop the overlay's websocket mid-broadcast.",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "node --watch --watch-path=./server.js --watch-path=./lib --watch-path=./config.json server.js"
   },
   "dependencies": {
     "ws": "^8.18.0"

@@ -258,6 +258,26 @@ html, body {
   --cam-shine: 7s;
 }
 
+/* Tone classes set the --panel-* variables, but the camera frame reads the
+   --ov-* ones - so without this mapping a tone did nothing to the frame.
+
+   Scoped to .cam, not to the body. On the body these variables cascaded into
+   the info panel and the toasts as well, so choosing a camera colour quietly
+   retinted every other element. Each section owns its own tone.
+
+   Listed per tone rather than applied to .cam unconditionally, so the untoned
+   default keeps its own warm border instead of inheriting the panel's cooler
+   one. */
+.cam.panel--notice,
+.cam.panel--warning,
+.cam.panel--danger,
+.cam.panel--success,
+.cam.panel--quest {
+  --ov-accent: var(--panel-accent);
+  --ov-border: var(--panel-border-color);
+  --cam-sweep-color: var(--panel-accent);
+}
+
 .cam {
   position: absolute;
   inset: 0;
@@ -297,11 +317,14 @@ html, body {
   left: 0;
   width: 45%;
   height: 220%;
+  /* Falls back to warm white. A custom accent tints it via
+     --cam-sweep-color, but only partway - a fully saturated sweep reads as a
+     coloured bar sliding past rather than as light on metal. */
   background: linear-gradient(
     90deg,
     transparent,
     rgb(255 236 208 / 0.15) 30%,
-    rgb(255 244 224 / 0.95) 50%,
+    var(--cam-sweep-color, rgb(255 244 224 / 0.95)) 50%,
     rgb(255 236 208 / 0.15) 70%,
     transparent
   );
@@ -336,6 +359,68 @@ html, body {
 .cam__corner--br { bottom: -1px; right: -1px; border-bottom-width: 3px; border-right-width: 3px; }
 
 .overlay--cam[data-corners="off"] .cam__corner { display: none; }
+
+/* A "notched corners" variant was tried here and removed. Masking .cam to cut
+   the corners also clips its descendants, so the corner brackets vanished
+   along with the border. Doing it properly needs the visible border moved
+   onto its own element, which would disturb the content-box geometry the
+   camera position depends on. Not worth it for a decoration. */
+
+/* --- Inner hairline ------------------------------------------------------
+   A second, lighter line just outside the main border. The cheapest way to
+   make a single-stroke rectangle read as a deliberate frame. */
+.cam__inner {
+  position: absolute;
+  inset: calc((var(--cam-frame) + 5px) * -1);
+  border: 1px solid var(--ov-border);
+  border-radius: calc(var(--cam-radius) + 3px);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.overlay--cam:not([data-inner="on"]) .cam__inner { display: none; }
+
+/* --- Edge studs ----------------------------------------------------------
+   A small diamond centred on each edge. Breaks up long straight runs on a
+   wide frame without adding clutter at the corners. */
+.cam__stud {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  background: var(--ov-accent);
+  rotate: 45deg;
+  pointer-events: none;
+}
+
+.cam__stud--t { top: calc((var(--cam-frame) + 4.5px) * -1); left: 50%; margin-left: -4.5px; }
+.cam__stud--b { bottom: calc((var(--cam-frame) + 4.5px) * -1); left: 50%; margin-left: -4.5px; }
+.cam__stud--l { left: calc((var(--cam-frame) + 4.5px) * -1); top: 50%; margin-top: -4.5px; }
+.cam__stud--r { right: calc((var(--cam-frame) + 4.5px) * -1); top: 50%; margin-top: -4.5px; }
+
+.overlay--cam:not([data-studs="on"]) .cam__stud { display: none; }
+
+/* --- Edge ticks ----------------------------------------------------------
+   A row of small marks along the top and bottom, like a measurement scale.
+   Drawn with a repeating gradient rather than elements, so the count adapts
+   to the frame width for free and it stays one paint. */
+.cam__ticks {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 5px;
+  pointer-events: none;
+  opacity: 0.6;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--ov-border) 0 2px,
+    transparent 2px 12px
+  );
+}
+
+.cam__ticks--top { top: calc((var(--cam-frame) + 11px) * -1); }
+.cam__ticks--bottom { bottom: calc((var(--cam-frame) + 11px) * -1); }
+
+.overlay--cam:not([data-ticks="on"]) .cam__ticks { display: none; }
 
 /* --------------------------------------------------------------------------
    Overlay index - the only page meant to be read in a browser, not OBS

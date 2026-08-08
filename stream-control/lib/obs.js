@@ -93,6 +93,7 @@ export class ObsClient {
     if (msg.op === OP.IDENTIFIED) {
       this.ready = true;
       this.log("[obs] connected");
+      if (this.onReady) this.onReady();
       return;
     }
 
@@ -132,6 +133,79 @@ export class ObsClient {
   setScene(sceneName) { return this.call("SetCurrentProgramScene", { sceneName }); }
   getScenes() { return this.call("GetSceneList"); }
   triggerTransition() { return this.call("TriggerStudioModeTransition"); }
+  currentScene() { return this.call("GetCurrentProgramScene"); }
+
+  /* Place a source at an exact rectangle on the canvas.
+
+     Bounds rather than scale: with OBS_BOUNDS_SCALE_INNER the source is fitted
+     into the box preserving its aspect ratio, so it works whether the webcam
+     reports 1080p, 720p or something odd. Setting scaleX/scaleY instead would
+     need us to know the source's native size and redo the maths every time it
+     changed.
+
+     Alignment 5 is OBS_ALIGN_LEFT (1) | OBS_ALIGN_TOP (4), which makes
+     positionX/Y the top-left corner rather than the centre. */
+  /* Find a source in a scene, including inside groups.
+
+     obs-websocket does not treat a group as part of its scene: children of a
+     group are addressed with the GROUP name where a scene name would normally
+     go. GetSceneItemId against the scene therefore returns "not found" for a
+     source you can plainly see in the source list, because it is nested.
+
+     Returns the container to address it through, plus whether that container
+     is a group - which matters, because a grouped item's coordinates are
+     relative to the group, not to the canvas. */
+  async findItem(sceneName, sourceName) {
+    const scene = await this.call("GetSceneItemList", { sceneName });
+
+    const direct = scene.sceneItems.find((i) => i.sourceName === sourceName);
+    if (direct) {
+      return { container: sceneName, sceneItemId: direct.sceneItemId, inGroup: false };
+    }
+
+    for (const item of scene.sceneItems) {
+      if (!item.isGroup) continue;
+      try {
+        const group = await this.call("GetGroupSceneItemList", { sceneName: item.sourceName });
+        const child = group.sceneItems.find((i) => i.sourceName === sourceName);
+        if (child) {
+          return {
+            container: item.sourceName,
+            sceneItemId: child.sceneItemId,
+            inGroup: true,
+            groupName: item.sourceName
+          };
+        }
+      } catch { /* a group that cannot be listed is not worth failing over */ }
+    }
+
+    throw new Error(`no source named "${sourceName}" in scene "${sceneName}"`);
+  }
+
+  async setItemRect(sceneName, sourceName, rect) {
+    const found = await this.findItem(sceneName, sourceName);
+    if (found.inGroup) {
+      const err = new Error(
+        `"${sourceName}" is inside the group "${found.groupName}"`
+      );
+      err.inGroup = true;
+      throw err;
+    }
+
+    return this.call("SetSceneItemTransform", {
+      sceneName,
+      sceneItemId: found.sceneItemId,
+      sceneItemTransform: {
+        positionX: rect.x,
+        positionY: rect.y,
+        alignment: 5,
+        boundsType: "OBS_BOUNDS_SCALE_INNER",
+        boundsAlignment: 0,
+        boundsWidth: Math.max(1, rect.w),
+        boundsHeight: Math.max(1, rect.h)
+      }
+    });
+  }
 
   setSourceVisible(sceneName, sourceName, enabled) {
     return this.call("GetSceneItemId", { sceneName, sourceName })

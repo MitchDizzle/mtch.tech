@@ -3,7 +3,8 @@
 
   "port": 8420,
 
-  "_comment_token": "Shared secret the phone must present. Anything on your LAN can reach this server - a smart TV, a games console, a guest - so a token is worth having even on a trusted network. Set to null to disable.",
+  "_comment_token": "Shared secret the phone must present. Anything on your LAN can reach this server - a smart TV, a games console, a guest - so a token is worth having even on a trusted network.",
+  "_comment_token_2": "To disable it, use a bare null with NO quotes: \"token\": null. The string \"null\" is a perfectly valid token, and the server will sit there asking you to type it.",
   "token": "change-me",
 
   "_comment_lan": "Reject anything that is not a private/loopback address. This is the real protection: never port-forward this server, and it is unreachable from the internet.",
@@ -13,9 +14,15 @@
     "_comment": "obs-websocket is built into OBS 28+. Enable it under Tools -> WebSocket Server Settings, then copy the password here. It stays on this machine - the phone never sees it.",
     "enabled": true,
     "url": "ws://127.0.0.1:4455",
-    "password": "",
+    "password": "0DI2ye8rEupjY8WG",
 
     "_comment_scenes": "Scenes offered as buttons on the control panel. Names must match OBS exactly.",
-    "scenes": ["Starting", "Live", "BRB", "Ending"]
+    "scenes": ["Starting", "Live", "BRB", "Ending"],
+
+    "_comment_camera": "Name of your camera source in OBS, exactly as it appears in the source list. When set, moving or resizing the frame from the phone moves the camera to match, so they stay in register. Leave empty to manage the camera yourself (e.g. with an OBS Group).",
+    "cameraSource": "",
+
+    "_comment_enforce": "Poll every 5s and correct the camera if it has drifted from the frame - useful once your layout is settled. Leave false while arranging a scene, or the server will keep yanking the camera back while you try to move it.",
+    "enforceCamera": false
   }
 }
