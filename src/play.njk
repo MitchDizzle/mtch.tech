@@ -1,30 +1,103 @@
 ---
 layout: layouts/shell.njk
 permalink: /play/
-title: Loading
+title: Mitchtopia
 description: Mitchtopia - interactive mode.
 ---
 {% from "components/panel.njk" import panel %}
 
-{# The game route. Options moved to the landing page as an in-place panel
-   swap, since they are a confirmation step rather than a destination.
+{# Greybox build. Coloured rectangles stand in for every sprite; the renderer
+   already draws through the same Animator that will draw real frames, so
+   swapping art in changes no game code.
 
-   This page is where asset loading and the canvas will live. For now it is a
-   placeholder so the flow terminates somewhere honest instead of 404ing. #}
+   See docs/decisions/0003-genre-pivot-roguelite.md. #}
 
-<main class="landing">
-  {% call panel({ variant: "prompt", title: "Not built yet", labelledBy: "play-title" }) %}
-    <p class="muted">
-      Interactive mode is still being made. The street, the storefronts, and
-      the first minigame come before anything is playable here.
+<main class="landing game-page">
+  <div class="game-shell">
+    <div class="game-stage" id="game-stage">
+      <canvas id="game-canvas" width="480" height="270"
+              aria-label="Game view. Keyboard: WASD or arrows to move, Space to attack, Shift to dash, E to interact."></canvas>
+    </div>
+
+    {# Touch controls. Hidden on devices with a fine pointer - a mouse user
+       does not need a virtual stick taking up the screen. #}
+    <div class="touch-controls" id="touch-controls" aria-hidden="true">
+      <div class="touch-stick" data-stick>
+        <span class="touch-stick__knob" data-stick-knob></span>
+      </div>
+      <div class="touch-buttons">
+        <button class="touch-btn" data-action="dash" type="button">Dash</button>
+        <button class="touch-btn touch-btn--main" data-action="attack" type="button">Hit</button>
+        <button class="touch-btn" data-action="interact" type="button">E</button>
+      </div>
+    </div>
+
+    <div class="game-classes" role="group" aria-label="Choose a class">
+      <button class="btn btn--sm is-active" type="button" data-class="knight">Knight</button>
+      <button class="btn btn--sm" type="button" data-class="ranger">Ranger</button>
+      <button class="btn btn--sm" type="button" data-class="mage">Mage</button>
+    </div>
+
+    <p class="muted small game-help">
+      Move with WASD or the arrows. Space attacks, Shift dashes with brief
+      invulnerability, E moves through a door once a room is cleared.
+      Switching class restarts you at full health.
     </p>
-    <p class="muted small">
-      Your options were saved - they will be waiting when there is something
-      to load.
-    </p>
+  </div>
+
+  {% call panel({
+    id: "game-over",
+    variant: "dialog",
+    banner: "Defeated",
+    tone: "danger",
+    title: "You died",
+    labelledBy: "over-title",
+    autoOpen: false,
+    hidden: true,
+    overlay: true
+  }) %}
+    <p class="muted" id="game-over-detail">The run ends here.</p>
     <div class="panel__actions">
-      <a class="btn" href="/" data-panel-exit>Back to Mitchtopia</a>
-      <a class="btn" href="/site/" data-panel-exit>Simplified site</a>
+      <button class="btn" type="button" id="game-retry">Back to staging</button>
+      <a class="btn" href="/site/" data-panel-exit>Leave</a>
     </div>
   {% endcall %}
 </main>
+
+<script type="module">
+  import { bootGame } from "{{ '/assets/js/game/game.js' | bust }}";
+
+  const canvas = document.getElementById("game-canvas");
+  const touch = document.getElementById("touch-controls");
+  const overlay = document.getElementById("game-over");
+  const retry = document.getElementById("game-retry");
+
+  const game = bootGame(canvas, touch, {
+    onStateChange(state) {
+      if (state === "dead") {
+        document.getElementById("game-over-detail").textContent =
+          `You made it to room ${Math.max(1, game.roomIndex + 1)}.`;
+        window.MitchPanel.open(overlay);
+        overlay.parentElement.hidden = false;
+        document.documentElement.classList.add("has-overlay");
+      }
+    }
+  });
+
+  game.start("knight");
+
+  retry.addEventListener("click", () => {
+    overlay.parentElement.hidden = true;
+    document.documentElement.classList.remove("has-overlay");
+    game.setClass(game.player.def.id);
+    game.enterStaging();
+  });
+
+  document.querySelectorAll("[data-class]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("[data-class]").forEach((b) => b.classList.remove("is-active"));
+      btn.classList.add("is-active");
+      game.setClass(btn.getAttribute("data-class"));
+    });
+  });
+</script>

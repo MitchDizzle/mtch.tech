@@ -1,0 +1,252 @@
+/* ==========================================================================
+   OBS overlays
+
+   Designed at 1920x1080. OBS renders a Browser Source at exactly the size you
+   configure, so at 1920x1080 the stage is 1:1 and nothing is resampled. A
+   browser preview scales the same stage down to fit the window.
+
+   The body background MUST stay transparent. OBS composites the Browser
+   Source over the sources beneath it, and any background colour here becomes
+   an opaque rectangle covering your gameplay or camera.
+   ========================================================================== */
+
+:root {
+  --font-display: "Cinzel", Georgia, serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Matches the site's warm trial palette. */
+  --ov-fg: #f0e9e2;
+  --ov-muted: #b8aa9e;
+  --ov-accent: rgb(235 160 96);
+  --ov-border: rgb(210 190 175 / 0.55);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;          /* never a scrollbar in a broadcast source */
+  background: transparent;   /* see note above - do not set a colour */
+  color: var(--ov-fg);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  cursor: none;              /* OBS shows the cursor if it ever enters */
+}
+
+.stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1920px;
+  height: 1080px;
+  /* --overlay-scale is set by overlay.js: 1 inside OBS, smaller in a
+     browser preview window. */
+  transform: translate(-50%, -50%) scale(var(--overlay-scale, 1));
+  transform-origin: center center;
+}
+
+/* --------------------------------------------------------------------------
+   Backdrop
+
+   Holding cards fill the frame; the live scene must stay transparent so the
+   camera and gameplay show through. Opt in per scene with a body class.
+   -------------------------------------------------------------------------- */
+
+.ov-backdrop { display: none; }
+
+.overlay--filled .ov-backdrop {
+  display: block;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #0a0503;
+}
+
+.ov-blob {
+  position: absolute;
+  width: 1400px;
+  height: 1400px;
+  border-radius: 50%;
+  opacity: 0.55;
+}
+
+/* No filter: blur() - a soft radial gradient is already soft, and blurring
+   something this large tanks the frame rate. OBS captures at your stream
+   frame rate, so a slow overlay costs dropped frames on the broadcast. */
+.ov-blob--1 { background: radial-gradient(circle closest-side, rgb(112 48 14 / .85), transparent); top: -420px; left: -300px; }
+.ov-blob--2 { background: radial-gradient(circle closest-side, rgb(138 66 20 / .8), transparent); bottom: -480px; right: -320px; }
+.ov-blob--3 { background: radial-gradient(circle closest-side, rgb(86 26 22 / .7), transparent); top: 260px; right: -440px; }
+
+@keyframes ov-drift-a { 0%,100% { transform: translate3d(0,0,0); opacity: .5 } 50% { transform: translate3d(120px,80px,0); opacity: .66 } }
+@keyframes ov-drift-b { 0%,100% { transform: translate3d(0,0,0); opacity: .42 } 50% { transform: translate3d(-140px,-90px,0); opacity: .6 } }
+@keyframes ov-drift-c { 0%,100% { transform: translate3d(0,0,0); opacity: .3 } 50% { transform: translate3d(-80px,120px,0); opacity: .48 } }
+
+/* Long cycles. This is ambience behind a holding card, not an effect.
+
+   Deliberately NOT gated on prefers-reduced-motion. These are broadcast
+   graphics, not interface - the viewer is watching video, and OBS does not
+   report a motion preference anyway. */
+.ov-blob--1 { animation: ov-drift-a 34s ease-in-out infinite; }
+.ov-blob--2 { animation: ov-drift-b 41s ease-in-out infinite; }
+.ov-blob--3 { animation: ov-drift-c 29s ease-in-out infinite; }
+
+/* --------------------------------------------------------------------------
+   Holding cards - starting soon, be right back, ending
+   -------------------------------------------------------------------------- */
+
+.ov-hold {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+  padding: 80px;
+}
+
+.ov-wordmark {
+  font-family: var(--font-display);
+  font-size: 96px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin: 0;
+  text-shadow: 0 0 48px rgb(235 152 86 / 0.4);
+}
+
+@keyframes ov-float { 0%,100% { transform: translate3d(0,0,0) } 50% { transform: translate3d(0,-10px,0) } }
+.ov-wordmark-wrap { text-align: center; animation: ov-float 7s ease-in-out infinite; }
+
+.ov-kicker {
+  margin: 8px 0 0;
+  font-size: 22px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--ov-muted);
+}
+
+.ov-hold .panel { --panel-max-width: 860px; }
+.ov-hold .panel__title { font-size: 34px; }
+.ov-hold .panel__subtitle { font-size: 18px; }
+.ov-hold .panel__banner { font-size: 16px; letter-spacing: 0.2em; }
+.ov-hold .panel__body { padding: 32px 40px; }
+
+.ov-lead {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.5;
+  color: var(--ov-muted);
+}
+
+.ov-timer {
+  margin: 24px 0 0;
+  font-family: var(--font-display);
+  font-size: 88px;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--ov-accent);
+}
+
+.ov-timer[hidden] { display: none; }
+
+/* --------------------------------------------------------------------------
+   Live scene
+   -------------------------------------------------------------------------- */
+
+/* Camera frame. Border only - the centre stays fully transparent so the OBS
+   camera source placed BELOW this overlay shows through the hole. Adding a
+   background here would hide your camera. */
+.ov-cam {
+  position: absolute;
+  border: 3px solid var(--ov-border);
+  border-radius: 4px;
+  /* Inner glow only, never a fill. */
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.5), 0 0 24px rgb(0 0 0 / 0.45);
+}
+
+.ov-cam__label {
+  position: absolute;
+  left: -3px;
+  bottom: -3px;
+  padding: 6px 16px;
+  background: rgb(26 20 16 / 0.92);
+  border: 3px solid var(--ov-border);
+  border-radius: 0 4px 0 4px;
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+/* Lower third. */
+.ov-lower {
+  position: absolute;
+  left: 48px;
+  bottom: 48px;
+  min-width: 520px;
+  max-width: 900px;
+}
+
+.ov-lower .panel__title { font-size: 26px; }
+.ov-lower .panel__subtitle { font-size: 16px; }
+.ov-lower .panel__body { padding: 16px 22px; }
+.ov-lower .panel__banner { font-size: 13px; }
+
+/* Corner status strip - clock and socials. */
+.ov-strip {
+  position: absolute;
+  top: 40px;
+  right: 48px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 12px 22px;
+  background: rgb(26 20 16 / 0.86);
+  border: 2px solid var(--ov-border);
+  border-radius: 4px;
+  font-size: 20px;
+}
+
+.ov-strip__clock {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  color: var(--ov-accent);
+}
+
+.ov-strip__sep {
+  width: 1px;
+  height: 22px;
+  background: var(--ov-border);
+}
+
+.ov-strip__handle { color: var(--ov-muted); letter-spacing: 0.06em; }
+
+/* Toast rail. Reuses the site's notification panel, so alerts look like the
+   rest of the theme without a second component. */
+.overlay-body .panel-toasts {
+  position: absolute;
+  top: 140px;
+  right: 48px;
+  padding: 0;
+}
+
+.overlay-body .panel--toast {
+  --panel-max-width: 460px;
+}
+
+.overlay-body .panel--toast .panel__title { font-size: 22px; }
+.overlay-body .panel--toast .panel__body { font-size: 17px; }
+.overlay-body .panel--toast .panel__banner { font-size: 13px; letter-spacing: 0.18em; }
+
+/* --------------------------------------------------------------------------
+   Overlay index - the only page meant to be read in a browser, not OBS
+   -------------------------------------------------------------------------- */
+
+.ov-index {
+  position: static;
+  cursor: auto;
+}

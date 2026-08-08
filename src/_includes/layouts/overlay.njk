@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ title }} - overlay</title>
+    <meta name="robots" content="noindex, nofollow">
+
+    {# Same trick as the site: mark JS present before first paint so panels
+       can start closed without flashing open. #}
+    <script>document.documentElement.className += " js";</script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&display=swap">
+
+    <link rel="stylesheet" href="{{ '/assets/css/panel.css' | bust }}">
+    <link rel="stylesheet" href="{{ '/assets/css/overlay.css' | bust }}">
+  </head>
+  <body class="overlay-body {{ bodyClass }}">
+    {# Everything lives inside a fixed 1920x1080 stage. OBS renders it 1:1;
+       a browser preview scales it down to fit. Designing at broadcast
+       resolution means what you see in the editor is what goes out. #}
+    <div class="stage" id="stage">
+      {{ content | safe }}
+    </div>
+
+    <script src="{{ '/assets/js/panel.js' | bust }}" defer></script>
+    <script src="{{ '/assets/js/overlay.js' | bust }}" defer></script>
+  </body>
+</html>

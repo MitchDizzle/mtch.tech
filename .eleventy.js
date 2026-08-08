@@ -7,6 +7,12 @@ module.exports = function (eleventyConfig) {
   // Passthrough copies
   eleventyConfig.addPassthroughCopy("src/assets");
 
+  // Superseded partial - moved to _includes/partials/overlay-hold.njk.
+  // Sitting in src/overlay/ it would render as its own page, since the
+  // underscore convention only applies inside _includes and _data.
+  // Safe to delete the file; this line can go with it.
+  eleventyConfig.ignores.add("src/overlay/_hold.njk");
+
   // Server config files. Dotfiles need an explicit mapping - Eleventy will
   // not pick up .htaccess from a directory glob.
   eleventyConfig.addPassthroughCopy({ "src/.htaccess": ".htaccess" });

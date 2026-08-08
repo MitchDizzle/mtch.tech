@@ -15,6 +15,11 @@ Current branch: `reimagined`. Main is the old iteration and is being largely scr
 | [03-static-mode.md](03-static-mode.md) | The non-game version - partly superseded by 08 |
 | [08-static-site.md](08-static-site.md) | Confirmed static design: panel component, fantasy UI, sections |
 | [09-background.md](09-background.md) | Planned galaxy/sunset sky, complexity tiers, perf constraints |
+
+> **Genre pivot in progress.** Docs 02, 04, and the asset list describe the
+> superseded side-scrolling street. See
+> [decisions/0003-genre-pivot-roguelite.md](decisions/0003-genre-pivot-roguelite.md)
+> for the current direction before working from them.
 | [04-world-map.md](04-world-map.md) | Street layout, detail falloff tiers, background composition |
 | [05-controls.md](05-controls.md) | Movement model, verbs, desktop and mobile input |
 | [06-rooms-and-minigames.md](06-rooms-and-minigames.md) | Room contents, NPCs, minigames, the hat reward system |

@@ -1,0 +1,4 @@
+{
+  "layout": "layouts/overlay.njk",
+  "eleventyExcludeFromCollections": true
+}

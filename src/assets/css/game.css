@@ -1,0 +1,147 @@
+/* ==========================================================================
+   Game page
+   ========================================================================== */
+
+.game-page {
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
+.game-shell {
+  width: 100%;
+  max-width: 62rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.game-stage {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+#game-canvas {
+  display: block;
+  border: 2px solid var(--panel-border-color);
+  border-radius: 3px;
+  background: #141014;
+
+  /* Crisp pixels. Without this the browser smooths the upscale and pixel art
+     turns to mush. The JS also sets imageSmoothingEnabled = false, and both
+     are needed - this covers the CSS upscale, that covers drawImage. */
+  image-rendering: pixelated;
+
+  /* Stop the browser hijacking touches over the play area: no double-tap
+     zoom, no pull-to-refresh, no text selection, no iOS callout menu. */
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.game-classes {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.game-classes .is-active {
+  color: var(--panel-accent);
+  border-color: var(--panel-accent);
+  background: rgb(255 255 255 / 0.06);
+}
+
+.game-help {
+  max-width: 34rem;
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   Touch controls
+
+   Shown only where the primary pointer is coarse. A laptop with a
+   touchscreen still gets the keyboard layout, because `pointer: coarse`
+   describes the primary input, not the available ones.
+   -------------------------------------------------------------------------- */
+
+.touch-controls {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .touch-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 30rem;
+    gap: 1rem;
+    padding: 0 0.5rem;
+    padding-bottom: env(safe-area-inset-bottom);
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+}
+
+.touch-stick {
+  position: relative;
+  width: 108px;
+  height: 108px;
+  flex: 0 0 auto;
+  border: 2px solid var(--panel-border-color);
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.04);
+  touch-action: none;
+}
+
+.touch-stick__knob {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 42px;
+  height: 42px;
+  margin: -21px 0 0 -21px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.18);
+  pointer-events: none;
+}
+
+.touch-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.touch-btn {
+  width: 58px;
+  height: 58px;
+  border: 2px solid var(--panel-border-color);
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.04);
+  color: var(--panel-fg);
+  font: inherit;
+  font-size: 0.78rem;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.touch-btn:active {
+  background: rgb(255 255 255 / 0.14);
+  border-color: var(--panel-accent);
+}
+
+.touch-btn--main {
+  width: 74px;
+  height: 74px;
+  font-size: 0.85rem;
+}
+
+/* The footer is noise under a game. */
+.game-page ~ .site-footer {
+  opacity: 0.4;
+}

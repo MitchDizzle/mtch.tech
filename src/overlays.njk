@@ -1,0 +1,115 @@
+---
+layout: layouts/shell.njk
+permalink: /overlays/
+title: Stream overlays
+description: OBS browser source URLs and setup for the Mitchtopia overlays.
+eleventyExcludeFromCollections: true
+---
+{% from "components/panel.njk" import panel %}
+
+{# Read in a browser on the streaming PC, not loaded into OBS. Noindex so it
+   does not turn up in search results. #}
+
+<main class="landing">
+  {% call panel({
+    variant: "page",
+    title: "Stream overlays",
+    subtitle: "OBS browser sources",
+    labelledBy: "ov-title",
+    tabs: nav,
+    currentUrl: "/site/"
+  }) %}
+    <div class="prose">
+      <p class="section-lead">
+        Each scene is a page on this site, so nothing needs copying between
+        machines. Add a Browser Source in OBS and paste the URL.
+      </p>
+
+      <h2>Scenes</h2>
+
+      <ul class="link-list" style="margin-bottom:1.5rem">
+        {% set scenes = [
+          { name: "Starting soon", path: "/overlay/starting/", note: "Full-screen holding card. Add ?mins=10 for a countdown." },
+          { name: "Be right back",  path: "/overlay/brb/",      note: "Full-screen holding card, warning tone." },
+          { name: "Ending",         path: "/overlay/ending/",   note: "Full-screen sign-off card." },
+          { name: "Live",           path: "/overlay/live/",     note: "Transparent. Camera frame, lower third, clock." }
+        ] %}
+        {% for s in scenes %}
+        <li>
+          <a class="link-row" href="{{ s.path }}">
+            <span class="link-row__text">
+              <span class="link-row__label">{{ s.name }}</span>
+              <span class="link-row__desc">{{ s.note }}</span>
+              <span class="link-row__handle">{{ site.url }}{{ s.path }}</span>
+            </span>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+
+      <h2>OBS setup</h2>
+
+      <ol>
+        <li>In the scene, <strong>Sources &rarr; + &rarr; Browser</strong>.</li>
+        <li>Paste the URL. Set <strong>Width 1920</strong>, <strong>Height 1080</strong>.
+          These must match your canvas exactly or the overlay is resampled and
+          the text goes soft.</li>
+        <li>Tick <strong>Shutdown source when not visible</strong> and
+          <strong>Refresh browser when scene becomes active</strong>. The
+          first stops an off-screen scene burning CPU; the second replays the
+          panel animation and restarts any countdown each time you cut to it.</li>
+        <li>Leave <strong>Control audio via OBS</strong> unticked - these make
+          no sound.</li>
+        <li>On the <strong>Live</strong> scene, drag the browser source
+          <em>above</em> your camera and game capture in the source list. The
+          camera shows through the transparent hole in the frame.</li>
+      </ol>
+
+      <h2>Customising without editing code</h2>
+
+      <p>
+        Every scene reads query parameters, so one page covers many looks.
+        Change the URL in OBS rather than the source.
+      </p>
+
+      <table>
+        <thead>
+          <tr><th>Parameter</th><th>Effect</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>title</code></td><td>Panel heading</td></tr>
+          <tr><td><code>sub</code></td><td>Line under the heading</td></tr>
+          <tr><td><code>banner</code></td><td>Banner text, e.g. <code>Notice</code></td></tr>
+          <tr><td><code>tone</code></td><td><code>notice</code>, <code>warning</code>, <code>danger</code>, <code>success</code>, <code>quest</code></td></tr>
+          <tr><td><code>lead</code></td><td>Body line</td></tr>
+          <tr><td><code>mins</code></td><td>Countdown length in minutes, starts on load</td></tr>
+          <tr><td><code>until</code></td><td>Countdown to a time, e.g. <code>2026-08-07T19:30</code></td></tr>
+          <tr><td><code>handle</code></td><td>Corner strip text (live scene)</td></tr>
+          <tr><td><code>camlabel</code></td><td>Caption on the camera frame</td></tr>
+          <tr><td><code>clock=24</code></td><td>Force a 24-hour clock</td></tr>
+        </tbody>
+      </table>
+
+      <p>Example - a fifteen minute countdown with custom wording:</p>
+
+      <pre><code>{{ site.url }}/overlay/starting/?mins=15&amp;title=Back%20at%20half%20past&amp;tone=warning</code></pre>
+
+      <p class="muted small">
+        Values need URL encoding: spaces become <code>%20</code>, and an
+        ampersand inside a value becomes <code>%26</code>.
+      </p>
+
+      <h2>Notes</h2>
+
+      <ul>
+        <li>The overlays are hosted, so updates appear the next time OBS
+          refreshes the source. No files to copy to the streaming PC.</li>
+        <li>Because they are hosted, they need a working connection. If you
+          stream somewhere unreliable, use <strong>File &rarr; Save</strong> in
+          the browser for a local copy as a fallback.</li>
+        <li>Countdowns run from wall-clock time, so a throttled tab or a
+          dropped frame cannot make them drift.</li>
+      </ul>
+    </div>
+  {% endcall %}
+</main>
