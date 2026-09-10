@@ -18,8 +18,10 @@ _site/
 # still has it open. Harmless, and they vanish once that process exits.
 .fuse_hidden*
 
-# Holds the OBS websocket password and the control panel token.
+# Both now live in the OS data directory instead, but ignore them here too so
+# an older checkout cannot commit an OBS password or a saved layout.
 stream-control/config.json
+stream-control/state.json
 
 # Editor directories and files
 .vscode/*

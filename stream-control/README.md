@@ -18,13 +18,41 @@ Two reasons, both hard constraints rather than preferences:
 The hosted overlays at `mtch.tech/overlay/...` still exist and still work.
 They are the zero-setup option; this is the controllable one.
 
+## Where settings live
+
+Config and saved layout live in the OS per-user data directory, **not** in the
+repo - so `git pull` on the streaming PC cannot stomp your setup, and no OBS
+password ends up in version control.
+
+| OS | Path |
+| --- | --- |
+| Windows | `%APPDATA%\mitchtopia-stream-control\` |
+| macOS | `~/Library/Application Support/mitchtopia-stream-control/` |
+| Linux | `~/.config/mitchtopia-stream-control/` |
+
+Set `STREAM_CONTROL_DIR` to override - handy for a synced drive, or two
+instances side by side.
+
+The server prints the resolved path on startup. A `state.json` left in the repo
+by an earlier version is copied across automatically on first run; the original
+is left behind for you to delete.
+
 ## Setup
 
 ```
 cd stream-control
 npm install
-cp config.example.json config.json
 ```
+
+Then copy `config.example.json` into the data directory above, named
+`config.json`. On Windows:
+
+```
+copy config.example.json %APPDATA%\mitchtopia-stream-control\config.json
+```
+
+A `config.json` still sitting next to the code keeps working, but the server
+warns and tells you where to move it.
 
 Edit `config.json`:
 

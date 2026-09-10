@@ -35,15 +35,56 @@ const PUBLIC = path.join(HERE, "public");
    a change to the theme shows up in both places. */
 const SITE_ASSETS = path.join(HERE, "..", "src", "assets");
 
-/* --------------------------------------------------------------------- config */
+/* ------------------------------------------------------------------ data dir
+
+   Config and saved settings live in the OS's per-user data directory, not
+   beside the code. Keeping them in the repo meant a `git pull` on the
+   streaming PC could stomp your layout, and state.json was being committed.
+
+   Override with STREAM_CONTROL_DIR to put them anywhere - useful for keeping
+   settings on a synced drive, or running two instances side by side. */
+
+function dataDir() {
+  if (process.env.STREAM_CONTROL_DIR) return process.env.STREAM_CONTROL_DIR;
+
+  const home = os.homedir();
+  const name = "mitchtopia-stream-control";
+
+  if (process.platform === "win32") {
+    return path.join(process.env.APPDATA || path.join(home, "AppData", "Roaming"), name);
+  }
+  if (process.platform === "darwin") {
+    return path.join(home, "Library", "Application Support", name);
+  }
+  return path.join(process.env.XDG_CONFIG_HOME || path.join(home, ".config"), name);
+}
+
+const DATA_DIR = dataDir();
+fs.mkdirSync(DATA_DIR, { recursive: true });
+
+/* --------------------------------------------------------------------- config
+
+   Searched in the data directory first, then next to the code. The second is
+   only there so an existing setup keeps working - it warns and tells you
+   where to move the file. */
 
 function loadConfig() {
-  const file = path.join(HERE, "config.json");
-  if (!fs.existsSync(file)) {
-    console.error("No config.json. Copy config.example.json to config.json first.");
-    process.exit(1);
+  const preferred = path.join(DATA_DIR, "config.json");
+  const legacy = path.join(HERE, "config.json");
+
+  if (fs.existsSync(preferred)) {
+    return JSON.parse(fs.readFileSync(preferred, "utf8"));
   }
-  return JSON.parse(fs.readFileSync(file, "utf8"));
+
+  if (fs.existsSync(legacy)) {
+    console.warn(`[config] using ${legacy}`);
+    console.warn(`         Move it to ${preferred} to keep it out of the repo.`);
+    return JSON.parse(fs.readFileSync(legacy, "utf8"));
+  }
+
+  console.error("No config.json found. Copy config.example.json to:");
+  console.error(`  ${preferred}`);
+  process.exit(1);
 }
 
 const config = loadConfig();
@@ -111,7 +152,23 @@ const SECTIONS = Object.keys(DEFAULTS);
    duplicated presets.
    -------------------------------------------------------------------------- */
 
-const STATE_FILE = path.join(HERE, "state.json");
+const STATE_FILE = path.join(DATA_DIR, "state.json");
+
+/* One-time move of a state.json left in the repo by an earlier version. Copy
+   rather than rename, so a half-finished migration cannot lose your layout -
+   the old file is left behind for you to delete. */
+(function migrateState() {
+  const legacy = path.join(HERE, "state.json");
+  if (fs.existsSync(legacy) && !fs.existsSync(STATE_FILE)) {
+    try {
+      fs.copyFileSync(legacy, STATE_FILE);
+      console.log(`[state] copied settings out of the repo into ${STATE_FILE}`);
+      console.log(`        ${legacy} is now unused and safe to delete.`);
+    } catch (err) {
+      console.warn(`[state] could not migrate: ${err.message}`);
+    }
+  }
+})();
 
 function emptyValues() {
   return SECTIONS.reduce((acc, s) => (acc[s] = {}, acc), {});
@@ -725,6 +782,7 @@ server.listen(config.port, () => {
     console.log("        To disable the token use a bare null with no quotes.");
   }
   console.log(`  OBS relay          : ${config.obs?.enabled ? config.obs.url : "disabled"}`);
+  console.log(`  Settings           : ${DATA_DIR}`);
   console.log(`  Camera follow      : ${
     !config.obs?.enabled ? "off - obs disabled"
       : config.obs.cameraSource ? `"${config.obs.cameraSource}"`
