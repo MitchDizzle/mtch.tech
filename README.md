@@ -48,7 +48,8 @@ file supplies the layout and permalink. Example project:
 title: "Project name"
 date: 2026-09-10
 description: "What the project does."
-tags: [web, tooling]
+category: Software
+keywords: [tooling]
 featured: true
 github_url: "https://github.com/mitchdizzle/repository"
 ---
@@ -58,6 +59,11 @@ Write the body below the frontmatter, using `##` for sections: the layout suppli
 the page's `h1`. Projects may also specify `live_url` and `image`.
 Posts use `title`, `date`, `description`, and `tags`; `image` is optional.
 Listings are discovered automatically and sorted newest first.
+
+For a ready-to-copy starting point, use [the project template](docs/project-template.md).
+Keep each project's images under `src/assets/img/projects/<project-slug>/`.
+The [project media guide](docs/11-project-media.md) covers optional slideshows,
+inline Markdown images, captions, and smaller figures.
 
 ## Metadata and styling
 

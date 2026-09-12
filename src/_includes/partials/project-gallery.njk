@@ -1,0 +1,26 @@
+<section class="project-gallery" data-gallery aria-label="Project images">
+  <div class="project-gallery__slides">
+    {% for slide in gallery %}
+    <figure class="project-figure project-gallery__slide" data-slide>
+      <a href="{{ slide.src | escape }}" aria-label="{{ ('Open full-size image: ' + slide.alt) | escape }}">
+        <img src="{{ slide.src | escape }}" alt="{{ slide.alt | escape }}"
+             {% if slide.width and slide.height %}width="{{ slide.width }}" height="{{ slide.height }}"{% endif %}
+             loading="{{ 'eager' if loop.first else 'lazy' }}" decoding="async">
+      </a>
+      {% if slide.caption %}<figcaption>{{ slide.caption | escape }}</figcaption>{% endif %}
+    </figure>
+    {% endfor %}
+    {% if gallery.length > 1 %}
+    <div class="project-gallery__arrows" data-gallery-arrows hidden>
+      <button class="btn project-gallery__arrow" type="button" data-previous aria-label="Previous project image"><span aria-hidden="true">&#8249;</span></button>
+      <button class="btn project-gallery__arrow" type="button" data-next aria-label="Next project image"><span aria-hidden="true">&#8250;</span></button>
+    </div>
+    {% endif %}
+  </div>
+  {% if gallery.length > 1 %}
+  <div class="project-gallery__controls" data-gallery-controls hidden>
+    <span class="project-gallery__status" data-gallery-status aria-live="off" aria-atomic="true"></span>
+    <button class="btn btn--sm" type="button" data-autoplay>Pause slideshow</button>
+  </div>
+  {% endif %}
+</section>

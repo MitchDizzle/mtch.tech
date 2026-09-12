@@ -31,6 +31,21 @@
 .prose h2 { font-size: 1.05rem; }
 .prose h3 { font-size: 0.95rem; }
 
+.project-prose h2 {
+  margin-top: 2.25rem;
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.9rem;
+  border-bottom: 1px solid var(--panel-rule-color);
+  color: var(--panel-accent);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.project-prose h3 {
+  color: var(--panel-accent);
+  font-weight: 600;
+}
+
 .prose a {
   color: var(--panel-accent);
   text-underline-offset: 3px;
@@ -83,6 +98,143 @@
 /* --------------------------------------------------------------------------
    Section heading inside a panel body
    -------------------------------------------------------------------------- */
+
+/* Project media shares the panel's border and spacing. Preserve screenshots
+   in full instead of cropping them to the listing card's aspect ratio. */
+.prose img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+  border: 1px solid var(--panel-rule-color);
+  border-radius: 3px;
+  background: rgb(0 0 0 / 0.2);
+}
+
+.project-figure {
+  margin: 1.5rem 0;
+}
+
+.project-figure--small {
+  max-width: 28rem;
+  margin-inline: auto;
+}
+
+.project-figure figcaption {
+  margin-top: 0.5rem;
+  color: var(--panel-fg-muted);
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.project-gallery {
+  margin-block: 1.5rem;
+  min-width: 0;
+}
+
+.project-gallery__slide a {
+  display: block;
+}
+
+.project-gallery__slides {
+  position: relative;
+}
+
+/* Overlap slides in one grid cell to reserve the tallest caption's space.
+   Inactive slides stay invisible and cannot receive focus. */
+.project-gallery.is-enhanced .project-gallery__slides {
+  display: grid;
+}
+
+.project-gallery.is-enhanced .project-gallery__slide {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.project-gallery.is-enhanced .project-gallery__slide[hidden] {
+  display: flex;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.project-gallery.is-enhanced figcaption {
+  flex: 1;
+}
+
+.project-gallery__slide {
+  margin: 0 0 1rem;
+}
+
+.project-gallery__slide figcaption {
+  margin: 0;
+  padding: 0.85rem 1rem;
+  min-height: 5em;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  border: 1px solid var(--panel-rule-color);
+  border-top: 0;
+  border-radius: 0 0 3px 3px;
+  background: var(--panel-bg, rgb(0 0 0 / 0.2));
+}
+
+.project-gallery__slide:has(figcaption) img {
+  border-radius: 3px 3px 0 0;
+}
+
+.project-gallery__arrows {
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 0.5rem;
+  pointer-events: none;
+}
+
+.project-gallery__arrow {
+  pointer-events: auto;
+  width: 44px;
+  min-height: 48px;
+  padding: 0;
+  font-size: 2rem;
+  line-height: 1;
+  background: var(--panel-bg-solid, #17120e);
+  color: var(--panel-accent);
+  border-color: var(--panel-rule-color);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.35);
+}
+
+.project-gallery__arrow:hover,
+.project-gallery__arrow:focus-visible {
+  background: var(--panel-bg-solid, #17120e);
+}
+
+.project-gallery.is-enhanced .project-gallery__slide img {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+}
+
+.project-gallery__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.project-gallery__status {
+  color: var(--panel-fg-muted);
+  font-size: 0.85rem;
+}
+
+.project-gallery [hidden] {
+  display: none;
+}
 
 .section-lead {
   margin: 0 0 1.25rem;
@@ -216,6 +368,41 @@
   margin-bottom: 1rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid var(--panel-rule-color);
+}
+
+.project-search {
+  display: block;
+  margin-bottom: 1rem;
+  color: var(--panel-fg);
+  font-size: 0.9rem;
+}
+
+.project-search input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  margin-top: 0.4rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--panel-rule-color);
+  border-radius: 3px;
+  background: rgb(0 0 0 / 0.2);
+  color: var(--panel-fg);
+  font: inherit;
+}
+
+.project-search input::placeholder {
+  color: var(--panel-fg-muted);
+}
+
+.project-results {
+  color: var(--panel-fg-muted);
+  font-size: 0.85rem;
+}
+
+[data-project-tools][hidden],
+[data-project-empty][hidden] {
+  display: none;
 }
 
 .filter-btn {

@@ -147,6 +147,30 @@ module.exports = function (eleventyConfig) {
   });
 
   // Filters
+  // One broad project category; older Markdown tags still work during migration.
+  function projectCategory(category, tags = []) {
+    if (typeof category === "string" && category.trim()) return category.trim();
+    if (tags.includes("gaming") || tags.includes("tf2") || tags.includes("gamemode")) return "Gaming";
+    if (tags.includes("web")) return "Web";
+    return "Software";
+  }
+  eleventyConfig.addFilter("projectCategory", projectCategory);
+  eleventyConfig.addFilter("projectCategories", (projects) => {
+    return [...new Set(projects.map((item) => projectCategory(item.data.category, item.data.tags)))].sort();
+  });
+
+  // Captioned inline images in Markdown. Plain Markdown images work too.
+  eleventyConfig.addShortcode("projectImage", (src, alt, caption = "", size = "full") => {
+    if (typeof src !== "string" || !src.startsWith("/assets/") || typeof alt !== "string" || !alt.trim()) {
+      throw new Error("projectImage requires an /assets/ image path and descriptive alt text.");
+    }
+    const escape = (value) => String(value).replace(/[&<>"']/g, (char) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    })[char]);
+    const modifier = size === "small" ? " project-figure--small" : "";
+    return `<figure class="project-figure${modifier}"><img src="${escape(src)}" alt="${escape(alt)}" loading="lazy" decoding="async">${caption ? `<figcaption>${escape(caption)}</figcaption>` : ""}</figure>`;
+  });
+
   eleventyConfig.addFilter("absoluteSiteUrl", (url) => {
     const site = require("./src/_data/site.json");
     const absolute = new URL(url || "/", site.url);

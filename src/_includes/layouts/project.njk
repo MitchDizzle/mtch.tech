@@ -12,18 +12,19 @@ layout: layouts/shell.njk
     tabs: nav,
     currentUrl: "/projects/"
   }) %}
-    <article class="prose">
-      {% if image %}
-      <img class="card-img" src="{{ image }}" alt="" style="border-radius:3px">
+    <article class="prose project-prose">
+      {% if gallery and gallery.length %}
+      {% include "partials/project-gallery.njk" %}
+      {% elif image %}
+      <figure class="project-figure">
+        <img src="{{ image | escape }}" alt="{{ imageAlt | default('') | escape }}" decoding="async">
+        {% if imageCaption %}<figcaption>{{ imageCaption | escape }}</figcaption>{% endif %}
+      </figure>
       {% endif %}
 
-      {% if tags %}
       <ul class="tag-list">
-        {% for tag in tags %}
-        <li class="tag">{{ tag }}</li>
-        {% endfor %}
+        <li class="tag">{{ category | projectCategory(tags) | escape }}</li>
       </ul>
-      {% endif %}
 
       {{ content | safe }}
 
@@ -40,3 +41,6 @@ layout: layouts/shell.njk
     </article>
   {% endcall %}
 </main>
+{% if gallery and gallery.length > 1 %}
+<script src="{{ '/assets/js/project-gallery.js' | bust }}" defer></script>
+{% endif %}

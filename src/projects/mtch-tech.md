@@ -2,8 +2,8 @@
 title: "mtch.tech"
 date: 2026-02-24
 description: "Personal portfolio site built with Eleventy. Cards, tag filtering, dark theme."
-tags:
-  - web
+category: Web
+keywords:
   - devops
 featured: true
 github_url: "https://github.com/mitchdizzle/mtch.tech"

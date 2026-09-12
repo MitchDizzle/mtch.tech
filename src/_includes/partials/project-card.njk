@@ -1,4 +1,5 @@
-<article class="card" data-tags="{{ item.data.tags | join(' ') }}">
+{% set projectCategory = item.data.category | projectCategory(item.data.tags) %}
+<article class="card" data-category="{{ projectCategory | escape }}" data-search="{{ (item.data.title + ' ' + (item.data.description or '') + ' ' + projectCategory + ' ' + (item.data.tags | default([]) | join(' ')) + ' ' + (item.data.keywords | default([]) | join(' '))) | escape }}">
   {% if item.data.image %}
   <img class="card-img" src="{{ item.data.image }}" alt="" loading="lazy">
   {% endif %}
@@ -11,13 +12,9 @@
     <p class="card-desc">{{ item.data.description }}</p>
     {% endif %}
 
-    {% if item.data.tags %}
     <ul class="tag-list">
-      {% for tag in item.data.tags %}
-      <li class="tag">{{ tag }}</li>
-      {% endfor %}
+      <li class="tag">{{ projectCategory | escape }}</li>
     </ul>
-    {% endif %}
 
     {% if item.data.github_url or item.data.live_url %}
     <div class="card-actions">

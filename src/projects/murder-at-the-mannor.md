@@ -2,8 +2,8 @@
 title: "MatM (TF2 Murder)"
 date: 2026-02-26
 description: "A TF2 game mode where selected players are covert killers."
-tags:
-  - gaming
+category: Gaming
+keywords:
   - tf2
   - source
   - plugin
