@@ -317,6 +317,11 @@
   min-width: 0;
 }
 
+/* Keep navigation on the right when the homepage omits a panel title. */
+.panel__header--nav > .panel__tabs:only-child {
+  margin-left: auto;
+}
+
 /* --- Tabs - the folder metaphor -----------------------------------------
    Each tab is a file tab. The current one has no bottom edge and shares the
    body's background, so it reads as continuous with the page beneath rather

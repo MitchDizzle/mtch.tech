@@ -1,0 +1,24 @@
+{# Shared by public site layouts. Stream overlays keep their noindex head. #}
+{% set pageTitle %}{% if title %}{{ title }}{% if site.shortName %} - {{ site.shortName }}{% endif %}{% else %}{{ site.name }} - {{ site.tagline }}{% endif %}{% endset %}
+{% set pageDescription = description or site.description %}
+{% set canonicalUrl = page.url | absoluteSiteUrl %}
+{% set previewImage = socialImage or site.socialImage %}
+<title>{{ pageTitle | escape }}</title>
+<meta name="description" content="{{ pageDescription | escape }}">
+<link rel="canonical" href="{{ canonicalUrl | escape }}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{ site.name | escape }}">
+<meta property="og:title" content="{{ pageTitle | escape }}">
+<meta property="og:description" content="{{ pageDescription | escape }}">
+<meta property="og:url" content="{{ canonicalUrl | escape }}">
+<meta name="twitter:card" content="{{ 'summary_large_image' if previewImage else 'summary' }}">
+<meta name="twitter:title" content="{{ pageTitle | escape }}">
+<meta name="twitter:description" content="{{ pageDescription | escape }}">
+{% if previewImage %}
+<meta property="og:image" content="{{ previewImage | absoluteSiteUrl | escape }}">
+<meta name="twitter:image" content="{{ previewImage | absoluteSiteUrl | escape }}">
+{% if socialImageAlt or site.socialImageAlt %}
+<meta property="og:image:alt" content="{{ (socialImageAlt or site.socialImageAlt) | escape }}">
+<meta name="twitter:image:alt" content="{{ (socialImageAlt or site.socialImageAlt) | escape }}">
+{% endif %}
+{% endif %}

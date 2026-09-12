@@ -1,260 +1,87 @@
 # mtch.tech
 
-A modular Vue 3 + Vite website with automatic content discovery from markdown files. Built for easy content management - just add markdown files and they automatically appear on the site!
+Mitch Gardner's personal site, branded as Mitchtopia. Built with Eleventy 3,
+Nunjucks, Markdown, vanilla JavaScript, and CSS. No Vue or Vite build is used.
 
-## Features
+## Local development
 
-- **Auto-discovery**: Drop markdown files in content folders and they automatically appear on your site
-- **Modern Stack**: Vue 3, Vite, TailwindCSS, Vue Router
-- **Markdown Support**: Write content in markdown with frontmatter metadata
-- **Auto-deploy**: GitHub Actions automatically builds and deploys to nfoservers on push to master
-- **Organized Content**: Separate sections for portfolio, recipes, and blog posts
-- **Git-friendly**: Every new piece of content = a git commit (GitHub activity!)
+Install Node.js (the installed Eleventy version requires Node 18 or newer), then:
 
-## Quick Start
+```sh
+npm ci
+npm start
+```
 
-### Prerequisites
+Eleventy builds the site, watches for changes, and serves it locally. Use the URL
+printed in the terminal (normally http://localhost:8080).
 
-- Node.js 18+ and npm
-- Git
-
-### Local Development
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/MitchDizzle/mtch.tech.git
-   cd mtch.tech
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Run the development server:
-   ```bash
-   npm run dev
-   ```
-
-4. Open http://localhost:5173 in your browser
-
-### Build for Production
-
-```bash
+```sh
 npm run build
 ```
 
-The built files will be in the `dist/` directory.
+This removes the previous `_site/` output and generates a fresh production build.
+`npm run clean` removes only `_site/`.
 
-## Adding Content
+## Project structure
 
-This is the best part - adding content is simple!
+- `.eleventy.js`: collections, template filters, asset copying, SVG icon sprite.
+- `src/index.njk`: title card, introduction, and main navigation.
+- `src/site.njk`, `src/projects.njk`, `src/contact.njk`: main site pages.
+- `src/projects/`: project Markdown and shared project layout/permalink defaults.
+- `src/posts/`: blog Markdown and shared post defaults.
+- `src/_data/`: site identity, social links, navigation, and skills.
+- `src/_includes/`: layouts, reusable panels, and partials.
+- `src/assets/`: CSS, JavaScript, icons, and images.
+- `src/play.njk` and `src/assets/js/game/`: existing game prototype; replanning is pending.
+- `src/overlay/`: OBS browser-source overlays.
+- `stream-control/`: separate Node application; see its own README.
+- `docs/`: design notes and decisions; start with `docs/10-audit-follow-up.md` for the latest direction.
+- `_site/`: generated output; do not edit directly.
 
-### Content Structure
+## Adding projects and posts
 
-```
-src/content/
-├── portfolio/          # Portfolio projects
-│   └── my-project.md
-├── recipes/
-│   ├── baking/        # Baking recipes
-│   │   └── cookies.md
-│   └── cooking/       # Cooking recipes
-│       └── pasta.md
-└── blog/              # Blog posts
-    └── my-post.md
-```
+Create a Markdown file in `src/projects/` or `src/posts/`. The directory's JSON
+file supplies the layout and permalink. Example project:
 
-### Adding a New Post
-
-1. Create a new markdown file in the appropriate folder
-2. Add frontmatter at the top
-3. Write your content in markdown
-4. Commit and push - it automatically appears!
-
-### Frontmatter Format
-
-Every markdown file should have frontmatter at the top:
-
-```markdown
+```yaml
 ---
-title: "My Amazing Project"
-description: "A brief description of what this is"
-date: 2025-12-31
-updated: 2025-12-31  # Optional
-tags: ["vue", "web-dev", "cool-stuff"]
-image: "/images/project-screenshot.jpg"  # Optional
+title: "Project name"
+date: 2026-09-10
+description: "What the project does."
+tags: [web, tooling]
+featured: true
+github_url: "https://github.com/mitchdizzle/repository"
 ---
-
-# Your Content Here
-
-Write your content in markdown...
 ```
 
-### Example: Adding a Recipe
+Write the body below the frontmatter, using `##` for sections: the layout supplies
+the page's `h1`. Projects may also specify `live_url` and `image`.
+Posts use `title`, `date`, `description`, and `tags`; `image` is optional.
+Listings are discovered automatically and sorted newest first.
 
-```bash
-# Create a new file
-cat > src/content/recipes/baking/chocolate-cake.md << 'EOF'
----
-title: "Decadent Chocolate Cake"
-description: "Rich, moist chocolate cake perfect for any occasion"
-date: 2025-12-31
-tags: ["chocolate", "cake", "dessert"]
----
+## Metadata and styling
 
-# Decadent Chocolate Cake
+Public layouts share `src/_includes/partials/metadata.njk` for page titles,
+descriptions, canonical URLs, Open Graph, and Twitter card metadata. Site-wide
+fallbacks come from `src/_data/site.json`.
 
-The best chocolate cake recipe you'll ever make!
+Previews currently provide text metadata. To add a preview image, place a PNG or
+JPEG in `src/assets/img/` and set `socialImage: "/assets/img/your-preview.png"`
+and `socialImageAlt` in page frontmatter, or as JSON fields in `site.json` for a
+site-wide default. Use an actual raster image; the SVG wordmark is not used as a
+social preview image.
 
-## Ingredients
-
-- 2 cups flour
-- 2 cups sugar
-- 3/4 cup cocoa powder
-...
-
-## Instructions
-
-1. Preheat oven to 350°F
-2. Mix dry ingredients...
-...
-EOF
-
-# Commit and push
-git add .
-git commit -m "Add chocolate cake recipe"
-git push
-```
-
-That's it! The recipe will automatically appear in your recipes section.
+Panel page titles use `h1`; dialogs use `h2`. Their appearance is controlled by
+`.panel__title` in `src/assets/css/panel.css`, independently of heading level.
+The homepage keeps its SVG wordmark inside an `h1` with image alternative text.
 
 ## Deployment
 
-### Setting up Auto-Deployment
+Run `npm run build` and upload the contents of `_site/` to the web root, including
+`.htaccess`. The Apache configuration provides redirects, the custom 404 page,
+compression, caching, and headers when supported by the host.
 
-The site automatically deploys to nfoservers when you push to the `master` or `main` branch.
-
-1. Go to your GitHub repository settings
-2. Navigate to **Secrets and variables > Actions**
-3. Add these secrets:
-   - `FTP_SERVER` - Your FTP server hostname (e.g., ftp.nfoservers.com)
-   - `FTP_USERNAME` - Your FTP username
-   - `FTP_PASSWORD` - Your FTP password
-   - `FTP_SERVER_DIR` - Target directory (e.g., `/public_html/`)
-
-4. Push to master - GitHub Actions will automatically:
-   - Install dependencies
-   - Build the site
-   - Deploy to your nfoservers hosting
-
-### Manual Deployment
-
-If you prefer to deploy manually:
-
-```bash
-# Build the site
-npm run build
-
-# Upload the dist/ folder to your server via FTP/SFTP
-# Use your preferred FTP client or command-line tool
-```
-
-## Project Structure
-
-```
-mtch.tech/
-├── .github/
-│   └── workflows/
-│       └── deploy.yml         # GitHub Actions deployment
-├── src/
-│   ├── assets/               # Images, fonts, etc.
-│   ├── components/
-│   │   ├── ui/              # UI components
-│   │   └── [content cards]
-│   ├── composables/
-│   │   └── useContent.js    # Auto-discovery magic!
-│   ├── content/             # Your markdown content
-│   │   ├── portfolio/
-│   │   ├── recipes/
-│   │   │   ├── baking/
-│   │   │   └── cooking/
-│   │   └── blog/
-│   ├── layouts/
-│   │   └── DefaultLayout.vue
-│   ├── pages/               # Route pages
-│   ├── router/
-│   │   └── index.js
-│   ├── App.vue
-│   ├── main.js
-│   └── style.css            # Tailwind styles
-├── public/                  # Static assets
-├── .env.example            # Environment variables template
-├── package.json
-├── tailwind.config.js
-├── vite.config.js
-└── README.md
-```
-
-## How Auto-Discovery Works
-
-The site uses Vite's `import.meta.glob()` to automatically discover all markdown files in the `src/content` directory. When you add a new file:
-
-1. Vite detects the new markdown file
-2. The `useContent` composable parses the frontmatter and content
-3. The file automatically appears in the appropriate section
-4. The slug is generated from the filename
-
-No need to update routes, imports, or any code!
-
-## Tech Stack
-
-- **Vue 3** - Progressive JavaScript framework
-- **Vite** - Fast build tool and dev server
-- **TailwindCSS** - Utility-first CSS framework
-- **Vue Router** - Official router for Vue.js
-- **markdown-it** - Markdown parser
-- **gray-matter** - Parse frontmatter from markdown
-- **GitHub Actions** - CI/CD pipeline
-- **FTP-Deploy-Action** - Automated FTP deployment
-
-## Customization
-
-### Changing Colors/Styles
-
-Edit `src/style.css` and `tailwind.config.js` to customize the look and feel.
-
-### Adding New Sections
-
-1. Create a new folder in `src/content/`
-2. Add a route in `src/router/index.js`
-3. Create a page component in `src/pages/`
-4. Add navigation link in `src/layouts/DefaultLayout.vue`
-
-### Modifying Auto-Discovery
-
-The auto-discovery logic is in `src/composables/useContent.js`. You can customize how content is parsed, sorted, and displayed.
-
-## Future Enhancements
-
-Potential features to add:
-
-- Git timestamp extraction (automatic creation/modified dates)
-- Image optimization
-- Search functionality
-- RSS feed generation
-- Dark mode
-- Content categories/filtering
-- Related posts/projects
-
-## License
-
-MIT
-
-## Contributing
-
-Feel free to submit issues or pull requests!
-
-## Author
-
-Built by Mitch - [mtch.tech](https://mtch.tech)
+No deployment workflow is included in this checkout. Deployment automation must
+be configured separately. Upload generated output only, not the repository,
+`node_modules/`, or the separate stream-control application. For other hosts,
+configure equivalents for the Apache rules as needed.

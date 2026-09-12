@@ -27,6 +27,8 @@
                "Options" slot. Also the page title on static pages and the
                speaker name in game dialogue.
      subtitle  flavour line under the title - a speaker's role, a descriptor
+     headingLevel  1 for a page's main heading; defaults to 1 for page panels,
+                   2 for dialogs and other panels. Styling is class-based.
      id        element id, needed if you drive it from JS
      tabs      array of { label, href } or { label, pane } - omit for none
      autoOpen  false to leave it closed until JS opens it (default: true)
@@ -40,6 +42,10 @@
 
 {% macro panel(opts = {}) %}
 {% set variant = opts.variant | default("prompt") %}
+{% set headingTag = "h2" %}
+{% if opts.headingLevel == 1 or (variant == "page" and not opts.headingLevel) %}
+{% set headingTag = "h1" %}
+{% endif %}
 {% if opts.overlay %}<div class="panel-overlay" data-panel-overlay{% if opts.hidden %} hidden{% endif %}>{% endif %}
 <div
   class="panel panel--{{ variant }}{% if opts.tone %} panel--{{ opts.tone }}{% endif %}{% if opts.banner %} panel--banner-{{ opts.bannerStyle | default("bar") }}{% endif %}{% if opts.class %} {{ opts.class }}{% endif %}"
@@ -65,7 +71,7 @@
   <div class="panel__header{% if opts.tabs %} panel__header--nav{% endif %}">
     {% if opts.title %}
     <div class="panel__heading">
-      <h2 class="panel__title"{% if opts.labelledBy %} id="{{ opts.labelledBy }}"{% endif %}>{{ opts.title }}</h2>
+      <{{ headingTag }} class="panel__title"{% if opts.labelledBy %} id="{{ opts.labelledBy }}"{% endif %}>{{ opts.title }}</{{ headingTag }}>
       {% if opts.subtitle %}<p class="panel__subtitle">{{ opts.subtitle }}</p>{% endif %}
     </div>
     {% endif %}

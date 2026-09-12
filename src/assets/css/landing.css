@@ -233,26 +233,26 @@ body {
      restarts it from zero, so any rule that removed and restored the fade
      would replay the whole entrance on the way back. */
   .js .title-card {
-    animation: title-float 7s ease-in-out 1450ms infinite;
+    animation: title-float 7s ease-in-out 800ms infinite;
   }
 
   .js .title-card__name {
-    animation: fade-in 1100ms ease-out 350ms both;
+    animation: fade-in 700ms ease-out 100ms both;
   }
 
   /* Subtitle trails the name rather than arriving with it. */
   .js .title-card__sub {
-    animation: fade-in 900ms ease-out 950ms both;
+    animation: fade-in 600ms ease-out 350ms both;
   }
 
   /* Opening delay applies ONLY to the first-load panel, so the name is read
-     before the choice appears. Scoped to .is-intro - JS strips that class
+     before the navigation panel appears. Scoped to .is-intro - JS strips that class
      after the first open, so swapped-in and reopened panels are immediate.
      Without this scope the rule matched every panel in .landing and made the
      options popup wait a second and a half. */
   .js .landing .panel.is-intro.is-opening,
   .js .landing .panel.is-intro.is-opening .panel__edge {
-    animation-delay: 1500ms;
+    animation-delay: 650ms;
   }
 }
 

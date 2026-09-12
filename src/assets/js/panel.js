@@ -31,7 +31,7 @@
   /* Resolve when the element's own animation actually finishes.
 
      Timing on duration alone is not enough - an animation-delay pushes the
-     real end far past it. The landing panel has a 1500ms intro delay, so a
+     real end far past it. The landing panel has an intro delay, so a
      duration-only timer fired while the animation was still queued and any
      cleanup that ran on it corrupted the animation mid-flight.
 

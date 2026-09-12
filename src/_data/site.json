@@ -10,6 +10,17 @@
 
   "profiles": [
     {
+      "id": "email",
+      "label": "Email",
+      "url": "mailto:contact@mtch.tech",
+      "handle": "contact@mtch.tech",
+      "icon": "contact",
+      "description": "The best way to get in contact with me.",
+      "me": false,
+      "footer": false,
+      "contact": true
+    },
+    {
       "id": "github",
       "label": "GitHub",
       "url": "https://github.com/mitchdizzle",
@@ -26,7 +37,7 @@
       "url": "https://www.linkedin.com/in/mitchell-r-gardner/",
       "handle": "linkedin.com/in/mitchell-r-gardner",
       "icon": "linkedin-with-circle",
-      "description": "Work history, and the best place for anything professional.",
+      "description": "Work history and professional connections.",
       "me": true,
       "footer": true,
       "contact": true

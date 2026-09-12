@@ -3,8 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>{% if title %}{{ title }}{% if site.shortName %} - {{ site.shortName }}{% endif %}{% else %}{{ site.name }} - {{ site.tagline }}{% endif %}</title>
-    <meta name="description" content="{{ description or site.description }}">
+    {% include "partials/metadata.njk" %}
     <meta name="color-scheme" content="dark">
 
     {# Blocking, inline, and deliberately tiny. Runs before first paint.

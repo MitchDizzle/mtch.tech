@@ -147,6 +147,13 @@ module.exports = function (eleventyConfig) {
   });
 
   // Filters
+  eleventyConfig.addFilter("absoluteSiteUrl", (url) => {
+    const site = require("./src/_data/site.json");
+    const absolute = new URL(url || "/", site.url);
+    absolute.pathname = absolute.pathname.replace(/\/index\.html$/, "/");
+    return absolute.href;
+  });
+
   eleventyConfig.addFilter("readableDate", (dateObj) => {
     return DateTime.fromJSDate(dateObj, { zone: "utc" }).toFormat("LLLL d, yyyy");
   });
