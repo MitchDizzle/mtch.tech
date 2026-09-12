@@ -7,8 +7,6 @@ keywords: [] # Optional search terms, e.g. [SourcePawn, TF2, plugin]
 featured: false
 # Optional listing thumbnail; remove until the file exists.
 # image: "/assets/img/projects/my-project/cover.webp"
-# imageAlt: "Describe the cover image."
-# imageCaption: "An optional caption when there is no gallery."
 # github_url: "https://github.com/mitchdizzle/your-repository"
 # live_url: "https://your-demo.example"
 # Optional slideshow; remove the comments after adding real files.
@@ -38,3 +36,7 @@ Explain an interesting problem and why you chose your approach.
 ## Results and lessons
 
 What worked, what changed, and what would you do differently?
+
+## Media
+
+{% projectGallery %}

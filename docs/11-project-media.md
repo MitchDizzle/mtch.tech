@@ -38,10 +38,9 @@ These can be prose sections; no additional frontmatter fields are required.
 
 ## Cover and optional slideshow
 
-`image` remains the thumbnail for the Projects listing. On the detail page it
-also appears as a full, uncropped image unless a `gallery` is provided. `imageAlt`
-and `imageCaption` describe that standalone image. Gallery entries are independent
-of the cover; include the cover in the gallery if you want it there too.
+`image` is the thumbnail for the Projects listing. It is not automatically placed
+in the article. Use an inline image or the slideshow tag wherever the image belongs
+in your story. Gallery entries are independent of the cover.
 
 Add a list to the Markdown frontmatter, using the order you want shown:
 
@@ -61,13 +60,26 @@ The paths above are examples; add your own files before enabling them. Width and
 height are optional and should be the image's actual pixel dimensions. Every
 image should have descriptive `alt` text. Captions explain why an image matters.
 
-Two or more images get arrows at the sides of the image, an image counter, and a
-Pause/Play control. Slides advance every five seconds, pausing on hover, keyboard
+Place this tag on its own line, with blank lines around it, wherever you want the
+slideshow to appear (after a summary, in Media, or at the end):
+
+```njk
+{% projectGallery %}
+```
+
+The tag uses this project's `gallery` list. Without the tag, no slideshow is
+inserted. With no gallery images, the tag produces no visible content.
+
+Two or more images get a compact Previous / Pause–Play / Next tab over the bottom
+center of the image. Clicking the image also toggles playback. The top-right
+expand icon opens the gallery fullscreen when supported, or opens the current
+image file as a fallback. The slide count is available to screen readers without a
+visible label. Slides advance every five seconds, pausing on hover, keyboard
 focus, while offscreen, or when the browser tab is hidden. Reduced-motion
 preferences start the slideshow paused; Play can explicitly enable it. Arrow keys
-work when focus is inside the slideshow. Centered captions sit in a bordered panel
-below the image. Images fit inside a
-consistent frame without cropping; click one to view its original file. Without
+work when focus is inside the slideshow. Centered, muted captions sit below the
+image without an enclosing box. Images fit inside a
+consistent frame without cropping. Without
 JavaScript, all images remain readable in order. One image has no extra controls;
 omitting `gallery` creates no empty slideshow.
 

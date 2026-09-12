@@ -61,6 +61,8 @@ That overhaul also gave me more room to develop the server's statistics tracking
 
 ## Media
 
-The slideshow above contains screenshots from the server.
+Screenshots from the server show the range of things players could create.
+
+{% projectGallery %}
 
 [Watch the Sandbox Build video on YouTube](https://www.youtube.com/watch?v=Q_RsP-1dXL4).

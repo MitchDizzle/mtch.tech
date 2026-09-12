@@ -5,6 +5,8 @@ document.querySelectorAll("[data-gallery]").forEach(function (gallery) {
   if (slides.length < 2 || !controls) return;
   var status = gallery.querySelector("[data-gallery-status]");
   var autoplay = gallery.querySelector("[data-autoplay]");
+  var imageLinks = Array.from(gallery.querySelectorAll("[data-gallery-image]"));
+  var original = gallery.querySelector("[data-gallery-original]");
   var motion = window.matchMedia("(prefers-reduced-motion: reduce)");
   var current = 0;
   var paused = motion.matches;
@@ -13,12 +15,43 @@ document.querySelectorAll("[data-gallery]").forEach(function (gallery) {
   var visible = true;
   var timer;
 
+  // Native fullscreen keeps the same gallery controls and Escape behavior.
+  // The original image URL remains a fallback where fullscreen is unavailable.
+  if (gallery.requestFullscreen && document.fullscreenEnabled) {
+    original.setAttribute("role", "button");
+    original.addEventListener("click", function (event) {
+      if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      var action = document.fullscreenElement === gallery ? document.exitFullscreen() : gallery.requestFullscreen();
+      action.catch(function () { window.location.assign(original.href); });
+    });
+    original.addEventListener("keydown", function (event) {
+      if (event.key === " ") { event.preventDefault(); original.click(); }
+    });
+    document.addEventListener("fullscreenchange", function () {
+      var expanded = document.fullscreenElement === gallery;
+      var label = expanded ? "Exit fullscreen" : "Expand image";
+      original.setAttribute("aria-label", label);
+      original.title = label;
+      original.querySelector("[data-expand-icon]").toggleAttribute("hidden", expanded);
+      original.querySelector("[data-collapse-icon]").toggleAttribute("hidden", !expanded);
+      schedule();
+    });
+  }
+
   function schedule() {
     window.clearTimeout(timer);
     var running = !paused && !hovered && !focused && visible && !document.hidden;
     // Automatic updates should not repeatedly interrupt screen-reader speech.
     status.setAttribute("aria-live", running ? "off" : "polite");
-    autoplay.textContent = paused ? "Play slideshow" : "Pause slideshow";
+    var label = paused ? "Play slideshow" : "Pause slideshow";
+    autoplay.setAttribute("aria-label", label);
+    autoplay.title = label;
+    autoplay.querySelector("[data-play-icon]").toggleAttribute("hidden", !paused);
+    autoplay.querySelector("[data-pause-icon]").toggleAttribute("hidden", paused);
+    imageLinks.forEach(function (link) {
+      link.setAttribute("aria-label", label + ": " + link.querySelector("img").alt);
+    });
     if (running) {
       timer = window.setTimeout(function () {
         show(current + 1);
@@ -34,6 +67,7 @@ document.querySelectorAll("[data-gallery]").forEach(function (gallery) {
       slide.inert = i !== current;
     });
     status.textContent = "Image " + (current + 1) + " of " + slides.length;
+    original.href = imageLinks[current].href;
   }
 
   function step(direction) {
@@ -43,13 +77,31 @@ document.querySelectorAll("[data-gallery]").forEach(function (gallery) {
 
   gallery.querySelector("[data-previous]").addEventListener("click", function () { step(-1); });
   gallery.querySelector("[data-next]").addEventListener("click", function () { step(1); });
-  autoplay.addEventListener("click", function () {
+  function togglePlayback() {
     paused = !paused;
-    // Explicit Play may resume while focus remains safely on this control.
-    if (!paused && document.activeElement === autoplay) focused = false;
+    // Focus stays on the stable toolbar when image playback resumes.
+    if (!paused && imageLinks.includes(document.activeElement)) autoplay.focus();
+    if (!paused) { focused = false; hovered = false; }
     schedule();
+  }
+  autoplay.addEventListener("click", togglePlayback);
+  imageLinks.forEach(function (link) {
+    link.setAttribute("role", "button");
+    link.addEventListener("click", function (event) {
+      if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      togglePlayback();
+    });
+    link.addEventListener("keydown", function (event) {
+      if (event.key === " ") { event.preventDefault(); togglePlayback(); }
+    });
   });
   gallery.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && document.fullscreenElement === gallery) {
+      event.preventDefault();
+      document.exitFullscreen().catch(function () { /* The visible exit control remains available. */ });
+      return;
+    }
     if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
     if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
     event.preventDefault();
@@ -79,6 +131,6 @@ document.querySelectorAll("[data-gallery]").forEach(function (gallery) {
   gallery.classList.add("is-enhanced");
   show(0);
   controls.hidden = false;
-  gallery.querySelector("[data-gallery-arrows]").hidden = false;
+  gallery.querySelector("[data-gallery-overlay]").hidden = false;
   schedule();
 });

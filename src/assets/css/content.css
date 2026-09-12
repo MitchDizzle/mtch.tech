@@ -163,54 +163,19 @@
 }
 
 .project-gallery__slide {
-  margin: 0 0 1rem;
+  margin: 0;
 }
 
 .project-gallery__slide figcaption {
-  margin: 0;
-  padding: 0.85rem 1rem;
-  min-height: 5em;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 62ch;
+  padding: 0.6rem 0.5rem 0.2rem;
   display: grid;
   place-items: center;
   text-align: center;
-  border: 1px solid var(--panel-rule-color);
-  border-top: 0;
-  border-radius: 0 0 3px 3px;
-  background: var(--panel-bg, rgb(0 0 0 / 0.2));
-}
-
-.project-gallery__slide:has(figcaption) img {
-  border-radius: 3px 3px 0 0;
-}
-
-.project-gallery__arrows {
-  position: absolute;
-  top: 0;
-  inset-inline: 0;
-  aspect-ratio: 16 / 9;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-inline: 0.5rem;
-  pointer-events: none;
-}
-
-.project-gallery__arrow {
-  pointer-events: auto;
-  width: 44px;
-  min-height: 48px;
-  padding: 0;
-  font-size: 2rem;
-  line-height: 1;
-  background: var(--panel-bg-solid, #17120e);
-  color: var(--panel-accent);
-  border-color: var(--panel-rule-color);
-  box-shadow: 0 2px 8px rgb(0 0 0 / 0.35);
-}
-
-.project-gallery__arrow:hover,
-.project-gallery__arrow:focus-visible {
-  background: var(--panel-bg-solid, #17120e);
+  border: 0;
+  background: none;
 }
 
 .project-gallery.is-enhanced .project-gallery__slide img {
@@ -219,17 +184,109 @@
   object-fit: contain;
 }
 
+.project-gallery__overlay {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  aspect-ratio: 16 / 9;
+  pointer-events: none;
+}
+
 .project-gallery__controls {
+  position: absolute;
+  bottom: 0.55rem;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+  gap: 0.15rem;
+  flex-wrap: nowrap;
+  border: 1px solid var(--panel-rule-color);
+  border-radius: 8px;
+  background: rgb(16 12 9 / 0.78);
+  backdrop-filter: blur(6px);
+  padding: 0 0.15rem;
+  pointer-events: auto;
 }
 
-.project-gallery__status {
+.project-gallery__control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--panel-fg);
+  cursor: pointer;
+}
+
+.project-gallery__control:hover,
+.project-gallery__control:focus-visible {
+  color: var(--panel-accent);
+  background: rgb(255 255 255 / 0.05);
+}
+
+.project-gallery__control svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.project-gallery a.project-gallery__expand {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  background: rgb(16 12 9 / 0.65);
+  border: 1px solid var(--panel-rule-color);
+  border-radius: 6px;
+  color: var(--panel-fg);
+  pointer-events: auto;
+}
+
+/* The anchor's base selector is more specific than the shared controls;
+   keep its hover/focus treatment at the same specificity. */
+.project-gallery a.project-gallery__expand:hover,
+.project-gallery a.project-gallery__expand:focus-visible {
+  color: var(--panel-accent);
+  background: linear-gradient(rgb(255 255 255 / 0.05), rgb(255 255 255 / 0.05)), rgb(16 12 9 / 0.65);
+}
+
+.project-gallery:fullscreen {
+  margin: 0;
+  padding: 1rem;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0503;
+}
+
+.project-gallery:fullscreen .project-gallery__slides {
+  width: min(100%, calc((100dvh - 8rem) * 16 / 9));
+}
+
+.project-gallery:fullscreen::backdrop {
+  background: #0a0503;
+}
+
+.project-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.5rem;
+  margin-top: 2rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--panel-rule-color);
   color: var(--panel-fg-muted);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
 }
 
 .project-gallery [hidden] {

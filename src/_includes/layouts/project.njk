@@ -7,26 +7,13 @@ layout: layouts/shell.njk
   {% call panel({
     variant: "page",
     title: title,
-    subtitle: date | readableDate,
     labelledBy: "project-title",
     tabs: nav,
     currentUrl: "/projects/"
   }) %}
     <article class="prose project-prose">
-      {% if gallery and gallery.length %}
-      {% include "partials/project-gallery.njk" %}
-      {% elif image %}
-      <figure class="project-figure">
-        <img src="{{ image | escape }}" alt="{{ imageAlt | default('') | escape }}" decoding="async">
-        {% if imageCaption %}<figcaption>{{ imageCaption | escape }}</figcaption>{% endif %}
-      </figure>
-      {% endif %}
-
-      <ul class="tag-list">
-        <li class="tag">{{ category | projectCategory(tags) | escape }}</li>
-      </ul>
-
-      {{ content | safe }}
+      {% set galleryMarkup %}{% if gallery and gallery.length %}{% include "partials/project-gallery.njk" %}{% endif %}{% endset %}
+      {{ content | replace('<div data-project-gallery-placeholder></div>', galleryMarkup) | safe }}
 
       {% if github_url or live_url %}
       <div class="panel__actions">
@@ -38,9 +25,13 @@ layout: layouts/shell.njk
         {% endif %}
       </div>
       {% endif %}
+      <footer class="project-meta" aria-label="Article details">
+        <span>Published <time datetime="{{ date | htmlDateString }}">{{ date | readableDate }}</time></span>
+        <span>Category: {{ category | projectCategory(tags) | escape }}</span>
+      </footer>
     </article>
   {% endcall %}
 </main>
-{% if gallery and gallery.length > 1 %}
+{% if gallery and gallery.length > 1 and 'data-project-gallery-placeholder' in content %}
 <script src="{{ '/assets/js/project-gallery.js' | bust }}" defer></script>
 {% endif %}

@@ -61,6 +61,7 @@ Posts use `title`, `date`, `description`, and `tags`; `image` is optional.
 Listings are discovered automatically and sorted newest first.
 
 For a ready-to-copy starting point, use [the project template](docs/project-template.md).
+Place `{% projectGallery %}` in the Markdown where you want the slideshow.
 Keep each project's images under `src/assets/img/projects/<project-slug>/`.
 The [project media guide](docs/11-project-media.md) covers optional slideshows,
 inline Markdown images, captions, and smaller figures.

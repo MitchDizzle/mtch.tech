@@ -147,6 +147,9 @@ module.exports = function (eleventyConfig) {
   });
 
   // Filters
+  // The project layout replaces this block after Markdown rendering, letting
+  // authors position the gallery without maintaining HTML in their write-up.
+  eleventyConfig.addShortcode("projectGallery", () => '<div data-project-gallery-placeholder></div>');
   // One broad project category; older Markdown tags still work during migration.
   function projectCategory(category, tags = []) {
     if (typeof category === "string" && category.trim()) return category.trim();

@@ -2,7 +2,7 @@
   <div class="project-gallery__slides">
     {% for slide in gallery %}
     <figure class="project-figure project-gallery__slide" data-slide>
-      <a href="{{ slide.src | escape }}" aria-label="{{ ('Open full-size image: ' + slide.alt) | escape }}">
+      <a data-gallery-image href="{{ slide.src | escape }}" aria-label="{{ ('Open full-size image: ' + slide.alt) | escape }}">
         <img src="{{ slide.src | escape }}" alt="{{ slide.alt | escape }}"
              {% if slide.width and slide.height %}width="{{ slide.width }}" height="{{ slide.height }}"{% endif %}
              loading="{{ 'eager' if loop.first else 'lazy' }}" decoding="async">
@@ -10,17 +10,26 @@
       {% if slide.caption %}<figcaption>{{ slide.caption | escape }}</figcaption>{% endif %}
     </figure>
     {% endfor %}
-    {% if gallery.length > 1 %}
-    <div class="project-gallery__arrows" data-gallery-arrows hidden>
-      <button class="btn project-gallery__arrow" type="button" data-previous aria-label="Previous project image"><span aria-hidden="true">&#8249;</span></button>
-      <button class="btn project-gallery__arrow" type="button" data-next aria-label="Next project image"><span aria-hidden="true">&#8250;</span></button>
-    </div>
-    {% endif %}
-  </div>
   {% if gallery.length > 1 %}
+  <div class="project-gallery__overlay" data-gallery-overlay hidden>
   <div class="project-gallery__controls" data-gallery-controls hidden>
-    <span class="project-gallery__status" data-gallery-status aria-live="off" aria-atomic="true"></span>
-    <button class="btn btn--sm" type="button" data-autoplay>Pause slideshow</button>
+    <button class="project-gallery__control" type="button" data-previous aria-label="Previous project image" title="Previous image">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6"/></svg>
+    </button>
+    <button class="project-gallery__control" type="button" data-autoplay aria-label="Pause slideshow" title="Pause slideshow">
+      <svg viewBox="0 0 24 24" aria-hidden="true" data-pause-icon><path d="M9 5v14M15 5v14"/></svg>
+      <svg viewBox="0 0 24 24" aria-hidden="true" data-play-icon hidden><path d="m8 5 11 7-11 7Z"/></svg>
+    </button>
+    <button class="project-gallery__control" type="button" data-next aria-label="Next project image" title="Next image">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 6 6 6-6 6"/></svg>
+    </button>
   </div>
+  <a class="project-gallery__control project-gallery__expand" data-gallery-original href="{{ gallery[0].src | escape }}" aria-label="Expand image" title="Expand image">
+    <svg viewBox="0 0 24 24" aria-hidden="true" data-expand-icon><path d="M9 4H4v5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg>
+    <svg viewBox="0 0 24 24" aria-hidden="true" data-collapse-icon hidden><path d="M4 9h5V4M20 9h-5V4M15 20v-5h5M9 20v-5H4"/></svg>
+  </a>
+  </div>
+  <span class="sr-only" data-gallery-status aria-live="off" aria-atomic="true"></span>
   {% endif %}
+  </div>
 </section>
