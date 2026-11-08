@@ -1,19 +1,49 @@
 ---
-layout: layouts/base.njk
+layout: layouts/shell.njk
+permalink: /contact/
 title: Contact
+description: How to reach Mitch Gardner.
 ---
-<main class="content">
-  <h1>Contact</h1>
-  <p>The best way to reach me is through GitHub or LinkedIn. I'm open to conversations about DevOps roles, infrastructure projects, and open source collaboration.</p>
+{% from "components/panel.njk" import panel %}
 
-  <ul class="contact-list">
-    <li>
-      <strong>GitHub:</strong>
-      <a href="{{ site.github_url }}" target="_blank" rel="noopener">{{ site.github_url }}</a>
-    </li>
-    <li>
-      <strong>LinkedIn:</strong>
-      <a href="{{ site.linkedin_url }}" target="_blank" rel="noopener">{{ site.linkedin_url }}</a>
-    </li>
-  </ul>
+{# Every row is generated from site.profiles in _data/site.json. URLs, handles,
+   and descriptions live there so nothing has to be updated in two places. #}
+
+<main class="landing">
+  {% call panel({
+    variant: "page",
+    title: "Contact",
+    labelledBy: "contact-title",
+    tabs: nav,
+    currentUrl: page.url
+  }) %}
+    <p class="section-lead">
+      Email is the best way to get in contact with me. Happy to talk about
+      engineering roles, infrastructure work, open source, or any of the
+      things on the rest of this site.
+    </p>
+
+    <ul class="link-list">
+      {% for profile in site.profiles %}
+        {% if profile.contact %}
+      <li>
+        <a class="link-row" href="{{ profile.url }}" rel="{% if profile.me %}me {% endif %}noopener">
+          {% if profile.icon %}
+          <svg class="link-row__icon" aria-hidden="true"><use href="#i-{{ profile.icon }}"/></svg>
+          {% endif %}
+          <span class="link-row__text">
+            <span class="link-row__label">{{ profile.label }}</span>
+            {% if profile.description %}
+            <span class="link-row__desc">{{ profile.description }}</span>
+            {% endif %}
+            {% if profile.handle %}
+            <span class="link-row__handle">{{ profile.handle }}</span>
+            {% endif %}
+          </span>
+        </a>
+      </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  {% endcall %}
 </main>

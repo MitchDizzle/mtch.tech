@@ -1,0 +1,432 @@
+/* ==========================================================================
+   OBS overlays
+
+   Designed at 1920x1080. OBS renders a Browser Source at exactly the size you
+   configure, so at 1920x1080 the stage is 1:1 and nothing is resampled. A
+   browser preview scales the same stage down to fit the window.
+
+   The body background MUST stay transparent. OBS composites the Browser
+   Source over the sources beneath it, and any background colour here becomes
+   an opaque rectangle covering your gameplay or camera.
+   ========================================================================== */
+
+:root {
+  --font-display: "Cinzel", Georgia, serif;
+  --font-body: system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Matches the site's warm trial palette. */
+  --ov-fg: #f0e9e2;
+  --ov-muted: #b8aa9e;
+  --ov-accent: rgb(235 160 96);
+  --ov-border: rgb(210 190 175 / 0.55);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;          /* never a scrollbar in a broadcast source */
+  background: transparent;   /* see note above - do not set a colour */
+  color: var(--ov-fg);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  cursor: none;              /* OBS shows the cursor if it ever enters */
+}
+
+.stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1920px;
+  height: 1080px;
+  /* --overlay-scale is set by overlay.js: 1 inside OBS, smaller in a
+     browser preview window. */
+  transform: translate(-50%, -50%) scale(var(--overlay-scale, 1));
+  transform-origin: center center;
+}
+
+/* --------------------------------------------------------------------------
+   Backdrop
+
+   Holding cards fill the frame; the live scene must stay transparent so the
+   camera and gameplay show through. Opt in per scene with a body class.
+   -------------------------------------------------------------------------- */
+
+.ov-backdrop { display: none; }
+
+.overlay--filled .ov-backdrop {
+  display: block;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #0a0503;
+}
+
+.ov-blob {
+  position: absolute;
+  width: 1400px;
+  height: 1400px;
+  border-radius: 50%;
+  opacity: 0.55;
+}
+
+/* No filter: blur() - a soft radial gradient is already soft, and blurring
+   something this large tanks the frame rate. OBS captures at your stream
+   frame rate, so a slow overlay costs dropped frames on the broadcast. */
+.ov-blob--1 { background: radial-gradient(circle closest-side, rgb(112 48 14 / .85), transparent); top: -420px; left: -300px; }
+.ov-blob--2 { background: radial-gradient(circle closest-side, rgb(138 66 20 / .8), transparent); bottom: -480px; right: -320px; }
+.ov-blob--3 { background: radial-gradient(circle closest-side, rgb(86 26 22 / .7), transparent); top: 260px; right: -440px; }
+
+@keyframes ov-drift-a { 0%,100% { transform: translate3d(0,0,0); opacity: .5 } 50% { transform: translate3d(120px,80px,0); opacity: .66 } }
+@keyframes ov-drift-b { 0%,100% { transform: translate3d(0,0,0); opacity: .42 } 50% { transform: translate3d(-140px,-90px,0); opacity: .6 } }
+@keyframes ov-drift-c { 0%,100% { transform: translate3d(0,0,0); opacity: .3 } 50% { transform: translate3d(-80px,120px,0); opacity: .48 } }
+
+/* Long cycles. This is ambience behind a holding card, not an effect.
+
+   Deliberately NOT gated on prefers-reduced-motion. These are broadcast
+   graphics, not interface - the viewer is watching video, and OBS does not
+   report a motion preference anyway. */
+.ov-blob--1 { animation: ov-drift-a 34s ease-in-out infinite; }
+.ov-blob--2 { animation: ov-drift-b 41s ease-in-out infinite; }
+.ov-blob--3 { animation: ov-drift-c 29s ease-in-out infinite; }
+
+/* --------------------------------------------------------------------------
+   Holding cards - starting soon, be right back, ending
+   -------------------------------------------------------------------------- */
+
+.ov-hold {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+  padding: 80px;
+}
+
+.ov-wordmark {
+  font-family: var(--font-display);
+  font-size: 96px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin: 0;
+  text-shadow: 0 0 48px rgb(235 152 86 / 0.4);
+}
+
+@keyframes ov-float { 0%,100% { transform: translate3d(0,0,0) } 50% { transform: translate3d(0,-10px,0) } }
+.ov-wordmark-wrap { text-align: center; animation: ov-float 7s ease-in-out infinite; }
+
+.ov-kicker {
+  margin: 8px 0 0;
+  font-size: 22px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--ov-muted);
+}
+
+.ov-hold .panel { --panel-max-width: 860px; }
+.ov-hold .panel__title { font-size: 34px; }
+.ov-hold .panel__subtitle { font-size: 18px; }
+.ov-hold .panel__banner { font-size: 16px; letter-spacing: 0.2em; }
+.ov-hold .panel__body { padding: 32px 40px; }
+
+.ov-lead {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.5;
+  color: var(--ov-muted);
+}
+
+.ov-timer {
+  margin: 24px 0 0;
+  font-family: var(--font-display);
+  font-size: 88px;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--ov-accent);
+}
+
+.ov-timer[hidden] { display: none; }
+
+/* --------------------------------------------------------------------------
+   Live scene
+   -------------------------------------------------------------------------- */
+
+/* Camera frame. Border only - the centre stays fully transparent so the OBS
+   camera source placed BELOW this overlay shows through the hole. Adding a
+   background here would hide your camera. */
+.ov-cam {
+  position: absolute;
+  border: 3px solid var(--ov-border);
+  border-radius: 4px;
+  /* Inner glow only, never a fill. */
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.5), 0 0 24px rgb(0 0 0 / 0.45);
+}
+
+.ov-cam__label {
+  position: absolute;
+  left: -3px;
+  bottom: -3px;
+  padding: 6px 16px;
+  background: rgb(26 20 16 / 0.92);
+  border: 3px solid var(--ov-border);
+  border-radius: 0 4px 0 4px;
+  font-family: var(--font-display);
+  font-size: 18px;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+/* Lower third. */
+.ov-lower {
+  position: absolute;
+  left: 48px;
+  bottom: 48px;
+  min-width: 520px;
+  max-width: 900px;
+}
+
+.ov-lower .panel__title { font-size: 26px; }
+.ov-lower .panel__subtitle { font-size: 16px; }
+.ov-lower .panel__body { padding: 16px 22px; }
+.ov-lower .panel__banner { font-size: 13px; }
+
+/* Corner status strip - clock and socials. */
+.ov-strip {
+  position: absolute;
+  top: 40px;
+  right: 48px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 12px 22px;
+  background: rgb(26 20 16 / 0.86);
+  border: 2px solid var(--ov-border);
+  border-radius: 4px;
+  font-size: 20px;
+}
+
+.ov-strip__clock {
+  font-family: var(--font-display);
+  font-variant-numeric: tabular-nums;
+  color: var(--ov-accent);
+}
+
+.ov-strip__sep {
+  width: 1px;
+  height: 22px;
+  background: var(--ov-border);
+}
+
+.ov-strip__handle { color: var(--ov-muted); letter-spacing: 0.06em; }
+
+/* Toast rail. Reuses the site's notification panel, so alerts look like the
+   rest of the theme without a second component. */
+.overlay-body .panel-toasts {
+  position: absolute;
+  top: 140px;
+  right: 48px;
+  padding: 0;
+}
+
+.overlay-body .panel--toast {
+  --panel-max-width: 460px;
+}
+
+.overlay-body .panel--toast .panel__title { font-size: 22px; }
+.overlay-body .panel--toast .panel__body { font-size: 17px; }
+.overlay-body .panel--toast .panel__banner { font-size: 13px; letter-spacing: 0.18em; }
+
+/* ==========================================================================
+   Camera frame (/overlay/cam/)
+
+   Fills the browser source rather than sitting in a 1920x1080 stage, so the
+   frame is sized and positioned in OBS directly over the camera.
+
+   The centre stays fully transparent. This source goes ABOVE the camera in
+   the OBS source list and the camera shows through the hole.
+   ========================================================================== */
+
+.overlay--cam {
+  --cam-frame: 4px;
+  --cam-radius: 6px;
+  --cam-shine: 7s;
+}
+
+/* Tone classes set the --panel-* variables, but the camera frame reads the
+   --ov-* ones - so without this mapping a tone did nothing to the frame.
+
+   Scoped to .cam, not to the body. On the body these variables cascaded into
+   the info panel and the toasts as well, so choosing a camera colour quietly
+   retinted every other element. Each section owns its own tone.
+
+   Listed per tone rather than applied to .cam unconditionally, so the untoned
+   default keeps its own warm border instead of inheriting the panel's cooler
+   one. */
+.cam.panel--notice,
+.cam.panel--warning,
+.cam.panel--danger,
+.cam.panel--success,
+.cam.panel--quest {
+  --ov-accent: var(--panel-accent);
+  --ov-border: var(--panel-border-color);
+  --cam-sweep-color: var(--panel-accent);
+}
+
+.cam {
+  position: absolute;
+  inset: 0;
+  border: var(--cam-frame) solid var(--ov-border);
+  border-radius: var(--cam-radius);
+  /* No background. A fill here would hide the camera. */
+  box-shadow:
+    inset 0 0 0 1px rgb(0 0 0 / 0.55),
+    0 0 22px rgb(0 0 0 / 0.4);
+}
+
+/* The shine.
+
+   Masked to the border ring only, so the sweep travels around the frame and
+   never crosses the camera image. The padding-box/border-box mask pair with
+   `exclude` is the standard way to paint a border and nothing else - the
+   first mask covers the inside, the second covers everything, and excluding
+   one from the other leaves the ring.
+
+   OBS Browser Source is Chromium, so modern mask syntax is safe here. */
+.cam__ring {
+  position: absolute;
+  inset: calc(var(--cam-frame) * -1);
+  border: var(--cam-frame) solid transparent;
+  border-radius: var(--cam-radius);
+  pointer-events: none;
+
+  -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+.cam__sweep {
+  position: absolute;
+  top: -60%;
+  left: 0;
+  width: 45%;
+  height: 220%;
+  /* Falls back to warm white. A custom accent tints it via
+     --cam-sweep-color, but only partway - a fully saturated sweep reads as a
+     coloured bar sliding past rather than as light on metal. */
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(255 236 208 / 0.15) 30%,
+    var(--cam-sweep-color, rgb(255 244 224 / 0.95)) 50%,
+    rgb(255 236 208 / 0.15) 70%,
+    transparent
+  );
+  /* transform only - composited, so the sweep costs the stream nothing. */
+  animation: cam-sweep var(--cam-shine) ease-in-out infinite;
+}
+
+@keyframes cam-sweep {
+  /* Travels across, then holds off-frame for most of the cycle. A constant
+     sweep reads as a distracting loop on stream; an occasional glint reads
+     as material. */
+  0%   { transform: translateX(-140%) skewX(-18deg); }
+  38%  { transform: translateX(340%) skewX(-18deg); }
+  100% { transform: translateX(340%) skewX(-18deg); }
+}
+
+.overlay--cam[data-shine="off"] .cam__ring { display: none; }
+
+/* Corner ticks - small accents that read as a fitted frame rather than a
+   plain rectangle. */
+.cam__corner {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 0 solid var(--ov-accent);
+  opacity: 0.9;
+}
+
+.cam__corner--tl { top: -1px; left: -1px; border-top-width: 3px; border-left-width: 3px; }
+.cam__corner--tr { top: -1px; right: -1px; border-top-width: 3px; border-right-width: 3px; }
+.cam__corner--bl { bottom: -1px; left: -1px; border-bottom-width: 3px; border-left-width: 3px; }
+.cam__corner--br { bottom: -1px; right: -1px; border-bottom-width: 3px; border-right-width: 3px; }
+
+.overlay--cam[data-corners="off"] .cam__corner { display: none; }
+
+/* A "notched corners" variant was tried here and removed. Masking .cam to cut
+   the corners also clips its descendants, so the corner brackets vanished
+   along with the border. Doing it properly needs the visible border moved
+   onto its own element, which would disturb the content-box geometry the
+   camera position depends on. Not worth it for a decoration. */
+
+/* --- Inner hairline ------------------------------------------------------
+   A second, lighter line just outside the main border. The cheapest way to
+   make a single-stroke rectangle read as a deliberate frame. */
+.cam__inner {
+  position: absolute;
+  inset: calc((var(--cam-frame) + 5px) * -1);
+  border: 1px solid var(--ov-border);
+  border-radius: calc(var(--cam-radius) + 3px);
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.overlay--cam:not([data-inner="on"]) .cam__inner { display: none; }
+
+/* --- Edge studs ----------------------------------------------------------
+   A small diamond centred on each edge. Breaks up long straight runs on a
+   wide frame without adding clutter at the corners. */
+.cam__stud {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  background: var(--ov-accent);
+  rotate: 45deg;
+  pointer-events: none;
+}
+
+.cam__stud--t { top: calc((var(--cam-frame) + 4.5px) * -1); left: 50%; margin-left: -4.5px; }
+.cam__stud--b { bottom: calc((var(--cam-frame) + 4.5px) * -1); left: 50%; margin-left: -4.5px; }
+.cam__stud--l { left: calc((var(--cam-frame) + 4.5px) * -1); top: 50%; margin-top: -4.5px; }
+.cam__stud--r { right: calc((var(--cam-frame) + 4.5px) * -1); top: 50%; margin-top: -4.5px; }
+
+.overlay--cam:not([data-studs="on"]) .cam__stud { display: none; }
+
+/* --- Edge ticks ----------------------------------------------------------
+   A row of small marks along the top and bottom, like a measurement scale.
+   Drawn with a repeating gradient rather than elements, so the count adapts
+   to the frame width for free and it stays one paint. */
+.cam__ticks {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 5px;
+  pointer-events: none;
+  opacity: 0.6;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--ov-border) 0 2px,
+    transparent 2px 12px
+  );
+}
+
+.cam__ticks--top { top: calc((var(--cam-frame) + 11px) * -1); }
+.cam__ticks--bottom { bottom: calc((var(--cam-frame) + 11px) * -1); }
+
+.overlay--cam:not([data-ticks="on"]) .cam__ticks { display: none; }
+
+/* --------------------------------------------------------------------------
+   Overlay index - the only page meant to be read in a browser, not OBS
+   -------------------------------------------------------------------------- */
+
+.ov-index {
+  position: static;
+  cursor: auto;
+}

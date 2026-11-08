@@ -1,0 +1,47 @@
+---
+permalink: /overlay/live/
+title: Live
+bodyClass: overlay--live
+---
+{% from "components/panel.njk" import panel %}
+
+{# The live scene. No backdrop - everything except these elements stays fully
+   transparent so gameplay and the camera show through from the OBS sources
+   underneath.
+
+   Positions are in 1920x1080 space. Adjust here rather than moving the
+   Browser Source in OBS, so the overlay and the camera stay in register. #}
+
+{# Camera frame. Border only, transparent centre - your camera source sits
+   BELOW this overlay in the OBS source list and shows through the hole.
+   Default: 480x270 box in the bottom-right, 16:9. #}
+<div class="ov-cam" style="right: 48px; bottom: 48px; width: 480px; height: 270px;">
+  <span class="ov-cam__label" data-param="camlabel">Mitch</span>
+</div>
+
+{# Lower third. #}
+<div class="ov-lower">
+  {% call panel({
+    variant: "dialog",
+    banner: "Now",
+    tone: "notice",
+    title: "Building something",
+    subtitle: "mtch.tech"
+  }) %}
+    <p style="margin:0;font-size:18px;color:var(--ov-muted)" data-param="lead">
+      Working on the site. Ask anything.
+    </p>
+  {% endcall %}
+</div>
+
+{# Corner strip: clock plus a handle. #}
+<div class="ov-strip">
+  <span class="ov-strip__clock" data-clock>--:--</span>
+  <span class="ov-strip__sep" aria-hidden="true"></span>
+  <span class="ov-strip__handle" data-param="handle">@MitchDizzle</span>
+</div>
+
+{# Alert rail. Reuses the site's toast panel so future integrations look
+   native rather than bolted on. Fire one while testing with:
+     MitchOverlay.toast("Follower", "someone followed", "success") #}
+<div class="panel-toasts" id="panel-toasts"></div>

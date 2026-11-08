@@ -1,0 +1,34 @@
+---
+layout: layouts/shell.njk
+permalink: /site/
+title: Mitch Gardner
+description: Projects, writing, and the things I spend time on.
+---
+{% from "components/panel.njk" import panel %}
+
+{# Section list is not final - see docs/08-static-site.md.
+   Home returns to the landing panel and replaces the old bottom button. #}
+
+<main class="landing">
+  {% call panel({
+    variant: "page",
+    title: "Mitch Gardner",
+    labelledBy: "hub-title",
+    tabsLabel: "Sections",
+    tabs: [
+      { label: "Home",     href: "/",          icon: "home" },
+      { label: "About",    href: "/site/",     icon: "user", current: true },
+      { label: "Projects", href: "/projects/", icon: "projects" },
+      { label: "Contact",  href: "/contact/",  icon: "contact" }
+    ]
+  }) %}
+    <p class="muted">
+      Software engineer of ten years.
+      Java, JavaScript, SourcePawn, and whatever the problem needs.
+      Away from the keyboard: motorcycles, baking, and games.
+    </p>
+    <p class="muted small">
+      Placeholder content. Sections are not final.
+    </p>
+  {% endcall %}
+</main>

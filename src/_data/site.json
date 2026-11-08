@@ -1,11 +1,78 @@
 {
-  "name": "Mitch Gardner",
+  "name": "Mitchtopia",
   "shortName": "mtch.tech",
-  "tagline": "DevOps & Software Engineer",
+  "url": "https://mtch.tech",
+  "tagline": "Software Engineer",
   "description": "Personal site for projects, writing, and contact.",
-  "github_url": "https://github.com/mitchdizzle",
-  "site_repo": "https://github.com/mitchdizzle/mtch.tech",
-  "linkedin_url": "https://linkedin.com/in/mitchgardner",
-  "instagram_url": "https://linkedin.com/in/mitchgardner",
-  "year": "2026"
+  "year": "2026",
+
+  "_comment_profiles": "SINGLE SOURCE OF TRUTH for every link to me. The footer and the contact page both build from this array - change a URL here and it updates everywhere. `footer` and `contact` control where each entry appears. `handle` is the visible text on the contact page; `icon` must match a symbol name in partials/icons.njk or a filename in assets/icons/.",
+
+  "profiles": [
+    {
+      "id": "email",
+      "label": "Email",
+      "url": "mailto:contact@mtch.tech",
+      "handle": "contact@mtch.tech",
+      "icon": "contact",
+      "description": "The best way to get in contact with me.",
+      "me": false,
+      "footer": false,
+      "contact": true
+    },
+    {
+      "id": "github",
+      "label": "GitHub",
+      "url": "https://github.com/mitchdizzle",
+      "handle": "github.com/mitchdizzle",
+      "icon": "github-with-circle",
+      "description": "Code, side projects, and whatever I am currently breaking.",
+      "me": true,
+      "footer": true,
+      "contact": true
+    },
+    {
+      "id": "linkedin",
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/in/mitchell-r-gardner/",
+      "handle": "linkedin.com/in/mitchell-r-gardner",
+      "icon": "linkedin-with-circle",
+      "description": "Work history and professional connections.",
+      "me": true,
+      "footer": true,
+      "contact": true
+    },
+    {
+      "id": "instagram",
+      "label": "Instagram",
+      "url": "https://instagram.com/MitchDizzle",
+      "handle": "@MitchDizzle",
+      "icon": "instagram-with-circle",
+      "description": "Motorcycles, baking, and the occasional finished project.",
+      "me": true,
+      "footer": true,
+      "contact": true
+    },
+    {
+      "id": "repo",
+      "label": "Source",
+      "url": "https://github.com/mitchdizzle/mtch.tech",
+      "handle": "github.com/mitchdizzle/mtch.tech",
+      "icon": "github",
+      "description": "This site's source, if you want to see how any of it works.",
+      "me": false,
+      "footer": true,
+      "contact": false
+    }
+  ],
+
+  "_comment_external": "Third-party links used in credits and attribution.",
+
+  "external": {
+    "chequered_ink": "https://chequered.ink/",
+    "chequered_ink_license": "https://chequered.ink/font-license/",
+    "kenney": "https://kenney.nl/",
+    "eleventy": "https://www.11ty.dev/",
+    "cinzel": "https://fonts.google.com/specimen/Cinzel"
+  }
 }

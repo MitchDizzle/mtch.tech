@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stream overlay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&display=swap">
+
+<!-- Reuses the site's stylesheets rather than copying them, so a theme change
+     shows up here without a second edit. -->
+<link rel="stylesheet" href="/site-assets/css/panel.css">
+<link rel="stylesheet" href="/site-assets/css/overlay.css">
+<link rel="stylesheet" href="/stage.css">
+</head>
+<body class="overlay-body overlay--cam overlay--stage">
+
+<!-- Everything lives in a 1920x1080 stage that scales to whatever size OBS
+     gives the browser source. Positions set from the phone are in stage
+     coordinates, so they mean the same thing at any source size. -->
+<div class="stage" id="stage">
+
+  <!-- Camera frame. Border only - your OBS camera source sits BELOW this
+       overlay and shows through the transparent middle. -->
+  <div class="cam" id="cam">
+    <div class="cam__ring" aria-hidden="true"><span class="cam__sweep"></span></div>
+
+    <!-- Edge decoration. Each is toggled by a data-* attribute on the frame,
+         so the markup is always present and CSS decides what shows. -->
+    <span class="cam__inner"></span>
+
+    <span class="cam__ticks cam__ticks--top"></span>
+    <span class="cam__ticks cam__ticks--bottom"></span>
+
+    <span class="cam__stud cam__stud--t"></span>
+    <span class="cam__stud cam__stud--r"></span>
+    <span class="cam__stud cam__stud--b"></span>
+    <span class="cam__stud cam__stud--l"></span>
+
+    <span class="cam__corner cam__corner--tl"></span>
+    <span class="cam__corner cam__corner--tr"></span>
+    <span class="cam__corner cam__corner--bl"></span>
+    <span class="cam__corner cam__corner--br"></span>
+  </div>
+
+  <!-- Persistent info panel: what you are working on. -->
+  <div class="info" id="info" hidden>
+    <div class="panel panel--dialog panel--banner-bar" id="info-panel">
+      <p class="panel__banner" id="info-banner">Now</p>
+      <div class="panel__header" id="info-header">
+        <h2 class="panel__title" id="info-title"></h2>
+        <p class="panel__subtitle" id="info-subtitle"></p>
+      </div>
+      <div class="panel__body" id="info-body-wrap">
+        <p id="info-body" style="margin:0"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-toasts" id="panel-toasts"></div>
+</div>
+
+<script src="/site-assets/js/panel.js"></script>
+<script src="/overlay-client.js"></script>
+</body>
+</html>

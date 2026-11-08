@@ -1,0 +1,96 @@
+{# =========================================================================
+   Icon sprite
+
+   Inlined once per page, hidden, then referenced with <use href="#i-name">.
+   Inline rather than an external file so there is no extra request and no
+   flash of missing icons, and no icon font to load.
+
+   All icons are 24x24, stroke-based, and inherit currentColor. Keep new ones
+   on the same grid and stroke width or they will not sit together.
+   ========================================================================= #}
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 11 12 3l9 8"/>
+    <path d="M5.5 9.5V20h13V9.5"/>
+    <path d="M10 20v-5h4v5"/>
+  </symbol>
+
+  <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="8.5" r="3.75"/>
+    <path d="M4.5 20c0-3.9 3.4-6 7.5-6s7.5 2.1 7.5 6"/>
+  </symbol>
+
+  <symbol id="i-projects" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 7.5a1.5 1.5 0 0 1 1.5-1.5h4L11 8.5h8A1.5 1.5 0 0 1 20.5 10v8a1.5 1.5 0 0 1-1.5 1.5H4.5A1.5 1.5 0 0 1 3 18Z"/>
+  </symbol>
+
+  <symbol id="i-writing" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 4.5h9.5L19 9v10.5H5Z"/>
+    <path d="M14 4.5V9h5"/>
+    <path d="M8.5 13h7M8.5 16h4.5"/>
+  </symbol>
+
+  <symbol id="i-contact" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3" y="5.5" width="18" height="13" rx="1.5"/>
+    <path d="m3.5 6.5 8.5 6.5 8.5-6.5"/>
+  </symbol>
+
+  <symbol id="i-source" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m8.5 8.5-4.5 3.5 4.5 3.5"/>
+    <path d="m15.5 8.5 4.5 3.5-4.5 3.5"/>
+    <path d="m13.5 5.5-3 13"/>
+  </symbol>
+
+  {# ---------------------------------------------------------------------
+     Imported icons - everything in src/assets/icons/
+
+     Each .svg in that folder is inlined below at build time as
+     <symbol id="i-<filename>">. So linkedin-with-circle.svg becomes
+     <use href="#i-linkedin-with-circle">. Drop a file in and it works; to
+     update an icon, replace the file. No path data is copied by hand.
+
+     A path's `d` attribute takes drawing commands, not a filename - which
+     is why referencing the file there could never work. This reads the
+     file and pulls its real geometry in.
+
+     The importer also strips <title>/<desc> so they do not surface as
+     tooltips, namespaces internal ids so two icons cannot collide over
+     id="a", and rewrites hardcoded black fills to currentColor so an icon
+     takes the colour of the link containing it.
+
+     Tip: name files after the id you want. github.svg is nicer to reference
+     than github-with-circle-and-shadow.svg.
+
+     Brand marks: using the GitHub or LinkedIn logo to link to your own
+     profile is ordinary nominative use. Keep the shape unmodified and leave
+     clear space around it.
+     --------------------------------------------------------------------- #}
+  {% iconSprite %}
+
+  {# Reserved for the hobby domains once those sections exist. #}
+  <symbol id="i-garage" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="5.5" cy="16" r="3.5"/>
+    <circle cx="18.5" cy="16" r="3.5"/>
+    <path d="M5.5 16h5l4-6h-3M14 10l2.5 6M13 7h3.5l1.5 3"/>
+  </symbol>
+
+  <symbol id="i-bakery" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 12a3.5 3.5 0 0 1 3-3.5c.4-1.5 2-2.5 3.8-2.5h2.4c1.8 0 3.4 1 3.8 2.5A3.5 3.5 0 0 1 20 12v5.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5Z"/>
+    <path d="M9 8.6v10M15 8.6v10"/>
+  </symbol>
+
+  <symbol id="i-games" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7.5 7.5h9a4.5 4.5 0 0 1 4.5 4.5v3a3 3 0 0 1-5.4 1.8L14.5 15h-5l-1.1 1.8A3 3 0 0 1 3 15v-3a4.5 4.5 0 0 1 4.5-4.5Z"/>
+    <path d="M7.5 11v2.5M6.25 12.25h2.5M16 11.5h.01M18 13.5h.01"/>
+  </symbol>
+</svg>

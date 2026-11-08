@@ -1,0 +1,31 @@
+{# Shared markup for the three holding cards. Each scene sets `title`,
+   `sub`, `lead`, and `banner` in its front matter; the URL can override any
+   of them at stream time via overlay.js. #}
+
+{% from "components/panel.njk" import panel %}
+
+<div class="ov-backdrop" aria-hidden="true">
+  <span class="ov-blob ov-blob--1"></span>
+  <span class="ov-blob ov-blob--2"></span>
+  <span class="ov-blob ov-blob--3"></span>
+</div>
+
+<div class="ov-hold">
+  <div class="ov-wordmark-wrap">
+    <p class="ov-wordmark">Mitchtopia</p>
+    <p class="ov-kicker" data-param="kicker">{{ site.name }}</p>
+  </div>
+
+  {% call panel({
+    variant: "dialog",
+    tone: tone,
+    banner: banner,
+    title: title,
+    subtitle: sub
+  }) %}
+    <p class="ov-lead" data-param="lead">{{ lead }}</p>
+    <p class="ov-timer" data-timer hidden>0:00</p>
+  {% endcall %}
+</div>
+
+<div class="panel-toasts" id="panel-toasts"></div>

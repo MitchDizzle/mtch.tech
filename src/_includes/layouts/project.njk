@@ -1,36 +1,37 @@
 ---
-layout: layouts/base.njk
+layout: layouts/shell.njk
 ---
-<main class="content">
-  <article class="project-detail">
-    {% if image %}
-    <img class="detail-banner" src="{{ image }}" alt="{{ title }}">
-    {% endif %}
+{% from "components/panel.njk" import panel %}
 
-    <h1>{{ title }}</h1>
+<main class="landing">
+  {% call panel({
+    variant: "page",
+    title: title,
+    labelledBy: "project-title",
+    tabs: nav,
+    currentUrl: "/projects/"
+  }) %}
+    <article class="prose project-prose">
+      {% set galleryMarkup %}{% if gallery and gallery.length %}{% include "partials/project-gallery.njk" %}{% endif %}{% endset %}
+      {{ content | replace('<div data-project-gallery-placeholder></div>', galleryMarkup) | safe }}
 
-    <div class="post-meta">
-      {% if tags %}
-      <ul class="tag-list">
-        {% for tag in tags %}
-        <li class="tag">{{ tag }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %}
-      <div class="detail-links">
+      {% if github_url or live_url %}
+      <div class="panel__actions">
         {% if github_url %}
-        <a class="btn btn-outline btn-sm" href="{{ github_url }}" target="_blank" rel="noopener">GitHub</a>
+        <a class="btn" href="{{ github_url }}" rel="noopener">View code</a>
         {% endif %}
         {% if live_url %}
-        <a class="btn btn-sm" href="{{ live_url }}" target="_blank" rel="noopener">Live Site</a>
+        <a class="btn" href="{{ live_url }}" rel="noopener">Visit site</a>
         {% endif %}
       </div>
-    </div>
-
-    <div class="post-body">
-      {{ content | safe }}
-    </div>
-
-    <p class="back-link"><a href="/projects/">&larr; Back to Projects</a></p>
-  </article>
+      {% endif %}
+      <footer class="project-meta" aria-label="Article details">
+        <span>Published <time datetime="{{ date | htmlDateString }}">{{ date | readableDate }}</time></span>
+        <span>Category: {{ category | projectCategory(tags) | escape }}</span>
+      </footer>
+    </article>
+  {% endcall %}
 </main>
+{% if gallery and gallery.length > 1 and 'data-project-gallery-placeholder' in content %}
+<script src="{{ '/assets/js/project-gallery.js' | bust }}" defer></script>
+{% endif %}

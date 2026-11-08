@@ -1,0 +1,39 @@
+{# Themed footer. Ornamental divider rather than a plain rule, so it reads as
+   part of the fantasy panel language instead of a bolted-on browser default.
+
+   Links come from site.profiles - the single source of truth in _data/site.json.
+   Anything flagged `footer: true` appears here. Each renders as an icon when
+   its symbol exists in the sprite and as a text label otherwise, so an
+   unfilled brand mark degrades to a readable link rather than an empty box. #}
+
+<footer class="site-footer">
+  <div class="site-footer__rule" aria-hidden="true">
+    <span class="site-footer__diamond"></span>
+  </div>
+
+  <div class="site-footer__inner">
+    <p class="site-footer__line">
+      &copy; {{ site.year }} {{ site.name }}
+      <span aria-hidden="true"> · </span>
+      <a class="site-footer__link" href="/credits/">Credits</a>
+    </p>
+
+    <nav class="site-footer__links" aria-label="Elsewhere">
+      {% for link in site.profiles %}
+        {% if link.footer %}
+      <a class="site-footer__link{% if link.icon %} site-footer__link--icon{% endif %}"
+         href="{{ link.url }}"
+         rel="{% if link.me %}me {% endif %}noopener"
+         title="{{ link.label }}">
+        {% if link.icon %}
+        <svg class="site-footer__icon" aria-hidden="true"><use href="#i-{{ link.icon }}"/></svg>
+        <span class="sr-only">{{ link.label }}</span>
+        {% else %}
+        {{ link.label }}
+        {% endif %}
+      </a>
+        {% endif %}
+      {% endfor %}
+    </nav>
+  </div>
+</footer>

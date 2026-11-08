@@ -1,0 +1,75 @@
+{
+  "active": "siege",
+  "order": [
+    "base",
+    "siege"
+  ],
+  "profiles": {
+    "base": {
+      "name": "Base",
+      "inherits": null,
+      "values": {
+        "cam": {
+          "visible": true,
+          "x": 1422,
+          "y": 779,
+          "w": 450,
+          "h": 253,
+          "shine": true,
+          "speed": 8,
+          "frame": 10,
+          "corners": true,
+          "inner": true,
+          "studs": true,
+          "ticks": false,
+          "tone": "default",
+          "accent": ""
+        },
+        "info": {
+          "visible": false,
+          "banner": "Now",
+          "title": "",
+          "subtitle": "",
+          "body": "",
+          "x": 48,
+          "y": 48,
+          "w": 620,
+          "tone": "default",
+          "accent": ""
+        },
+        "toast": {
+          "x": 1412,
+          "y": 48,
+          "w": 460
+        }
+      }
+    },
+    "siege": {
+      "name": "Siege",
+      "inherits": "base",
+      "values": {
+        "cam": {
+          "w": 480,
+          "h": 270,
+          "x": 20,
+          "y": 20,
+          "visible": true,
+          "tone": "danger",
+          "accent": "",
+          "studs": true,
+          "ticks": true
+        },
+        "info": {
+          "visible": false,
+          "x": 20,
+          "y": 340,
+          "tone": "default"
+        },
+        "toast": {
+          "x": 1412,
+          "y": 48
+        }
+      }
+    }
+  }
+}

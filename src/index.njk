@@ -1,59 +1,43 @@
 ---
-layout: layouts/base.njk
-title: Home
+layout: layouts/shell.njk
+title: false
+description: Mitchtopia - the personal site of Mitch Gardner. Software, motorcycles, baking, and games.
 ---
-<main class="content">
-  <section class="hero">
-    <h1>{{ site.name }}</h1>
-    <p class="hero-tagline">{{ site.tagline }}</p>
-    <p class="hero-bio">DevOps and software engineer focused on building reliable infrastructure and clean tooling. I work across cloud platforms, automation, and full-stack development.</p>
-    <div class="hero-actions">
-      <a class="btn" href="/projects/">View Projects</a>
-      <a class="btn btn-outline" href="/contact/">Get in Touch</a>
-    </div>
-  </section>
+{% from "components/panel.njk" import panel %}
 
-  <section class="skills-section">
-    <h2>Skills Snapshot</h2>
-    <div class="skills-grid">
-      {% for category in skills.categories %}
-      <div class="skills-category">
-        <h3>{{ category.name }}</h3>
-        <ul class="skills-list">
-          {% for item in category.items %}
-          <li>{{ item }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-      {% endfor %}
-    </div>
-  </section>
+<main class="landing">
+  {# The wordmark is Breathe Fire III, converted to outlines.
 
-  {% if collections.featuredProjects | length %}
-  <section class="featured-section">
-    <div class="section-header">
-      <h2>Featured Projects</h2>
-      <a href="/projects/">View All &rarr;</a>
-    </div>
-    <div class="card-grid">
-      {% for item in collections.featuredProjects %}
-        {% include "partials/project-card.njk" %}
-      {% endfor %}
-    </div>
-  </section>
-  {% endif %}
+     It is NOT loaded as a webfont: the licence is non-commercial and an
+     @font-face rule would distribute the font binary to every visitor.
+     Outlines ship no font file, and cost one small request instead.
 
-  {% if collections.recentPosts | length %}
-  <section class="recent-section">
-    <div class="section-header">
-      <h2>Recent Posts</h2>
-      <a href="/blog/">View All &rarr;</a>
-    </div>
-    <div class="card-grid">
-      {% for item in collections.recentPosts %}
-        {% include "partials/post-card.njk" %}
-      {% endfor %}
-    </div>
-  </section>
-  {% endif %}
+     Drop the exported file at src/assets/img/mitchtopia.svg and it is used
+     automatically; until then the styled text below stands in. #}
+  <div class="title-card">
+    {% set wordmark = "/assets/img/mitchtopia.svg" %}
+    {% if wordmark | hasAsset %}
+    <h1 class="title-card__name title-card__name--art">
+      <img src="{{ wordmark | bust }}" alt="Mitchtopia" width="640" height="140">
+    </h1>
+    {% else %}
+    <h1 class="title-card__name">Mitchtopia</h1>
+    {% endif %}
+    <p class="title-card__sub">Mitch Gardner</p>
+  </div>
+
+  {% call panel({
+    id: "home",
+    title: "Welcome",
+    variant: "prompt",
+    class: "is-intro",
+    label: "Explore Mitchtopia",
+    tabs: nav,
+    currentUrl: page.url
+  }) %}
+    <p class="muted">
+      Software engineer of ten years. Motorcycles, baking, and games in
+      between. Explore my projects or learn more about me.
+    </p>
+  {% endcall %}
 </main>

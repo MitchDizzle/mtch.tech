@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    {% include "partials/metadata.njk" %}
+    <meta name="color-scheme" content="dark">
+
+    {# Blocking, inline, and deliberately tiny. Runs before first paint.
+
+       1. Adds .js to <html> so CSS can start panels in the closed state.
+          Without JS the class never lands and panels stay open and readable,
+          so the no-JS fallback is preserved. This is what removes the flash
+          of an open panel on navigation.
+
+       2. Phase-locks the background drift to wall-clock time. Each page load
+          would otherwise restart the animation from zero, which reads as a
+          visible jump. Modulo keeps the negative delay small enough to stay
+          precise. #}
+    <script>
+      (function () {
+        var r = document.documentElement;
+        r.className += " js";
+        var t = Date.now() / 1000;
+        r.style.setProperty("--drift-delay-1", -(t % 34) + "s");
+        r.style.setProperty("--drift-delay-2", -(t % 41) + "s");
+        r.style.setProperty("--drift-delay-3", -(t % 29) + "s");
+      })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&display=swap">
+
+    <link rel="stylesheet" href="{{ '/assets/css/landing.css' | bust }}">
+    <link rel="stylesheet" href="{{ '/assets/css/panel.css' | bust }}">
+    <link rel="stylesheet" href="{{ '/assets/css/content.css' | bust }}">
+    <link rel="stylesheet" href="{{ '/assets/css/game.css' | bust }}">
+  </head>
+  <body>
+    {# Animated background. Placeholder for background art - swapping this
+       block should not require touching anything else. #}
+    <div class="bg" aria-hidden="true">
+      <span class="bg__blob bg__blob--1"></span>
+      <span class="bg__blob bg__blob--2"></span>
+      <span class="bg__blob bg__blob--3"></span>
+    </div>
+
+    {% include "partials/icons.njk" %}
+
+    {{ content | safe }}
+
+    {% include "partials/site-footer.njk" %}
+
+    <div class="panel-toasts" id="panel-toasts" aria-live="polite" aria-atomic="false"></div>
+
+    <script src="{{ '/assets/js/panel.js' | bust }}" defer></script>
+    {# Dev only. Inert unless ?fps is in the URL or Ctrl+Shift+F is pressed. #}
+    <script src="{{ '/assets/js/fps.js' | bust }}" defer></script>
+  </body>
+</html>

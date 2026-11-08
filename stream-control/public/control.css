@@ -1,0 +1,412 @@
+/* ==========================================================================
+   Phone control panel
+
+   Built for one-handed use on a phone while something else has your
+   attention. Big targets, no confirmation dialogs, no small text.
+   ========================================================================== */
+
+:root {
+  --font-display: "Cinzel", Georgia, serif;
+  --bg: #0a0503;
+  --card: rgb(26 20 16 / 0.9);
+  --fg: #f0e9e2;
+  --muted: #b8aa9e;
+  --line: rgb(210 190 175 / 0.28);
+  --accent: rgb(235 160 96);
+  --ok: #7ee2a8;
+  --bad: #e8776a;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 0 12px 40px;
+  padding-bottom: max(40px, env(safe-area-inset-bottom));
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+.ctl-head {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 4px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+
+.ctl-head h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.ctl-status {
+  font-size: 13px;
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  color: var(--muted);
+}
+
+.ctl-status[data-state="on"] { color: var(--ok); border-color: rgb(126 226 168 / .5); }
+.ctl-status[data-state="off"] { color: var(--bad); border-color: rgb(232 119 106 / .5); }
+
+/* --------------------------------------------------------------------------
+   Tabs
+
+   Triggers is what you press mid-stream; Settings is what you set beforehand.
+   Keeping them apart means the live controls never scroll off under a thumb.
+   -------------------------------------------------------------------------- */
+
+.ctl-tabs {
+  position: sticky;
+  top: 57px;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 10px 0;
+  background: var(--bg);
+}
+
+.ctl-tab {
+  min-height: 46px;
+  background: rgb(255 255 255 / 0.04);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ctl-tab[aria-selected="true"] {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: rgb(255 255 255 / 0.07);
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Position controls
+   -------------------------------------------------------------------------- */
+
+.ctl-corners {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+/* Nine-point placement grid. Laid out as a 3x3 so the button's position on
+   screen matches where the element lands - far quicker to hit than reading
+   nine labels. */
+.ctl-pos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.ctl-pos .ctl-btn {
+  min-height: 48px;
+  padding: 0;
+  font-size: 19px;
+  line-height: 1;
+}
+
+/* The centre is a different kind of action from the eight edges, so it reads
+   differently rather than hiding among them. */
+.ctl-pos .ctl-btn[data-corner="mc"] {
+  color: var(--accent);
+  font-size: 13px;
+}
+
+.ctl-card {
+  margin: 14px 0;
+  padding: 16px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+}
+
+.ctl-card h2 {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.ctl-muted { color: var(--muted); font-size: 14px; margin: 0 0 10px; }
+
+.ctl-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.ctl-row:last-child { margin-bottom: 0; }
+
+input[type="text"],
+input[type="password"] {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  padding: 0 12px;
+  background: rgb(255 255 255 / 0.05);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--fg);
+  font: inherit;
+}
+
+/* 48px minimum everywhere. Anything smaller is a miss waiting to happen when
+   you are not looking at the phone. */
+.ctl-btn {
+  min-height: 48px;
+  padding: 0 16px;
+  background: rgb(255 255 255 / 0.05);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--fg);
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ctl-btn:active { background: rgb(255 255 255 / 0.14); }
+.ctl-btn--primary { border-color: var(--accent); color: var(--accent); }
+
+.ctl-toggles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.ctl-toggle {
+  min-height: 56px;
+  background: rgb(255 255 255 / 0.04);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* On/off has to be readable in a glance, so it changes colour AND weight
+   rather than relying on a subtle border difference. */
+.ctl-toggle[aria-pressed="true"] {
+  color: var(--bg);
+  background: var(--accent);
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+/* --------------------------------------------------------------------------
+   Stepper rows
+
+   These replaced range sliders entirely. A slider in a scrolling page eats
+   vertical drags, so going to scroll changes a value instead - live, on
+   stream. Buttons cannot be grabbed by a scroll gesture.
+   -------------------------------------------------------------------------- */
+
+.ctl-stepper {
+  display: grid;
+  grid-template-columns: 1fr 52px 76px 52px;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+/* When an inherit button is present the row gains a fifth column. */
+.ctl-stepper:has(.ctl-stepper__inherit:not([hidden])) {
+  grid-template-columns: 1fr 52px 76px 52px 46px;
+}
+
+.ctl-stepper__label {
+  font-size: 15px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* A dot rather than a word - the row is already tight and the inherit button
+   next to it explains what the marker means. */
+.ctl-override {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex: 0 0 auto;
+}
+
+.ctl-stepper__btn {
+  min-height: 46px;
+  padding: 0;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.ctl-stepper__val {
+  min-height: 46px;
+  padding: 0;
+  background: rgb(255 255 255 / 0.05);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--accent);
+  font: inherit;
+  font-size: 15px;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ctl-stepper__inherit {
+  min-height: 46px;
+  padding: 0;
+  font-size: 17px;
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* --------------------------------------------------------------------------
+   Profiles
+   -------------------------------------------------------------------------- */
+
+.ctl-profiles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.ctl-editing {
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: rgb(235 160 96 / 0.08);
+  font-size: 14px;
+  color: var(--fg);
+}
+
+/* Editing Base touches everything, so it gets a louder treatment than
+   editing a profile that only overrides a few keys. */
+.ctl-editing[data-base="true"] {
+  border-color: var(--bad);
+  background: rgb(232 119 106 / 0.08);
+}
+
+.ctl-btn--danger {
+  border-color: var(--bad);
+  color: var(--bad);
+}
+
+.ctl-tones {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.ctl-tone {
+  min-height: 48px;
+  background: rgb(255 255 255 / 0.04);
+  border: 2px solid var(--t);
+  border-radius: 4px;
+  color: var(--t);
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ctl-tone[aria-pressed="true"] {
+  background: var(--t);
+  color: var(--bg);
+  font-weight: 600;
+}
+
+/* A custom accent overrides the tone, so the preset row is dimmed to show it
+   is not what is currently on screen. */
+.ctl-tones[data-muted="true"] { opacity: 0.4; }
+
+/* --------------------------------------------------------------------------
+   Custom accent
+   -------------------------------------------------------------------------- */
+
+.ctl-accent {
+  display: grid;
+  grid-template-columns: 1fr 64px auto;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.ctl-accent__label {
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.ctl-accent[data-active="true"] .ctl-accent__label {
+  color: var(--accent);
+}
+
+/* The native picker is the one control worth keeping - every phone OS gives
+   a good full-screen colour UI for it, and nothing hand-rolled would beat
+   that on a small screen. */
+.ctl-accent input[type="color"] {
+  width: 64px;
+  height: 48px;
+  padding: 2px;
+  background: rgb(255 255 255 / 0.05);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.ctl-accent .ctl-btn {
+  padding: 0 12px;
+  font-size: 14px;
+}
+
+.ctl-scenes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.ctl-scene {
+  min-height: 58px;
+  background: rgb(255 255 255 / 0.04);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--fg);
+  font: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ctl-scene[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.ctl-scene:active { background: rgb(255 255 255 / 0.14); }

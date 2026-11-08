@@ -1,0 +1,615 @@
+/* ==========================================================================
+   LitRPG panel - shared component
+
+   The site's signature element. Used for:
+     - the landing prompt
+     - the game options screen
+     - static page frames
+     - in-game menus, dialogue, and system notifications (DOM overlaid on
+       the canvas, so this is literally the same component, not a lookalike)
+
+   Opening: a horizontal line expands from centre, then extends vertically.
+   Closing: the reverse.
+
+   The panel is a CLIPPING MASK, not a scaling box. Content sits at final
+   size and the clip opens over it, so text is never stretched or squashed
+   and is already in place as the panel reveals it.
+   ========================================================================== */
+
+:root {
+  /* --- Border ----------------------------------------------------------
+     Swap these when the Kenney fantasy border comes in. Keeping the width
+     in a variable means adding the ornate border causes no layout reflow.
+     Do not hardcode the width anywhere. */
+  --panel-border-width: 2px;
+  --panel-border-color: rgb(180 190 210 / 0.55);
+  --panel-radius: 4px;
+
+  /* --- Surface ---------------------------------------------------------
+     Panels are slightly transparent, like a game overlay. Alpha stays high
+     enough that body text keeps its contrast ratio against the darkest
+     backdrop the panel can sit on. Do not push below ~0.85 without
+     re-checking contrast. */
+  /* TEMPORARY warm trial, matching the background in landing.css.
+     Panels stay near-neutral with a warm bias rather than going orange -
+     body text has to stay comfortable to read at length. Previous cool
+     values kept in comments. */
+  --panel-bg: rgb(26 20 16 / 0.88);        /* was rgb(16 18 26 / .88) */
+  --panel-bg-solid: rgb(26 20 16);         /* was rgb(16 18 26) */
+  --panel-fg: rgb(240 233 226);            /* was rgb(228 232 240) */
+  --panel-fg-muted: rgb(184 170 158);      /* was rgb(158 166 184) */
+  --panel-rule-color: rgb(210 190 175 / 0.22);  /* was rgb(180 190 210 / .22) */
+  --panel-accent: rgb(235 160 96);         /* was rgb(126 178 235) */
+
+  /* Optional frosting. Costly on low-end mobile - see the guard below. */
+  --panel-blur: 6px;
+
+  --panel-padding: 1.25rem;
+
+  /* --- Timing ---------------------------------------------------------- */
+  --panel-open-duration: 550ms;
+  --panel-close-duration: 450ms;
+  --panel-open-ease: cubic-bezier(0.2, 0.8, 0.3, 1);
+  --panel-close-ease: cubic-bezier(0.6, 0, 0.7, 0.2);
+}
+
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+
+.panel {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--panel-max-width, 48rem);
+  margin-inline: auto;
+
+  border: var(--panel-border-width) solid var(--panel-border-color);
+  border-radius: var(--panel-radius);
+  background: var(--panel-bg);
+  color: var(--panel-fg);
+
+  /* Default state is OPEN and fully visible. Everything must be readable
+     with no JS, no CSS animation support, or a failed bundle. The animation
+     is progressive enhancement layered on top - never the other way round. */
+  clip-path: inset(0 0 0 0);
+}
+
+/* Panels awaiting a swap take no layout space. Explicit because a future
+   display rule on .panel would otherwise beat the UA default for [hidden]. */
+.panel[hidden] {
+  display: none;
+}
+
+/* Start closed ONLY when JS is confirmed present.
+
+   The .js class is added by an inline blocking script in <head>, so this
+   applies before first paint - which is what stops a new page flashing an
+   open panel for a frame before the animation begins.
+
+   Without JS the class never lands, this rule never matches, and the panel
+   stays open and readable. The fallback is preserved by construction rather
+   than by hoping a script runs. */
+@media (prefers-reduced-motion: no-preference) {
+  .js .panel[data-panel]:not(.is-opening):not(.is-closing) {
+    clip-path: inset(50% 50% 50% 50%);
+  }
+}
+
+/* --- Frosting: OFF by default ------------------------------------------
+   backdrop-filter must re-sample and re-blur everything behind it on every
+   frame in which that backdrop changes. The landing background is animated
+   and the game canvas repaints constantly, so on those surfaces it is a
+   guaranteed frame-rate problem, not a maybe.
+
+   Opt in per-surface with .panel--frosted, and only where the backdrop is
+   static. Measure before shipping it anywhere. */
+@supports (backdrop-filter: blur(1px)) {
+  @media (min-width: 48rem) and (prefers-reduced-motion: no-preference) {
+    .panel--frosted {
+      backdrop-filter: blur(var(--panel-blur));
+    }
+  }
+}
+
+/* Panel grows to content height; the PAGE scrolls. Never give the panel its
+   own internal scroll container - nested scrolling on mobile is hostile and
+   the frame would clip long content. */
+.panel__body {
+  padding: var(--panel-padding);
+}
+
+/* --- Header --------------------------------------------------------------
+   A first-class region of the panel, not the first line of the body. This is
+   what "Options" sits in, what a page title sits in, and what a speaker name
+   sits in during game dialogue - one slot, three uses.
+
+   Order within a panel: banner (what KIND of message) -> header (WHOSE, or
+   WHICH) -> tabs -> body. */
+
+.panel__header {
+  padding: 0.8rem var(--panel-padding);
+  border-bottom: 1px solid var(--panel-rule-color);
+}
+
+.panel__title {
+  margin: 0;
+  font-family: var(--font-display, inherit);
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+/* Flavour under the title - a speaker's role, a section descriptor. */
+.panel__subtitle {
+  margin: 0.15rem 0 0;
+  font-size: 0.8rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--panel-fg-muted);
+}
+
+/* Dialogue headers are compact and rule-less - the speaker should sit close
+   to their line, not be separated from it by a divider. */
+.panel--dialogue .panel__header {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.panel--dialogue .panel__title {
+  color: var(--panel-accent);
+  font-size: 0.95rem;
+}
+
+/* Toasts are small enough that a divider is noise, and tight enough that the
+   header has to earn its space.
+
+   The display face is dropped here on purpose. Cinzel is wide and tall at
+   small sizes, so at toast scale it pushes the body text down and reads as a
+   second banner competing with the real one. The banner above already
+   carries the flavour; the title just needs to be legible. */
+.panel--toast .panel__header {
+  padding: 0.6rem 1rem 0;
+  border-bottom: 0;
+}
+
+/* Cinzel is wide and tall at small sizes - at toast scale the title competes
+   with the banner above it instead of supporting it. The banner carries the
+   flavour; the title only needs to be legible. Delete this rule to put the
+   display face back. */
+.panel--toast .panel__title {
+  font-family: var(--font-body, inherit);
+  font-size: 0.9rem;
+  letter-spacing: 0;
+}
+
+.panel--toast .panel__header + .panel__body {
+  padding-top: 0.15rem;
+}
+
+.panel__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.panel__actions > * {
+  flex: 1;
+}
+
+/* --------------------------------------------------------------------------
+   Banner - the LitRPG flavour line
+
+   "Warning!", "Notice", "Quest complete". Distinct from .panel__title: the
+   banner names the KIND of message, the title names the message itself. A
+   panel can carry either, both, or neither.
+
+   Placement constraint: the banner must stay inside the panel's box. The
+   panel is clipped with clip-path, which clips descendants too, so a classic
+   plaque straddling the top border would be sliced in half. The plaque
+   variant below sits just inside the edge instead.
+   -------------------------------------------------------------------------- */
+
+.panel__banner {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  /* It is a <p>. Without this the UA's default margin: 1em 0 pushes the
+     header away from the banner's rule and opens a gap under every banner
+     in the system. */
+  margin: 0;
+  padding: 0.5rem var(--panel-padding);
+  background: var(--panel-banner-bg, transparent);
+  border-bottom: 1px solid var(--panel-rule-color);
+  color: var(--panel-accent);
+  font-family: var(--font-display, inherit);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* A hairline in the accent colour, so the tone reads even at a glance. */
+.panel__banner::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 3px;
+  align-self: stretch;
+  margin: -0.5rem 0.25rem -0.5rem calc(var(--panel-padding) * -1 + 0.25rem);
+  background: var(--panel-accent);
+}
+
+/* Centred plaque rather than a full-width strip. Inset from the top edge,
+   never overlapping it - see the clip-path note above. */
+.panel--banner-plaque .panel__banner {
+  justify-content: center;
+  margin: 0.75rem auto -0.25rem;
+  padding: 0.3rem 1.1rem;
+  width: fit-content;
+  border: 1px solid var(--panel-border-color);
+  border-radius: 2px;
+  background: var(--panel-banner-bg, transparent);
+}
+
+.panel--banner-plaque .panel__banner::before {
+  display: none;
+}
+
+/* --- Tones ---------------------------------------------------------------
+   Each tone retints the accent, the surface, and the border together. All
+   surfaces stay dark so body text keeps its contrast - the hue carries the
+   meaning, not the brightness.
+
+   Tone is decoration. It must never be the only thing communicating that
+   something went wrong; the banner text has to say so too. */
+
+.panel--notice {
+  --panel-accent: rgb(126 178 235);
+  --panel-banner-bg: rgb(126 178 235 / 0.12);
+  --panel-border-color: rgb(126 178 235 / 0.45);
+  --panel-bg: rgb(14 20 32 / 0.9);
+}
+
+.panel--warning {
+  --panel-accent: rgb(232 198 106);
+  --panel-banner-bg: rgb(232 198 106 / 0.12);
+  --panel-border-color: rgb(232 198 106 / 0.45);
+  --panel-bg: rgb(28 23 12 / 0.9);
+}
+
+.panel--danger {
+  --panel-accent: rgb(232 119 106);
+  --panel-banner-bg: rgb(232 119 106 / 0.13);
+  --panel-border-color: rgb(232 119 106 / 0.5);
+  --panel-bg: rgb(30 15 14 / 0.9);
+}
+
+.panel--success {
+  --panel-accent: rgb(126 226 168);
+  --panel-banner-bg: rgb(126 226 168 / 0.12);
+  --panel-border-color: rgb(126 226 168 / 0.45);
+  --panel-bg: rgb(12 26 20 / 0.9);
+}
+
+.panel--quest {
+  --panel-accent: rgb(186 154 236);
+  --panel-banner-bg: rgb(186 154 236 / 0.13);
+  --panel-border-color: rgb(186 154 236 / 0.45);
+  --panel-bg: rgb(22 17 34 / 0.9);
+}
+
+/* --- Header with navigation ---------------------------------------------
+   Title on the left, icon tabs on the right, sharing the header row. */
+
+.panel__header--nav {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  /* Tabs overlap the header's own rule to produce the folder effect below,
+     so the padding has to leave room for them to sit flush at the bottom. */
+  padding-bottom: 0;
+}
+
+.panel__heading {
+  padding-bottom: 0.8rem;
+  min-width: 0;
+}
+
+/* Keep navigation on the right when the homepage omits a panel title. */
+.panel__header--nav > .panel__tabs:only-child {
+  margin-left: auto;
+}
+
+/* --- Tabs - the folder metaphor -----------------------------------------
+   Each tab is a file tab. The current one has no bottom edge and shares the
+   body's background, so it reads as continuous with the page beneath rather
+   than as a button sitting above it.
+
+   The mechanism: the tab row is pushed down by 1px so the tabs straddle the
+   header's border-bottom, then the current tab paints over that border with
+   its own background. */
+
+.panel__tabs {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  margin-bottom: -1px;
+  flex: 0 0 auto;
+}
+
+.panel__tab {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid transparent;
+  border-bottom: 0;
+  border-radius: 3px 3px 0 0;
+  background: none;
+  color: var(--panel-fg-muted);
+  font: inherit;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+  /* Touch target. The visual tab stays compact; the hit area does not. */
+  min-height: 40px;
+  transition: color 140ms ease, background-color 140ms ease;
+}
+
+.panel__tab:hover,
+.panel__tab:focus-visible {
+  color: var(--panel-fg);
+  background: rgb(255 255 255 / 0.05);
+}
+
+/* The current tab: bordered on three sides, background matching the body,
+   and one pixel of that background covering the header rule underneath. */
+.panel__tab.is-current,
+.panel__tab[aria-selected="true"] {
+  color: var(--panel-accent);
+  border-color: var(--panel-rule-color);
+  background: var(--panel-bg-solid);
+  padding-bottom: calc(0.5rem + 1px);
+}
+
+.panel__tab-icon {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 auto;
+}
+
+.panel__tab-label {
+  font-size: 0.85rem;
+}
+
+/* Narrow screens: tabs get the full width of the row and the title shrinks
+   rather than the tabs wrapping under it. */
+@media (max-width: 34rem) {
+  .panel__header--nav {
+    gap: 0.5rem;
+  }
+
+  .panel__tab {
+    padding-inline: 0.55rem;
+  }
+
+  .panel__title {
+    font-size: 0.95rem;
+  }
+}
+
+/* --- Leading edge -------------------------------------------------------
+   The expanding line during phase one. Decorative; aria-hidden in markup. */
+
+.panel__edge {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100%;
+  height: var(--panel-border-width);
+  translate: -50% -50%;
+  background: var(--panel-accent);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Variants
+   -------------------------------------------------------------------------- */
+
+/* Landing screen and short confirmations. Narrow, centred, no tabs. */
+.panel--prompt {
+  --panel-max-width: 30rem;
+}
+
+/* Game options, pause menu, anything with form controls. */
+.panel--dialog {
+  --panel-max-width: 34rem;
+}
+
+/* Static page frame. Wide, grows to content, page scrolls. */
+.panel--page {
+  --panel-max-width: 52rem;
+  --panel-padding: 1.75rem;
+}
+
+/* In-game dialogue box. Anchored low, wide, short. */
+.panel--dialogue {
+  --panel-max-width: 44rem;
+  --panel-padding: 1rem 1.25rem;
+}
+
+/* --- Overlay -------------------------------------------------------------
+   Takes a panel out of normal flow so it covers the page instead of pushing
+   siblings around. Without this, a taller panel reflows whatever sits above
+   it - the title card visibly jumps.
+
+   The wrapper scrolls, not the panel. Tall content on a short landscape
+   phone scrolls the overlay; the panel itself never gets a nested scroll
+   container and never clips its own frame. */
+
+.panel-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1.25rem;
+  padding-top: max(1.25rem, env(safe-area-inset-top));
+  padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+  background: rgb(3 4 8 / 0.72);
+}
+
+.panel-overlay[hidden] {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes scrim-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  .panel-overlay {
+    animation: scrim-in 260ms ease-out both;
+  }
+  .panel-overlay.is-dismissing {
+    animation: scrim-in 220ms ease-in reverse both;
+  }
+}
+
+/* Everything behind an open overlay fades and stops responding.
+
+   The panel underneath is NOT hidden or closed - it stays in the flow,
+   merely invisible. Removing it from the flow would let the flex container
+   recentre and visibly shove the title card around. It is covered by the
+   scrim anyway, so leaving it in place costs nothing and returning to it
+   needs no animation at all.
+
+   The transition lives here rather than on the base rule so the fade is
+   one-way: out is animated, back in is instant. See the matching note in
+   landing.css. */
+.has-overlay .landing > :not(.panel-overlay) {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 240ms ease-out;
+}
+
+/* An overlay is a popup, not an entrance. It should feel quick both ways -
+   noticeably faster than the landing panel's ceremonial open. */
+.panel-overlay .panel {
+  --panel-open-duration: 380ms;
+  --panel-close-duration: 200ms;
+}
+
+/* Transient LitRPG system notification - "Hat acquired". Small, corner-
+   anchored, auto-dismissing. Managed by panel.js. */
+.panel--toast {
+  --panel-max-width: 22rem;
+  --panel-padding: 0.75rem 1rem;
+  margin-inline: 0;
+}
+
+.panel-toasts {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none;
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+}
+
+/* --------------------------------------------------------------------------
+   Animation - progressive enhancement only
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes panel-open {
+    0%   { clip-path: inset(50% 50% 50% 50%); }
+    45%  { clip-path: inset(50% 0 50% 0); }
+    100% { clip-path: inset(0 0 0 0); }
+  }
+
+  @keyframes panel-close {
+    0%   { clip-path: inset(0 0 0 0); }
+    55%  { clip-path: inset(50% 0 50% 0); }
+    100% { clip-path: inset(50% 50% 50% 50%); }
+  }
+
+  @keyframes panel-edge {
+    0%   { scale: 0 1; opacity: 1; }
+    45%  { scale: 1 1; opacity: 1; }
+    60%  { opacity: 0; }
+    100% { scale: 1 1; opacity: 0; }
+  }
+
+  /* fill-mode MUST be `both`, not `forwards`.
+
+     Adding .is-opening immediately breaks the :not(.is-opening) rule that was
+     holding the panel clipped shut. With `forwards`, nothing applies the 0%
+     keyframe during animation-delay, so the panel renders fully open for the
+     length of the delay and then snaps closed the instant the animation
+     starts. `both` applies the 0% keyframe backwards through the delay. */
+  .panel.is-opening {
+    animation: panel-open var(--panel-open-duration) var(--panel-open-ease) both;
+  }
+
+  .panel.is-closing {
+    animation: panel-close var(--panel-close-duration) var(--panel-close-ease) both;
+  }
+
+  .panel.is-opening .panel__edge {
+    animation: panel-edge var(--panel-open-duration) var(--panel-open-ease) both;
+  }
+
+  /* Toasts are quicker - they fire often and must not feel ceremonial. */
+  .panel--toast {
+    --panel-open-duration: 320ms;
+    --panel-close-duration: 260ms;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel.is-opening,
+  .panel.is-closing {
+    animation: none;
+    clip-path: inset(0 0 0 0);
+  }
+
+  .panel__edge {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Fantasy border - swap-in point
+   Uncomment once the Kenney symbols are extracted. Corners stay fixed and
+   edges repeat; do NOT scale the whole border SVG uniformly or the corner
+   ornaments squash.
+   -------------------------------------------------------------------------- */
+
+/*
+:root {
+  --panel-border-width: 24px;
+}
+
+.panel {
+  border-style: solid;
+  border-image-source: url("/assets/ui/border-panel.svg");
+  border-image-slice: 24 fill;
+  border-image-repeat: round;
+  border-image-width: 1;
+}
+
+@media (max-width: 30rem) {
+  :root { --panel-border-width: 12px; }
+}
+*/
