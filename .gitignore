@@ -24,3 +24,4 @@ _site/
 *.njsproj
 *.sln
 *.sw?
+stream-control/config.json
