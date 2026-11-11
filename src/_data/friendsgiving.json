@@ -1,0 +1,47 @@
+{
+  "_comment": "signupUrl: the shared sign-up sheet, shown as 'See who's bringing what'. formspreeId: the id from https://formspree.io/f/<id>; while empty the page hides the sign-up form.",
+  "date": "Saturday, November 21",
+  "time": "6:00 PM",
+  "address": "1708 Marion St, Leavenworth, KS",
+  "mapUrl": "https://www.google.com/maps/search/?api=1&query=1708+Marion+St+Leavenworth+KS",
+  "signupUrl": "https://docs.google.com/spreadsheets/d/1aqbB8oMscimxyKI2ZDnW0d1KI39VKp5h/edit?usp=sharing",
+  "formspreeId": "mjywvyvg",
+  "photosUrl": "https://photos.app.goo.gl/GYaVUPwdcFtv6ZdD7",
+  "mustHaves": [
+    {
+      "item": "Turkey"
+    },
+    {
+      "item": "Ham",
+      "covered": true
+    },
+    {
+      "item": "Mashed potatoes"
+    },
+    {
+      "item": "Gravy"
+    },
+    {
+      "item": "Stuffing"
+    },
+    {
+      "item": "Green beans"
+    },
+    {
+      "item": "Mac and cheese"
+    },
+    {
+      "item": "Rolls"
+    },
+    {
+      "item": "Cranberry sauce"
+    },
+    {
+      "item": "Pies"
+    },
+    {
+      "item": "Other",
+      "note": "anything else you want to bring"
+    }
+  ]
+}

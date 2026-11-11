@@ -580,3 +580,62 @@
   padding: 0.3rem 0.7rem;
   font-size: 0.8rem;
 }
+
+/* --------------------------------------------------------------------------
+   Sign-up form (Friendsgiving page)
+   -------------------------------------------------------------------------- */
+
+.signup-form {
+  display: grid;
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.signup-form__field {
+  display: block;
+  color: var(--panel-fg);
+  font-size: 0.9rem;
+}
+
+.signup-form__field[hidden] {
+  display: none;
+}
+
+.signup-form input:not([type="hidden"]),
+.signup-form select,
+.signup-form textarea {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 44px;
+  margin-top: 0.4rem;
+  padding: 0.65rem 0.8rem;
+  border: 1px solid var(--panel-rule-color);
+  border-radius: 3px;
+  background: rgb(0 0 0 / 0.2);
+  color: var(--panel-fg);
+  font: inherit;
+  box-sizing: border-box;
+}
+
+.signup-form select option {
+  background: #1a120d;
+  color: var(--panel-fg);
+}
+
+.signup-form textarea {
+  resize: vertical;
+}
+
+.signup-form .btn {
+  justify-self: start;
+}
+
+.signup-form__status:empty {
+  display: none;
+}
+
+.signup-form__status {
+  margin: 0;
+  color: var(--panel-accent);
+}

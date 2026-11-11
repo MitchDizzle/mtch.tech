@@ -1,0 +1,138 @@
+---
+layout: layouts/shell.njk
+permalink: /friendsgiving/
+title: Friendsgiving
+description: Friendsgiving potluck, Saturday November 21 at 6 PM. BYOB.
+socialImage: /assets/img/friendsgiving/og.jpg
+socialImageAlt: Friendsgiving invite, Saturday Nov 21 at 6 PM, 1708 Marion St, Leavenworth
+noindex: true
+eleventyExcludeFromCollections: true
+---
+{% from "components/panel.njk" import panel %}
+{% set fg = friendsgiving %}
+
+{# Unlisted invite page: not in the nav, the sitemap, or search results.
+   Sign-ups live in a shared Google Sheet; the link is set in
+   _data/friendsgiving.json. #}
+
+<main class="landing">
+  {% call panel({
+    variant: "page",
+    title: "Friendsgiving",
+    subtitle: fg.date + " · " + fg.time,
+    labelledBy: "fg-title"
+  }) %}
+    <div class="prose">
+      <figure class="project-figure project-figure--small">
+        <img src="/assets/img/friendsgiving/invite.jpg" alt="Friendsgiving invite: Saturday, Nov 21 at 6 PM, potluck, BYOB, 1708 Marion St, Leavenworth, KS, over instant photos from last year" decoding="async">
+      </figure>
+
+      <p class="section-lead">
+        It's a potluck, so bring a dish to share. Sign up below so we don't
+        end up with five pans of mac and cheese. BYOB if you drink.
+      </p>
+
+      <h2>When and where</h2>
+      <ul>
+        <li>{{ fg.date }}, starting at {{ fg.time }}</li>
+        <li><a href="{{ fg.mapUrl }}" rel="noopener">{{ fg.address }}</a></li>
+      </ul>
+
+      <h2>What we need</h2>
+      <ul>
+        {% for dish in fg.mustHaves %}
+        <li>{{ dish.item }}{% if dish.covered %} <span class="muted">(covered)</span>{% elif dish.note %} <span class="muted">({{ dish.note }})</span>{% endif %}</li>
+        {% endfor %}
+      </ul>
+      <h2 id="signup-heading">Sign up</h2>
+      {% if fg.formspreeId %}
+      <form class="signup-form" action="https://formspree.io/f/{{ fg.formspreeId }}" method="POST" aria-labelledby="signup-heading" data-signup-form>
+        <input type="hidden" name="_subject" value="Friendsgiving sign-up">
+        <input type="text" name="_gotcha" class="sr-only" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+        <label class="signup-form__field">Your name
+          <input type="text" name="name" required autocomplete="name">
+        </label>
+
+        <label class="signup-form__field">What you're bringing
+          <select name="dish" required data-dish-select>
+            <option value="">Pick one</option>
+            {% for dish in fg.mustHaves %}{% if not dish.covered and dish.item != "Other" %}
+            <option>{{ dish.item }}</option>
+            {% endif %}{% endfor %}
+            <option value="other">Other</option>
+          </select>
+        </label>
+
+        <label class="signup-form__field" data-other-field hidden>What is it?
+          <input type="text" name="other_dish" data-other-input>
+        </label>
+
+        <label class="signup-form__field">Notes <span class="muted">(optional: anything special about your dish)</span>
+          <textarea name="notes" rows="3"></textarea>
+        </label>
+
+        <button class="btn" type="submit">Sign me up</button>
+        <p class="signup-form__status" role="status" data-signup-status></p>
+      </form>
+      {% else %}
+      <p class="muted">Sign-up form coming soon.</p>
+      {% endif %}
+
+      <div class="panel__actions">
+        {% if fg.signupUrl %}<a class="btn" href="{{ fg.signupUrl }}" rel="noopener">See who's bringing what</a>{% endif %}
+        <a class="btn" href="{{ fg.photosUrl }}" rel="noopener">Last year's photos</a>
+      </div>
+    </div>
+  {% endcall %}
+</main>
+
+{% if fg.formspreeId %}
+<script>
+  // Submits in place so guests stay on the page. Without JS the form posts
+  // normally and Formspree shows its own thank-you page.
+  (function () {
+    var form = document.querySelector("[data-signup-form]");
+    if (!form) return;
+    var select = form.querySelector("[data-dish-select]");
+    var otherField = form.querySelector("[data-other-field]");
+    var otherInput = form.querySelector("[data-other-input]");
+    var status = form.querySelector("[data-signup-status]");
+    var button = form.querySelector("button[type=submit]");
+
+    select.addEventListener("change", function () {
+      var isOther = select.value === "other";
+      otherField.hidden = !isOther;
+      otherInput.required = isOther;
+    });
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      button.disabled = true;
+      status.textContent = "Sending...";
+      fetch(form.action, {
+        method: "POST",
+        body: new FormData(form),
+        headers: { Accept: "application/json" }
+      }).then(function (res) {
+        if (!res.ok) {
+          // Formspree returns { errors: [{ message }] } on validation failures.
+          return res.json().catch(function () { return {}; }).then(function (data) {
+            var msgs = (data.errors || []).map(function (err) { return err.message; });
+            throw new Error(msgs.join(" ") || "error");
+          });
+        }
+        form.reset();
+        otherField.hidden = true;
+        otherInput.required = false;
+        status.textContent = "Got it, thanks! See you on the 21st.";
+      }).catch(function (err) {
+        var detail = err && err.message && err.message !== "error" ? " (" + err.message + ")" : "";
+        status.textContent = "That didn't go through" + detail + ". Try again, or just text Mitch.";
+      }).finally(function () {
+        button.disabled = false;
+      });
+    });
+  })();
+</script>
+{% endif %}

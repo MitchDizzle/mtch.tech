@@ -4,6 +4,7 @@
 {% set canonicalUrl = page.url | absoluteSiteUrl %}
 {% set previewImage = socialImage or site.socialImage %}
 <title>{{ pageTitle | escape }}</title>
+{% if noindex %}<meta name="robots" content="noindex, nofollow">{% endif %}
 <meta name="description" content="{{ pageDescription | escape }}">
 <link rel="canonical" href="{{ canonicalUrl | escape }}">
 <meta property="og:type" content="website">
