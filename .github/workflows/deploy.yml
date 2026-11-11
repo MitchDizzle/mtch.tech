@@ -1,0 +1,62 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+    # A push that only changes what isn't part of the site needs no deploy:
+    # the kitchen board (it ships from main too, but the kitchen PC pulls it
+    # from git), Claude's settings, the docs at the top (CLAUDE.md, STYLE.md) and the folders kept out of the
+    # build (CLAUDE.md, Build). Anything else deploys. To skip one on purpose,
+    # put [skip ci] in the commit message (GitHub's own flag; the newest
+    # commit of the push decides). specials.json is in src/, so it always
+    # deploys: the kitchen PC reads the specials from the live site.
+    paths-ignore:
+      - '.claude/**'
+      - '*.md'
+      - 'docs/**'
+      - 'stream-control/**'
+
+# One deploy at a time. A push runs once, for its newest commit, however many
+# commits it carries. Pushes close together queue rather than overlap on the
+# FTP upload, and a queued one is replaced by a newer one, so only the latest
+# is built. A running deploy is never cancelled: that could leave the site
+# half uploaded.
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # The whole history, not just the last commit: the /studio/ board
+          # dates each piece by its last commit and archives the ones that
+          # haven't changed for two weeks (src/_lib/studio-archive.js).
+          # With one commit, every piece would look new.
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ secrets.FTP_SERVER_DIR }}
+          local-dir: ./_site/
