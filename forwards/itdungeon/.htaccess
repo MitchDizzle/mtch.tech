@@ -1,0 +1,11 @@
+# itdungeon.mtch.tech: sends every request to the game at mtch.tech/itdungeon/.
+#
+# The deploy workflow uploads this folder to the subdomain's own folder on the
+# host (the FTP_ITDUNGEON_DIR secret). 302, not 301: browsers keep a 301 for
+# good, and the game may move onto the subdomain later.
+
+Options -Indexes
+
+<IfModule mod_alias.c>
+  Redirect 302 / https://mtch.tech/itdungeon/
+</IfModule>

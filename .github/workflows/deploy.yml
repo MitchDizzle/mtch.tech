@@ -30,6 +30,11 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
+    # The subdomain's folder on the host, for the forward step at the end.
+    # Secrets can't be tested in an `if`, so it comes through env.
+    env:
+      FTP_ITDUNGEON_DIR: ${{ secrets.FTP_ITDUNGEON_DIR }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -60,3 +65,16 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: ${{ secrets.FTP_SERVER_DIR }}
           local-dir: ./_site/
+
+      # itdungeon.mtch.tech forwards to the game's folder here (/itdungeon/):
+      # forwards/itdungeon/ goes into the subdomain's own folder. Skipped until
+      # the FTP_ITDUNGEON_DIR secret is set (same FTP login as the site).
+      - name: Deploy the itdungeon.mtch.tech forward
+        if: env.FTP_ITDUNGEON_DIR != ''
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ env.FTP_ITDUNGEON_DIR }}
+          local-dir: ./forwards/itdungeon/
