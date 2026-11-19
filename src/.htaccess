@@ -152,8 +152,17 @@ ErrorDocument 404 /404.html
   </FilesMatch>
 
   <FilesMatch "\.(css|js|woff2?|png|jpe?g|webp|avif|svg|ico|mp3|ogg)$">
-    Header set Cache-Control "public, max-age=31536000, immutable"
+    Header set Cache-Control "public, max-age=31536000, immutable" env=!HOSTED_GAME
+    Header set Cache-Control "no-cache" env=HOSTED_GAME
   </FilesMatch>
+</IfModule>
+
+# Hosted games (their own folders, uploaded apart from this site) load their
+# files without a ?v= hash, so a year-long immutable cache would keep returning
+# players on the old build after an upload. Their files revalidate instead
+# (a 304 when nothing changed). Add a game's folder here when it's hosted.
+<IfModule mod_setenvif.c>
+  SetEnvIf Request_URI "^/itdungeon/" HOSTED_GAME
 </IfModule>
 
 # ---------------------------------------------------------------------------
@@ -252,8 +261,11 @@ FileETag None
 <IfModule mod_alias.c>
   RedirectMatch 404 (?i)/\.git(/|$)
   RedirectMatch 404 (?i)/node_modules(/|$)
-  RedirectMatch 404 (?i)/src(/|$)
-  RedirectMatch 404 (?i)/docs(/|$)
+  # /src and /docs are anchored to the site root. A game uploaded into its own
+  # folder (/itdungeon/) keeps its code in its own src/, and the unanchored
+  # rules 404'd every file in it.
+  RedirectMatch 404 (?i)^/src(/|$)
+  RedirectMatch 404 (?i)^/docs(/|$)
   RedirectMatch 404 (?i)/\.vscode(/|$)
   RedirectMatch 404 (?i)/\.idea(/|$)
 </IfModule>

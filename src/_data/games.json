@@ -1,0 +1,21 @@
+{
+  "_comment": "The games hub (/games/) lists these in order. url is where the game is played; project is its write-up on this site, if it has one; status is the card's tag; image is optional (16:9 crop). A game uploaded into its own folder also needs that folder added to HOSTED_GAME in src/.htaccess, so returning players get new uploads.",
+
+  "games": [
+    {
+      "title": "IT Dungeon",
+      "url": "/itdungeon/",
+      "project": "/projects/it-dungeon/",
+      "status": "In development",
+      "description": "Defend a breached network with a weapon made of real Python. Plays in a phone's browser, with optional Security+, Networking, and Linux questions.",
+      "image": "/assets/img/projects/it-dungeon/cover.webp"
+    },
+    {
+      "title": "Mitchtopia",
+      "url": "/play/",
+      "status": "Prototype",
+      "description": "A greybox room-clearer: three classes, a dash, and a door once the room is clear. Coloured blocks stand in for the art. Keyboard or touch.",
+      "image": "/assets/img/games/mitchtopia-prototype.webp"
+    }
+  ]
+}

@@ -2,5 +2,6 @@
   { "label": "Home",     "href": "/",          "icon": "home" },
   { "label": "About",    "href": "/site/",     "icon": "user" },
   { "label": "Projects", "href": "/projects/", "icon": "projects" },
+  { "label": "Games",    "href": "/games/",    "icon": "games" },
   { "label": "Contact",  "href": "/contact/",  "icon": "contact" }
 ]

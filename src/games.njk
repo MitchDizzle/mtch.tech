@@ -1,0 +1,45 @@
+---
+layout: layouts/shell.njk
+permalink: /games/
+title: Games
+description: Games you can play in the browser on mtch.tech.
+---
+{% from "components/panel.njk" import panel %}
+
+{# The list is src/_data/games.json. #}
+<main class="landing">
+  {% call panel({
+    variant: "page",
+    title: "Games",
+    labelledBy: "games-title",
+    tabs: nav,
+    currentUrl: page.url
+  }) %}
+    <p class="section-lead">
+      Games I've made that you can play right here in the browser.
+    </p>
+
+    <div class="card-grid">
+      {% for game in games.games %}
+      <article class="card">
+        {% if game.image %}
+        <img class="card-img" src="{{ game.image }}" alt="" loading="lazy">
+        {% endif %}
+        <div class="card-body">
+          <h2 class="card-title"><a href="{{ game.url }}">{{ game.title }}</a></h2>
+          <p class="card-desc">{{ game.description }}</p>
+          <ul class="tag-list">
+            <li class="tag">{{ game.status }}</li>
+          </ul>
+          <div class="card-actions">
+            <a class="btn btn--sm" href="{{ game.url }}">Play</a>
+            {% if game.project %}
+            <a class="btn btn--sm" href="{{ game.project }}">About</a>
+            {% endif %}
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  {% endcall %}
+</main>
