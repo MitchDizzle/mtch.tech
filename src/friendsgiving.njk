@@ -13,7 +13,8 @@ eleventyExcludeFromCollections: true
 
 {# Unlisted invite page: not in the nav, the sitemap, or search results.
    Sign-ups live in a shared Google Sheet; the link is set in
-   _data/friendsgiving.json. #}
+   _data/friendsgiving.json. The dishes listed there show as ideas only:
+   the sheet tracks who's bringing what, so `covered` isn't shown. #}
 
 <main class="landing">
   {% call panel({
@@ -38,11 +39,11 @@ eleventyExcludeFromCollections: true
         <li><a href="{{ fg.mapUrl }}" rel="noopener">{{ fg.address }}</a></li>
       </ul>
 
-      <h2>What we need</h2>
+      <h2>Need ideas?</h2>
       <ul>
-        {% for dish in fg.mustHaves %}
-        <li>{{ dish.item }}{% if dish.covered %} <span class="muted">(covered)</span>{% elif dish.note %} <span class="muted">({{ dish.note }})</span>{% endif %}</li>
-        {% endfor %}
+        {% for dish in fg.mustHaves %}{% if dish.item != "Other" %}
+        <li>{{ dish.item }}</li>
+        {% endif %}{% endfor %}
       </ul>
       <h2 id="signup-heading">Sign up</h2>
       {% if fg.formspreeId %}
@@ -55,17 +56,12 @@ eleventyExcludeFromCollections: true
         </label>
 
         <label class="signup-form__field">What you're bringing
-          <select name="dish" required data-dish-select>
-            <option value="">Pick one</option>
-            {% for dish in fg.mustHaves %}{% if not dish.covered and dish.item != "Other" %}
-            <option>{{ dish.item }}</option>
+          <input type="text" name="dish" required list="dish-ideas" autocomplete="off" placeholder="Pick an idea or type your own">
+          <datalist id="dish-ideas">
+            {% for dish in fg.mustHaves %}{% if dish.item != "Other" %}
+            <option value="{{ dish.item }}"></option>
             {% endif %}{% endfor %}
-            <option value="other">Other</option>
-          </select>
-        </label>
-
-        <label class="signup-form__field" data-other-field hidden>What is it?
-          <input type="text" name="other_dish" data-other-input>
+          </datalist>
         </label>
 
         <label class="signup-form__field">Notes <span class="muted">(optional: anything special about your dish)</span>
@@ -94,17 +90,8 @@ eleventyExcludeFromCollections: true
   (function () {
     var form = document.querySelector("[data-signup-form]");
     if (!form) return;
-    var select = form.querySelector("[data-dish-select]");
-    var otherField = form.querySelector("[data-other-field]");
-    var otherInput = form.querySelector("[data-other-input]");
     var status = form.querySelector("[data-signup-status]");
     var button = form.querySelector("button[type=submit]");
-
-    select.addEventListener("change", function () {
-      var isOther = select.value === "other";
-      otherField.hidden = !isOther;
-      otherInput.required = isOther;
-    });
 
     form.addEventListener("submit", function (e) {
       e.preventDefault();
@@ -123,8 +110,6 @@ eleventyExcludeFromCollections: true
           });
         }
         form.reset();
-        otherField.hidden = true;
-        otherInput.required = false;
         status.textContent = "Got it, thanks! See you on the 21st.";
       }).catch(function (err) {
         var detail = err && err.message && err.message !== "error" ? " (" + err.message + ")" : "";
