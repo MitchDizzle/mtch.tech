@@ -601,7 +601,9 @@
   display: none;
 }
 
-.signup-form input:not([type="hidden"]),
+/* Not the .sr-only spam trap: this rule is more specific than .sr-only and
+   would make it full width, which pushed the page 5px wider than a phone. */
+.signup-form input:not([type="hidden"]):not(.sr-only),
 .signup-form select,
 .signup-form textarea {
   display: block;
